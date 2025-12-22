@@ -1,0 +1,66 @@
+package com.example.app.extensions
+
+import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalog
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+
+val Project.libs
+    get(): VersionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
+internal val Project.moduleName: String
+    get() = path.split(":").drop(1).joinToString(".")
+
+fun Project.configureProjectDependencies(vararg moduleLists: List<Project>) {
+    extensions.configure<KotlinMultiplatformExtension> {
+        sourceSets.apply {
+            commonMain.dependencies {
+                moduleLists.flatMap { it }.forEach { implementation(it) }
+            }
+        }
+    }
+}
+
+val Project.coreModules: CoreModules
+    get() = CoreModules(this)
+
+class CoreModules(private val project: Project) {
+    val domain get() = project.project(":core:domain")
+    val utils get() = project.project(":core:utils")
+    val navigation get() = project.project(":core:navigation")
+
+    val all get() = listOf(domain, utils, navigation)
+}
+
+val Project.featureModules: FeatureModules
+    get() = FeatureModules(this)
+
+class FeatureModules(private val project: Project) {
+    val chat get() = project.project(":feature:chat")
+    val profile get() = project.project(":feature:profile")
+
+    val all: List<Project> = listOf(chat, profile)
+}
+
+val Project.sharedModules: SharedModules
+    get() = SharedModules(this)
+
+class SharedModules(private val project: Project) {
+    val design get() = project.project(":shared:design")
+    val resources get() = project.project(":shared:resources")
+    val common get() = project.project(":shared:components")
+
+    val all get() = listOf(design, resources, common)
+}
+
+val Project.datasourceModules: DatasourceModules
+    get() = DatasourceModules(this)
+
+class DatasourceModules(private val project: Project) {
+    val remote get() = project.project(":datasource:remote")
+    val local get() = project.project(":datasource:local")
+
+    val all get() = listOf(remote, local)
+}
