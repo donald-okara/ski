@@ -50,7 +50,7 @@ fun PreviewContainer(
         darkTheme = isDark
     ) {
         Surface(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier,
         ) {
             content.invoke()
         }
