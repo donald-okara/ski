@@ -1,0 +1,94 @@
+package com.example.design.ui.theme
+
+import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import com.example.resources.Resources
+import org.jetbrains.compose.resources.Font
+
+val bodyFontFamily: FontFamily
+    @Composable
+    get() = FontFamily(
+        Font(Resources.Font.GOOGLE_SANS_EXTRA_LIGHT, FontWeight.Normal),
+
+        )
+
+val displayFontFamily: FontFamily
+    @Composable
+    get() = FontFamily(
+        Font(Resources.Font.GOOGLE_SANS_BOLD, FontWeight.Bold),
+
+        )
+
+// Default Material 3 typography values
+val baseline = Typography()
+
+// Typography customized for a slideshow presentation
+val AppTypography: Typography
+    @Composable
+    get() = Typography(
+        displayLarge = baseline.displayLarge.copy(
+            fontFamily = displayFontFamily,
+            fontSize = 112.sp,
+            letterSpacing = (-0.02).em
+        ),
+        displayMedium = baseline.displayMedium.copy(
+            fontFamily = displayFontFamily,
+            fontSize = 72.sp
+        ),
+        displaySmall = baseline.displaySmall.copy(
+            fontFamily = displayFontFamily,
+            fontSize = 56.sp
+        ),
+        headlineLarge = baseline.headlineLarge.copy(
+            fontFamily = displayFontFamily,
+            fontSize = 48.sp
+        ),
+        headlineMedium = baseline.headlineMedium.copy(
+            fontFamily = displayFontFamily,
+            fontSize = 40.sp
+        ),
+        headlineSmall = baseline.headlineSmall.copy(
+            fontFamily = displayFontFamily,
+            fontSize = 36.sp
+        ),
+        titleLarge = baseline.titleLarge.copy(
+            fontFamily = displayFontFamily,
+            fontSize = 32.sp
+        ),
+        titleMedium = baseline.titleMedium.copy(
+            fontFamily = displayFontFamily,
+            fontSize = 28.sp
+        ),
+        titleSmall = baseline.titleSmall.copy(
+            fontFamily = displayFontFamily,
+            fontSize = 24.sp
+        ),
+        bodyLarge = baseline.bodyLarge.copy(
+            fontFamily = bodyFontFamily,
+            fontSize = 28.sp
+        ),
+        bodyMedium = baseline.bodyMedium.copy(
+            fontFamily = bodyFontFamily,
+            fontSize = 24.sp
+        ),
+        bodySmall = baseline.bodySmall.copy(
+            fontFamily = bodyFontFamily,
+            fontSize = 20.sp
+        ),
+        labelLarge = baseline.labelLarge.copy(
+            fontFamily = bodyFontFamily,
+            fontSize = 24.sp
+        ),
+        labelMedium = baseline.labelMedium.copy(
+            fontFamily = bodyFontFamily,
+            fontSize = 20.sp
+        ),
+        labelSmall = baseline.labelSmall.copy(
+            fontFamily = bodyFontFamily,
+            fontSize = 18.sp
+        ),
+    )

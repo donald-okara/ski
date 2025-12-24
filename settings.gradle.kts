@@ -40,7 +40,7 @@ includeBuild("build-logic")
 
 // Folders
 include(":core")
-include(":feature")
+include(":segments")
 include(":datasource")
 include(":shared")
 
@@ -53,9 +53,9 @@ include(":core:navigation")
 include(":datasource:remote")
 include(":datasource:local")
 
-// Feature
-include(":feature:chat")
-include(":feature:profile")
+// Segments
+include(":segments:introduction")
+include(":segments:demos")
 
 // Shared UI
 include(":shared:design")

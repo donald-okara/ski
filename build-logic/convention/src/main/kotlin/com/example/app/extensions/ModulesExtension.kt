@@ -34,14 +34,14 @@ class CoreModules(private val project: Project) {
     val all get() = listOf(domain, utils, navigation)
 }
 
-val Project.featureModules: FeatureModules
-    get() = FeatureModules(this)
+val Project.segmentModules: SegmentModules
+    get() = SegmentModules(this)
 
-class FeatureModules(private val project: Project) {
-    val chat get() = project.project(":feature:chat")
-    val profile get() = project.project(":feature:profile")
+class SegmentModules(private val project: Project) {
+    val demos get() = project.project(":segments:demos")
+    val introduction get() = project.project(":segments:introduction")
 
-    val all: List<Project> = listOf(chat, profile)
+    val all: List<Project> = listOf(demos, introduction)
 }
 
 val Project.sharedModules: SharedModules

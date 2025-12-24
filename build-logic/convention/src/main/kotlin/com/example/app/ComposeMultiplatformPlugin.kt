@@ -28,13 +28,16 @@ class ComposeMultiplatformPlugin : Plugin<Project> {
                     dependencies {
                         implementation(composeDeps.runtime)
                         implementation(composeDeps.foundation)
-                        implementation(composeDeps.material3)
+                        implementation("org.jetbrains.compose.material3:material3:1.9.0-alpha04")
                         implementation(composeDeps.ui)
                         implementation(composeDeps.materialIconsExtended)
                         implementation(composeDeps.components.resources)
-                        implementation(composeDeps.material)
                         implementation(composeDeps.components.uiToolingPreview)
                     }
+                }
+                androidMain.dependencies {
+                    implementation(composeDeps.preview)
+                    implementation(libs.findBundle("preview").get())
                 }
                 jvmMain.dependencies {
                     implementation(composeDeps.desktop.currentOs)
