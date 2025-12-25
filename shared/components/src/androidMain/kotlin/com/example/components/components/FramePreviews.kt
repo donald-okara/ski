@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
 import com.example.components.frames.BrushType
 import com.example.components.frames.ExpressivePictureFrame
+import com.example.components.frames.frameShapes
 import com.example.components.previews.PreviewContainer
 import com.example.components.previews.ThemePreviews
 import com.example.resources.Resources
@@ -33,14 +34,6 @@ private class PictureFramePreviewProvider : PreviewParameterProvider<PictureFram
         Resources.Images.IAN
     )
 
-    val shapes = listOf(
-        MaterialShapes.Sunny,
-        MaterialShapes.Cookie4Sided,
-        MaterialShapes.Cookie6Sided,
-        MaterialShapes.Cookie7Sided,
-        MaterialShapes.PixelCircle
-    )
-
     val colors = listOf(
         Color(0xFF546524),
         Color(0xFF5B6146),
@@ -51,7 +44,7 @@ private class PictureFramePreviewProvider : PreviewParameterProvider<PictureFram
         get() {
             return sequence {
                 for (image in images) {
-                    for (shape in shapes) {
+                    for (shape in frameShapes) {
                         for (color in colors) {
                             yield(
                                 PictureFrameModel(

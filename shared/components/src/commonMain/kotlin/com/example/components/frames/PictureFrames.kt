@@ -214,9 +214,10 @@ enum class BrushType {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 val frameShapes = listOf(
+    MaterialShapes.Bun,
     MaterialShapes.Sunny,
     MaterialShapes.Cookie4Sided,
     MaterialShapes.Cookie6Sided,
     MaterialShapes.Cookie7Sided,
-    MaterialShapes.PixelCircle
+    MaterialShapes.PixelCircle,
 )
