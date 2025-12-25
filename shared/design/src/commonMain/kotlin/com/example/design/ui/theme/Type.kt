@@ -13,15 +13,18 @@ val bodyFontFamily: FontFamily
     @Composable
     get() = FontFamily(
         Font(Resources.Font.GOOGLE_SANS_EXTRA_LIGHT, FontWeight.Normal),
-
         )
 
 val displayFontFamily: FontFamily
     @Composable
     get() = FontFamily(
         Font(Resources.Font.GOOGLE_SANS_BOLD, FontWeight.Bold),
-
         )
+val subheadingsFontFamily: FontFamily
+    @Composable
+    get() = FontFamily(
+        Font(Resources.Font.ROBOTO_MONO_EXTRA_LIGHT, FontWeight.Bold),
+    )
 
 // Default Material 3 typography values
 val baseline = Typography()
@@ -40,7 +43,7 @@ val AppTypography: Typography
             fontSize = 72.sp
         ),
         displaySmall = baseline.displaySmall.copy(
-            fontFamily = displayFontFamily,
+            fontFamily = subheadingsFontFamily,
             fontSize = 56.sp
         ),
         headlineLarge = baseline.headlineLarge.copy(
@@ -52,7 +55,7 @@ val AppTypography: Typography
             fontSize = 40.sp
         ),
         headlineSmall = baseline.headlineSmall.copy(
-            fontFamily = displayFontFamily,
+            fontFamily = subheadingsFontFamily,
             fontSize = 36.sp
         ),
         titleLarge = baseline.titleLarge.copy(
@@ -64,7 +67,7 @@ val AppTypography: Typography
             fontSize = 28.sp
         ),
         titleSmall = baseline.titleSmall.copy(
-            fontFamily = displayFontFamily,
+            fontFamily = subheadingsFontFamily,
             fontSize = 24.sp
         ),
         bodyLarge = baseline.bodyLarge.copy(
@@ -76,7 +79,7 @@ val AppTypography: Typography
             fontSize = 24.sp
         ),
         bodySmall = baseline.bodySmall.copy(
-            fontFamily = bodyFontFamily,
+            fontFamily = subheadingsFontFamily,
             fontSize = 20.sp
         ),
         labelLarge = baseline.labelLarge.copy(
@@ -88,7 +91,7 @@ val AppTypography: Typography
             fontSize = 20.sp
         ),
         labelSmall = baseline.labelSmall.copy(
-            fontFamily = bodyFontFamily,
+            fontFamily = subheadingsFontFamily,
             fontSize = 18.sp
         ),
     )
