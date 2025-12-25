@@ -10,92 +10,31 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-fun ExpressiveFrame(
-    modifier: Modifier = Modifier,
-    polygon: RoundedPolygon = frameShapes.random(),
-    backgroundColor: Color = MaterialTheme.colorScheme.primary,
-    rotate: Boolean = true,
-    durationMillis: Int = 30000,
-    content: (@Composable () -> Unit)? = null,
-) {
-    val shape = polygon.toShape()
-
-    val animatedColor by animateColorAsState(
-        targetValue = backgroundColor,
-        animationSpec = tween(500)
-    )
-    val infiniteTransition = rememberInfiniteTransition(label = "InfiniteRotation")
-
-    val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = InfiniteRepeatableSpec(
-            animation = tween(durationMillis = durationMillis, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "RotationAnimation"
-    )
-
-    Box(
-        modifier = modifier
-            .then(
-                if (rotate)
-                    Modifier
-                        .graphicsLayer {
-                            rotationZ = rotation
-
-                        } else Modifier
-            )
-            .clip(shape)
-            .background(color = animatedColor)
-    ) {
-        Box(
-            modifier = Modifier
-                .then(
-                    if (rotate)
-                        Modifier
-                            .graphicsLayer {
-                                rotationZ = -rotation
-                            }
-                    else Modifier
-                )
-        ) {
-            content?.invoke()
-        }
-    }
-}
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -104,6 +43,8 @@ fun ExpressiveFrameClipped(
     polygon: RoundedPolygon = frameShapes.random(),
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     sizeDp: Int,
+    floating: Boolean = false,
+    brushType: BrushType = BrushType.SWEEP,
     content: (@Composable () -> Unit)? = null,
 ) {
     val shape = polygon.toShape()
@@ -113,27 +54,89 @@ fun ExpressiveFrameClipped(
         animationSpec = tween(500)
     )
 
+    val brushColors = listOf(
+        animatedColor,
+        animatedColor.copy(alpha = 0.8f),
+        animatedColor.copy(alpha = 0.6f),
+        animatedColor.copy(alpha = 0.4f),
+        animatedColor.copy(alpha = 0.2f)
+    )
+
+    val brush by remember(brushType) {
+        derivedStateOf {
+            when (brushType) {
+                BrushType.LINEAR -> Brush.linearGradient(
+                    colors = brushColors
+                )
+
+                BrushType.SWEEP -> Brush.sweepGradient(
+                    colors = brushColors
+                )
+
+                BrushType.RADIAL -> Brush.radialGradient(
+                    colors = brushColors
+                )
+
+                BrushType.VERTICAL -> Brush.verticalGradient(
+                    colors = brushColors
+                )
+
+                BrushType.HORIZONTAL -> Brush.horizontalGradient(
+                    colors = brushColors
+                )
+            }
+        }
+    }
+
+    // 1. Create an infinite transition for the floating effect
+    val infiniteTransition = rememberInfiniteTransition(label = "FloatingAnimation")
+
+    // 2. Animate the Y offset (top to bottom)
+    val floatingOffsetY by infiniteTransition.animateFloat(
+        initialValue = -10f,
+        targetValue = 10f,
+        animationSpec = InfiniteRepeatableSpec(
+            animation = tween(durationMillis = 3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse // Go up and down smoothly
+        ),
+        label = "OffsetY"
+    )
+
+    // 3. Animate the X offset (side to side)
+    val floatingOffsetX by infiniteTransition.animateFloat(
+        initialValue = -10f,
+        targetValue = 10f,
+        animationSpec = InfiniteRepeatableSpec(
+            animation = tween(durationMillis = 2500, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse // Go left and right smoothly
+        ),
+        label = "OffsetX"
+    )
+
     Box(
         modifier = modifier
             .graphicsLayer {
                 clip = false
             }
+            .then(
+                if (floating)
+                // 4. Apply both X and Y offsets
+                    Modifier
+                        .offset {
+                            IntOffset(
+                                x = floatingOffsetX.roundToInt(),
+                                y = floatingOffsetY.roundToInt()
+                            )
+                        }
+                else
+                    Modifier
+            ),
     ) {
         Box(
             modifier = Modifier
                 .size(sizeDp.dp)
                 .clip(shape)
-                .background(
-                    brush = Brush.sweepGradient(
-                        colors = listOf(
-                            backgroundColor,
-                            backgroundColor.copy(alpha = 0.8f),
-                            backgroundColor.copy(alpha = 0.6f),
-                            backgroundColor.copy(alpha = 0.4f),
-                            backgroundColor.copy(alpha = 0.2f)
-                        )
-                    )
-                )
+                .background(brush)
         )
 
         content?.let { contentLambda ->
@@ -182,13 +185,17 @@ fun ExpressivePictureFrame(
     polygon: RoundedPolygon = frameShapes.random(),
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     sizeDp: Int = 200,
+    floating: Boolean = true,
+    brushType: BrushType = BrushType.SWEEP,
     image: DrawableResource,
 ) {
     ExpressiveFrameClipped(
         modifier = modifier,
         polygon = polygon,
+        brushType = brushType,
         backgroundColor = backgroundColor,
-        sizeDp = sizeDp
+        sizeDp = sizeDp,
+        floating = floating
     ) {
         Image(
             painter = painterResource(image),
@@ -198,6 +205,13 @@ fun ExpressivePictureFrame(
         )
     }
 }
+
+
+enum class BrushType {
+    LINEAR, SWEEP, RADIAL, VERTICAL, HORIZONTAL
+
+}
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 val frameShapes = listOf(
     MaterialShapes.Sunny,

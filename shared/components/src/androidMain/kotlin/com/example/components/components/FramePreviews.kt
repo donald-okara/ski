@@ -1,12 +1,9 @@
 package com.example.components.components
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,7 +12,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
-import com.example.components.frames.ExpressiveFrame
+import com.example.components.frames.BrushType
 import com.example.components.frames.ExpressivePictureFrame
 import com.example.components.previews.PreviewContainer
 import com.example.components.previews.ThemePreviews
@@ -25,7 +22,7 @@ import org.jetbrains.compose.resources.DrawableResource
 data class PictureFrameModel(
     val drawable: DrawableResource,
     val shape: RoundedPolygon,
-    val backgroundColor: Color
+    val backgroundColor: Color,
 )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -60,7 +57,7 @@ private class PictureFramePreviewProvider : PreviewParameterProvider<PictureFram
                                 PictureFrameModel(
                                     drawable = image,
                                     shape = shape,
-                                    backgroundColor = color
+                                    backgroundColor = color,
                                 )
                             )
                         }
