@@ -73,8 +73,10 @@ fun PictureFramePreview(
         ) {
             ExpressivePictureFrame(
                 image = model.drawable,
+                sizeDp = 400,
                 polygon = model.shape,
                 backgroundColor = model.backgroundColor,
+                brushType = BrushType.SWEEP
             )
         }
     }

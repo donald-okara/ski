@@ -30,6 +30,14 @@ import com.example.design.ui.theme.AppTheme
 annotation class DevicePreviews
 
 @Preview(
+    name = "Desktop",
+    group = "Devices",
+    heightDp = 800,
+    widthDp = 1280,
+)
+annotation class DesktopPreview
+
+@Preview(
     name = "Light",
     group = "Themes",
     uiMode = Configuration.UI_MODE_NIGHT_NO
