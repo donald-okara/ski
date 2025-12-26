@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -27,6 +28,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
@@ -43,6 +45,7 @@ fun ExpressiveFrameClipped(
     polygon: RoundedPolygon = frameShapes.random(),
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     sizeDp: Int,
+    imageOffset: Int = -10,
     floating: Boolean = false,
     brushType: BrushType = BrushType.SWEEP,
     content: (@Composable () -> Unit)? = null,
@@ -62,7 +65,7 @@ fun ExpressiveFrameClipped(
         animatedColor.copy(alpha = 0.2f)
     )
 
-    val brush by remember(brushType) {
+    val brush by remember(brushType, backgroundColor) {
         derivedStateOf {
             when (brushType) {
                 BrushType.LINEAR -> Brush.linearGradient(
@@ -115,6 +118,7 @@ fun ExpressiveFrameClipped(
 
     Box(
         modifier = modifier
+            .aspectRatio(1f)
             .graphicsLayer {
                 clip = false
             }
@@ -135,7 +139,11 @@ fun ExpressiveFrameClipped(
         Box(
             modifier = Modifier
                 .size(sizeDp.dp)
-                .clip(shape)
+                .graphicsLayer {
+                    shadowElevation = 8.dp.toPx()
+                    this.shape = shape // Use the same shape for the shadow
+                    clip = true // Clip the content inside to the shape
+                }
                 .background(brush)
         )
 
@@ -151,14 +159,15 @@ fun ExpressiveFrameClipped(
                             right = size.width,
                             bottom = size.height / 2
                         ) {
-                            this@drawWithContent.drawContent()
-                        }
+                            translate(top = imageOffset.dp.toPx()) {
+                                this@drawWithContent.drawContent()
+                            }                        }
                     }
             ) {
                 contentLambda()
             }
 
-            // Bottom half - clipped to rotating shape
+            // Bottom half - clipped to shape
             Box(
                 modifier = Modifier
                     .clip(shape)
@@ -169,8 +178,9 @@ fun ExpressiveFrameClipped(
                             right = size.width,
                             bottom = size.height
                         ) {
-                            this@drawWithContent.drawContent()
-                        }
+                            translate(top = imageOffset.dp.toPx()) {
+                                this@drawWithContent.drawContent()
+                            }                        }
                     }
             ) {
                 contentLambda()
@@ -185,6 +195,7 @@ fun ExpressivePictureFrame(
     polygon: RoundedPolygon = frameShapes.random(),
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     sizeDp: Int = 200,
+    imageOffset: Int = -10,
     floating: Boolean = true,
     brushType: BrushType = BrushType.SWEEP,
     image: DrawableResource,
@@ -195,6 +206,7 @@ fun ExpressivePictureFrame(
         brushType = brushType,
         backgroundColor = backgroundColor,
         sizeDp = sizeDp,
+        imageOffset = imageOffset,
         floating = floating
     ) {
         Image(
@@ -219,5 +231,6 @@ val frameShapes = listOf(
     MaterialShapes.Cookie4Sided,
     MaterialShapes.Cookie6Sided,
     MaterialShapes.Cookie7Sided,
-    MaterialShapes.PixelCircle,
+    MaterialShapes.Clover4Leaf,
+    MaterialShapes.Clover8Leaf
 )

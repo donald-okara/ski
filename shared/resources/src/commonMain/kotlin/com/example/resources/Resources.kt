@@ -1,15 +1,6 @@
 package com.example.resources
 
-import ski.shared.resources.generated.resources.Res
-import ski.shared.resources.generated.resources.app_name
-import ski.shared.resources.generated.resources.google_sans_bold
-import ski.shared.resources.generated.resources.google_sans_regular
-import ski.shared.resources.generated.resources.ian_dooley
-import ski.shared.resources.generated.resources.ivana_cajina
-import ski.shared.resources.generated.resources.rafaella_mendes
-import ski.shared.resources.generated.resources.roboto_mono_extra_light
-
-
+import ski.shared.resources.generated.resources.*
 object Resources {
     object Strings {
         val APP_NAME = Res.string.app_name
@@ -26,5 +17,6 @@ object Resources {
         val IAN = Res.drawable.ian_dooley
         val IVANA = Res.drawable.ivana_cajina
         val RAFAELLA = Res.drawable.rafaella_mendes
+        val DON = Res.drawable.donald_isoe
     }
 }
