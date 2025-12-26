@@ -85,9 +85,7 @@ fun ExpressiveFrameClipped(
         }
     }
 
-    val infiniteTransition = rememberInfiniteTransition(label = "Floating")
-
-    val (offsetX, offsetY) = randomFloatingOffset(seed = index)
+    val (offsetX, offsetY) = randomFloatingOffset(seed = index, (sizeDp/4).toFloat())
 
     Box(
         modifier = modifier
@@ -202,11 +200,11 @@ fun Modifier.expressiveImageClip(
 }
 
 @Composable
-fun randomFloatingOffset(seed: Int = 0): Pair<Float, Float> {
+fun randomFloatingOffset(seed: Int = 0, animationDistance: Float = 50f): Pair<Float, Float> {
     val random = remember(seed) { Random(seed) }
 
-    val rangeX = remember(seed) { random.nextFloat() * 20f - 20 } // -10 to +10
-    val rangeY = remember(seed) { random.nextFloat() * 20f - 20f }
+    val rangeX = remember(seed) { random.nextFloat() * animationDistance - animationDistance } // -10 to +10
+    val rangeY = remember(seed) { random.nextFloat() * animationDistance - animationDistance }
 
     val durationX = remember(seed) { random.nextInt(2000, 4000) }
     val durationY = remember(seed) { random.nextInt(2500, 5000) }

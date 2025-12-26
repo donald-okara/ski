@@ -38,7 +38,7 @@ fun AnimatedSnakeFramedCard(
 ) {
     val strokeColor = MaterialTheme.colorScheme.onSurface
     val strokeWidth = 4.dp
-    val cornerRadius = 24.dp
+    val cornerRadius = 32.dp
     val extraPadding = 8.dp
 
     BoxWithConstraints(modifier) {
