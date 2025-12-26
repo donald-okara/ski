@@ -3,6 +3,7 @@ package com.example.components.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -26,19 +27,20 @@ data class PictureFrameModel(
     val drawable: DrawableResource,
     val shape: RoundedPolygon,
     val backgroundColor: Color,
+    val size: Int = 200
 )
 
 val images = listOf(
     Resources.Images.DON,
-    Resources.Images.RAFAELLA,
-    Resources.Images.IVANA,
-    Resources.Images.IAN,
+//    Resources.Images.RAFAELLA,
+//    Resources.Images.IVANA,
+//    Resources.Images.IAN,
 )
 
 val colors = listOf(
     Color(0xFF546524),
-    Color(0xFF5B6146),
-    Color(0xFF3A665E)
+//    Color(0xFF5B6146),
+//    Color(0xFF3A665E)
 )
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private class PictureFramePreviewProvider : PreviewParameterProvider<PictureFrameModel> {
@@ -76,7 +78,7 @@ fun PictureFramePreview(
         ) {
             ExpressivePictureFrame(
                 image = model.drawable,
-                sizeDp = 400,
+                sizeDp = 200,
                 polygon = model.shape,
                 backgroundColor = color.value,
                 brushType = BrushType.SWEEP,
