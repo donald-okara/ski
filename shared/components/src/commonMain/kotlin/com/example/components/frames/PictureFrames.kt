@@ -27,16 +27,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -45,16 +51,20 @@ fun ExpressiveFrameClipped(
     polygon: RoundedPolygon = frameShapes.random(),
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     sizeDp: Int,
+    index: Int = 0,
     imageOffset: Int = -10,
     floating: Boolean = false,
     brushType: BrushType = BrushType.SWEEP,
-    content: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit
 ) {
     val shape = polygon.toShape()
+    val density = LocalDensity.current
+    val imageOffsetPx = with(density) { imageOffset.dp.toPx() }
 
     val animatedColor by animateColorAsState(
         targetValue = backgroundColor,
-        animationSpec = tween(500)
+        animationSpec = tween(500),
+        label = "FrameColor"
     )
 
     val brushColors = listOf(
@@ -65,129 +75,55 @@ fun ExpressiveFrameClipped(
         animatedColor.copy(alpha = 0.2f)
     )
 
-    val brush by remember(brushType, backgroundColor) {
-        derivedStateOf {
-            when (brushType) {
-                BrushType.LINEAR -> Brush.linearGradient(
-                    colors = brushColors
-                )
-
-                BrushType.SWEEP -> Brush.sweepGradient(
-                    colors = brushColors
-                )
-
-                BrushType.RADIAL -> Brush.radialGradient(
-                    colors = brushColors
-                )
-
-                BrushType.VERTICAL -> Brush.verticalGradient(
-                    colors = brushColors
-                )
-
-                BrushType.HORIZONTAL -> Brush.horizontalGradient(
-                    colors = brushColors
-                )
-            }
+    val brush = remember(brushType, animatedColor) {
+        when (brushType) {
+            BrushType.LINEAR -> Brush.linearGradient(brushColors)
+            BrushType.SWEEP -> Brush.sweepGradient(brushColors)
+            BrushType.RADIAL -> Brush.radialGradient(brushColors)
+            BrushType.VERTICAL -> Brush.verticalGradient(brushColors)
+            BrushType.HORIZONTAL -> Brush.horizontalGradient(brushColors)
         }
     }
 
-    // 1. Create an infinite transition for the floating effect
-    val infiniteTransition = rememberInfiniteTransition(label = "FloatingAnimation")
-
-    // 2. Animate the Y offset (top to bottom)
-    val floatingOffsetY by infiniteTransition.animateFloat(
-        initialValue = -10f,
-        targetValue = 10f,
-        animationSpec = InfiniteRepeatableSpec(
-            animation = tween(durationMillis = 3000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse // Go up and down smoothly
-        ),
-        label = "OffsetY"
-    )
-
-    // 3. Animate the X offset (side to side)
-    val floatingOffsetX by infiniteTransition.animateFloat(
-        initialValue = -10f,
-        targetValue = 10f,
-        animationSpec = InfiniteRepeatableSpec(
-            animation = tween(durationMillis = 2500, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse // Go left and right smoothly
-        ),
-        label = "OffsetX"
-    )
+    val (offsetX, offsetY) = randomFloatingOffset(seed = index, (sizeDp/4).toFloat())
 
     Box(
         modifier = modifier
-            .aspectRatio(1f)
-            .graphicsLayer {
-                clip = false
-            }
+            .size(sizeDp.dp)
             .then(
                 if (floating)
-                // 4. Apply both X and Y offsets
-                    Modifier
-                        .offset {
-                            IntOffset(
-                                x = floatingOffsetX.roundToInt(),
-                                y = floatingOffsetY.roundToInt()
-                            )
-                        }
-                else
-                    Modifier
-            ),
+                    Modifier.offset {
+                        IntOffset(offsetX.roundToInt(), offsetY.roundToInt())
+                    }
+                else Modifier
+            )
     ) {
+        // Background frame
         Box(
             modifier = Modifier
-                .size(sizeDp.dp)
+                .matchParentSize()
                 .graphicsLayer {
                     shadowElevation = 8.dp.toPx()
-                    this.shape = shape // Use the same shape for the shadow
-                    clip = true // Clip the content inside to the shape
+                    this.shape = shape
+                    clip = true
                 }
                 .background(brush)
         )
 
-        content?.let { contentLambda ->
-            // Top half - unclipped overflow
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .drawWithContent {
-                        clipRect(
-                            left = 0f,
-                            top = 0f,
-                            right = size.width,
-                            bottom = size.height / 2
-                        ) {
-                            translate(top = imageOffset.dp.toPx()) {
-                                this@drawWithContent.drawContent()
-                            }                        }
-                    }
-            ) {
-                contentLambda()
-            }
-
-            // Bottom half - clipped to shape
-            Box(
-                modifier = Modifier
-                    .clip(shape)
-                    .drawWithContent {
-                        clipRect(
-                            left = 0f,
-                            top = size.height / 2,
-                            right = size.width,
-                            bottom = size.height
-                        ) {
-                            translate(top = imageOffset.dp.toPx()) {
-                                this@drawWithContent.drawContent()
-                            }                        }
-                    }
-            ) {
-                contentLambda()
-            }
+        // Image (drawn ONCE)
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .expressiveImageClip(
+                    shape = shape,
+                    imageOffsetPx = imageOffsetPx
+                )
+        ) {
+            content()
         }
     }
 }
+
 
 @Composable
 fun ExpressivePictureFrame(
@@ -195,6 +131,7 @@ fun ExpressivePictureFrame(
     polygon: RoundedPolygon = frameShapes.random(),
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     sizeDp: Int = 200,
+    index: Int = 0,
     imageOffset: Int = -10,
     floating: Boolean = true,
     brushType: BrushType = BrushType.SWEEP,
@@ -204,6 +141,7 @@ fun ExpressivePictureFrame(
         modifier = modifier,
         polygon = polygon,
         brushType = brushType,
+        index = index,
         backgroundColor = backgroundColor,
         sizeDp = sizeDp,
         imageOffset = imageOffset,
@@ -217,6 +155,85 @@ fun ExpressivePictureFrame(
         )
     }
 }
+
+fun Modifier.expressiveImageClip(
+    shape: Shape,
+    imageOffsetPx: Float
+) = this.drawWithContent {
+    val w = size.width
+    val h = size.height
+    val halfH = h / 2f
+
+    // Convert shape to outline path
+    val outline = shape.createOutline(size, layoutDirection, this)
+    val shapePath = when (outline) {
+        is Outline.Generic -> outline.path
+        is Outline.Rectangle -> Path().apply { addRect(outline.rect) }
+        is Outline.Rounded -> Path().apply { addRoundRect(outline.roundRect) }
+    }
+
+    // 1. Draw TOP half (no clipping)
+    clipRect(
+        left = 0f,
+        top = 0f,
+        right = w,
+        bottom = halfH
+    ) {
+        translate(top = imageOffsetPx) {
+            this@drawWithContent.drawContent()
+        }
+    }
+
+    // 2. Draw BOTTOM half (clipped to shape)
+    clipPath(shapePath) {
+        clipRect(
+            left = 0f,
+            top = halfH,
+            right = w,
+            bottom = h
+        ) {
+            translate(top = imageOffsetPx) {
+                this@drawWithContent.drawContent()
+            }
+        }
+    }
+}
+
+@Composable
+fun randomFloatingOffset(seed: Int = 0, animationDistance: Float = 50f): Pair<Float, Float> {
+    val random = remember(seed) { Random(seed) }
+
+    val rangeX = remember(seed) { random.nextFloat() * animationDistance - animationDistance } // -10 to +10
+    val rangeY = remember(seed) { random.nextFloat() * animationDistance - animationDistance }
+
+    val durationX = remember(seed) { random.nextInt(2000, 4000) }
+    val durationY = remember(seed) { random.nextInt(2500, 5000) }
+
+    val infiniteTransition = rememberInfiniteTransition(label = "Floating_$seed")
+
+    val offsetX by infiniteTransition.animateFloat(
+        initialValue = -rangeX,
+        targetValue = rangeX,
+        animationSpec = InfiniteRepeatableSpec(
+            animation = tween(durationMillis = durationX, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "OffsetX_$seed"
+    )
+
+    val offsetY by infiniteTransition.animateFloat(
+        initialValue = -rangeY,
+        targetValue = rangeY,
+        animationSpec = InfiniteRepeatableSpec(
+            animation = tween(durationMillis = durationY, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "OffsetY_$seed"
+    )
+
+    return offsetX to offsetY
+}
+
 
 
 enum class BrushType {
