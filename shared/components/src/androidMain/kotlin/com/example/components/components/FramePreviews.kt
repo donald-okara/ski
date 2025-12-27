@@ -31,7 +31,7 @@ data class PictureFrameModel(
 )
 
 val images = listOf(
-    Resources.Images.DON,
+    Resources.Images.RAFAELLA,
 //    Resources.Images.RAFAELLA,
 //    Resources.Images.IVANA,
 //    Resources.Images.IAN,

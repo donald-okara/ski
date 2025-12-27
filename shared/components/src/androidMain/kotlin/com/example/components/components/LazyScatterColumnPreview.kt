@@ -17,7 +17,7 @@ import com.example.resources.Resources
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 val frames = listOf(
     PictureFrameModel(
-        drawable = Resources.Images.DON,
+        drawable = Resources.Images.IAN,
         shape = MaterialShapes.Cookie4Sided,
         size = 500,
         backgroundColor = Color(0xFF546524)

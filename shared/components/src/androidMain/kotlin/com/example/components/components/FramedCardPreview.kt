@@ -116,7 +116,7 @@ private fun FramedShowCase() {
                     .fillMaxHeight()
             ) {
                 ExpressivePictureFrame(
-                    image = Resources.Images.DON,
+                    image = Resources.Images.RAFAELLA,
                     sizeDp = 400,
                     polygon = MaterialShapes.Sunny,
                     backgroundColor = MaterialTheme.colorScheme.tertiary,

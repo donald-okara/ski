@@ -17,6 +17,5 @@ object Resources {
         val IAN = Res.drawable.ian_dooley
         val IVANA = Res.drawable.ivana_cajina
         val RAFAELLA = Res.drawable.rafaella_mendes
-        val DON = Res.drawable.donald_isoe
     }
 }
