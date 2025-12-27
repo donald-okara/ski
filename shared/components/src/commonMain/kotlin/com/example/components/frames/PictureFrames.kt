@@ -8,9 +8,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -18,13 +16,13 @@ import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
@@ -33,7 +31,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
@@ -55,7 +52,7 @@ fun ExpressiveFrameClipped(
     imageOffset: Int = -10,
     floating: Boolean = false,
     brushType: BrushType = BrushType.SWEEP,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val shape = polygon.toShape()
     val density = LocalDensity.current
@@ -85,7 +82,7 @@ fun ExpressiveFrameClipped(
         }
     }
 
-    val (offsetX, offsetY) = randomFloatingOffset(seed = index, (sizeDp/4).toFloat())
+    val (offsetX, offsetY) = randomFloatingOffset(seed = index, (sizeDp / 4).toFloat())
 
     Box(
         modifier = modifier
@@ -100,14 +97,16 @@ fun ExpressiveFrameClipped(
     ) {
         // Background frame
         Box(
-            modifier = Modifier
+            Modifier
+                .clip(shape)
                 .matchParentSize()
-                .graphicsLayer {
-                    shadowElevation = 8.dp.toPx()
-                    this.shape = shape
-                    clip = true
+                .drawBehind {
+                    drawRoundRect(
+                        brush = brush,
+                        size = size,
+                        cornerRadius = CornerRadius(16.dp.toPx())
+                    )
                 }
-                .background(brush)
         )
 
         // Image (drawn ONCE)
@@ -158,7 +157,7 @@ fun ExpressivePictureFrame(
 
 fun Modifier.expressiveImageClip(
     shape: Shape,
-    imageOffsetPx: Float
+    imageOffsetPx: Float,
 ) = this.drawWithContent {
     val w = size.width
     val h = size.height
@@ -203,7 +202,8 @@ fun Modifier.expressiveImageClip(
 fun randomFloatingOffset(seed: Int = 0, animationDistance: Float = 50f): Pair<Float, Float> {
     val random = remember(seed) { Random(seed) }
 
-    val rangeX = remember(seed) { random.nextFloat() * animationDistance - animationDistance } // -10 to +10
+    val rangeX =
+        remember(seed) { random.nextFloat() * animationDistance - animationDistance } // -10 to +10
     val rangeY = remember(seed) { random.nextFloat() * animationDistance - animationDistance }
 
     val durationX = remember(seed) { random.nextInt(2000, 4000) }
@@ -233,7 +233,6 @@ fun randomFloatingOffset(seed: Int = 0, animationDistance: Float = 50f): Pair<Fl
 
     return offsetX to offsetY
 }
-
 
 
 enum class BrushType {

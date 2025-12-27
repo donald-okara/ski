@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.components.frames.BrushType
 import com.example.components.frames.ExpressivePictureFrame
 import com.example.resources.Resources
+import org.jetbrains.compose.resources.DrawableResource
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -36,37 +37,69 @@ fun IntroductionScreen(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.5f),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                "Building Slides with Jetpack Compose on Ski",
-                style = MaterialTheme.typography.displayMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Start
-            )
+        TextSegment(
+            title = "Building Slides with Jetpack Compose on Ski",
+            presenter = "Jane Doe"
+        )
+
+        ImageSegment(
+            painter = Resources.Images.RAFAELLA
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun ImageSegment(
+    modifier: Modifier = Modifier,
+    painter: DrawableResource
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxHeight()
+    ) {
+        ExpressivePictureFrame(
+            image = painter,
+            sizeDp = 400,
+            polygon = MaterialShapes.Clover4Leaf,
+            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            brushType = BrushType.SWEEP
+        )
+    }
+}
+
+@Composable
+private fun TextSegment(
+    modifier: Modifier = Modifier,
+    title: String,
+    presenter: String,
+    organisation: String? = null
+) {
+    Column(
+        modifier = modifier
+            .fillMaxHeight()
+            .fillMaxWidth(0.5f),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start
+    ) {
+        Text(
+            title,
+            style = MaterialTheme.typography.displayMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Start
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            presenter,
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        organisation?.let {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                "Jane Doe",
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxHeight()
-        ) {
-            ExpressivePictureFrame(
-                image = Resources.Images.RAFAELLA,
-                sizeDp = 400,
-                polygon = MaterialShapes.Sunny,
-                backgroundColor = MaterialTheme.colorScheme.tertiary,
-                brushType = BrushType.RADIAL
+                organisation,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
