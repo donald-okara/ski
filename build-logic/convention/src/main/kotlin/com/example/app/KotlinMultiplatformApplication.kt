@@ -20,9 +20,7 @@ class KotlinMultiplatformApplication: Plugin<Project> {
             listOf(
                 "kotlinMultiplatform",
                 "androidApplication",
-                "navigation3Convention",
                 "composeMultiplatformPlugin",
-                "koinConvention"
             ).forEach { id ->
                 pluginManager.apply(libs.findPlugin(id).get().get().pluginId)
             }

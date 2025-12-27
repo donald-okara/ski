@@ -1,8 +1,7 @@
 package com.example.components.frames
 
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -17,16 +16,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 @Composable
 fun AnimatedSnakeFramedCard(
@@ -40,94 +35,100 @@ fun AnimatedSnakeFramedCard(
     val strokeWidth = 4.dp
     val cornerRadius = 32.dp
     val extraPadding = 8.dp
+    val duration = 500
 
-    BoxWithConstraints(modifier) {
-        val density = LocalDensity.current
-        val r = with(density) { cornerRadius.toPx() }
-        val strokePx = with(density) { strokeWidth.toPx() }
-        val extraPx = with(density) { extraPadding.toPx() }
+    LookaheadScope {
+        BoxWithConstraints(modifier) {
+            val density = LocalDensity.current
+            val r = with(density) { cornerRadius.toPx() }
+            val strokePx = with(density) { strokeWidth.toPx() }
+            val extraPx = with(density) { extraPadding.toPx() }
 
-        var headerWidth by remember { mutableStateOf(0f) }
-        var headerHeight by remember { mutableStateOf(0f) }
-        var footerWidth by remember { mutableStateOf(0f) }
-        var footerHeight by remember { mutableStateOf(0f) }
+            var headerWidth by remember { mutableStateOf(0f) }
+            var headerHeight by remember { mutableStateOf(0f) }
+            var footerWidth by remember { mutableStateOf(0f) }
+            var footerHeight by remember { mutableStateOf(0f) }
 
-        // Animate the header and footer dimensions
-        val animatedHeaderWidth by animateFloatAsState(
-            targetValue = if (header != null) headerWidth else 0f,
-            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
-        )
-        val animatedHeaderHeight by animateFloatAsState(
-            targetValue = if (header != null) headerHeight else 0f,
-            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
-        )
-        val animatedFooterWidth by animateFloatAsState(
-            targetValue = if (footer != null) footerWidth else 0f,
-            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
-        )
-        val animatedFooterHeight by animateFloatAsState(
-            targetValue = if (footer != null) footerHeight else 0f,
-            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
-        )
-
-        Canvas(Modifier.matchParentSize()) {
-            val w = size.width
-            val h = size.height
-
-            val path = if (leftToRight)
-                headerFooterSnakePath(
-                w, h, r,
-                animatedHeaderWidth, animatedHeaderHeight,
-                animatedFooterWidth, animatedFooterHeight
-            ) else headerFooterSnakePathMirrored(
-                w, h, r,
-                animatedHeaderWidth, animatedHeaderHeight,
-                animatedFooterWidth, animatedFooterHeight
+            // Animate the header and footer dimensions
+            val animatedHeaderWidth by animateFloatAsState(
+                targetValue = if (header != null) headerWidth else 0f,
+                animationSpec = tween(durationMillis = duration)
+            )
+            val animatedHeaderHeight by animateFloatAsState(
+                targetValue = if (header != null) headerHeight else 0f,
+                animationSpec = tween(durationMillis = duration)
+            )
+            val animatedFooterWidth by animateFloatAsState(
+                targetValue = if (footer != null) footerWidth else 0f,
+                animationSpec = tween(durationMillis = duration)
+            )
+            val animatedFooterHeight by animateFloatAsState(
+                targetValue = if (footer != null) footerHeight else 0f,
+                animationSpec = tween(durationMillis = duration)
             )
 
-            drawPath(
-                path = path,
-                color = strokeColor,
-                style = Stroke(strokePx)
-            )
-        }
+            Canvas(Modifier.matchParentSize()) {
+                val w = size.width
+                val h = size.height
 
-        // HEADER
-        header?.let { header ->
-            Box(
-                modifier = Modifier
-                    .align( if (leftToRight) Alignment.TopStart else Alignment.TopEnd)
-                    .onGloballyPositioned {
-                        headerWidth = it.size.width.toFloat() + extraPx
-                        headerHeight = it.size.height.toFloat() + extraPx
-                    }
-            ) { header() }
-        }
-
-        // FOOTER
-        footer?.let { footer ->
-            Box(
-                modifier = Modifier
-                    .align(if (leftToRight) Alignment.BottomEnd else Alignment.BottomStart)
-                    .onGloballyPositioned {
-                        footerWidth = it.size.width.toFloat() + extraPx
-                        footerHeight = it.size.height.toFloat() + extraPx
-                    }
-            ) { footer() }
-        }
-
-        // CONTENT
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = with(density) { animatedHeaderHeight.toDp() },
-                    bottom = with(density) { animatedFooterHeight.toDp() },
-                    start = 8.dp,
-                    end = 8.dp
+                val path = if (leftToRight)
+                    headerFooterSnakePath(
+                        w, h, r,
+                        animatedHeaderWidth, animatedHeaderHeight,
+                        animatedFooterWidth, animatedFooterHeight
+                    ) else headerFooterSnakePathMirrored(
+                    w, h, r,
+                    animatedHeaderWidth, animatedHeaderHeight,
+                    animatedFooterWidth, animatedFooterHeight
                 )
-        ) {
-            content()
+
+                drawPath(
+                    path = path,
+                    color = strokeColor,
+                    style = Stroke(strokePx)
+                )
+            }
+
+            // HEADER
+            header?.let { header ->
+                Box(
+                    modifier = Modifier
+                        .align( if (leftToRight) Alignment.TopStart else Alignment.TopEnd)
+                        .onGloballyPositioned {
+                            headerWidth = it.size.width.toFloat() + extraPx
+                            headerHeight = it.size.height.toFloat() + extraPx
+                        }
+                ) { header() }
+            }
+
+            // FOOTER
+            footer?.let { footer ->
+                Box(
+                    modifier = Modifier
+                        .align(if (leftToRight) Alignment.BottomEnd else Alignment.BottomStart)
+                        .onGloballyPositioned {
+                            footerWidth = it.size.width.toFloat() + extraPx
+                            footerHeight = it.size.height.toFloat() + extraPx
+                        }
+                ) { footer() }
+            }
+            val safeHeaderPaddingPx = animatedHeaderHeight.coerceAtLeast(0f)
+            val safeFooterPaddingPx = animatedFooterHeight.coerceAtLeast(0f)
+
+            // CONTENT
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = with(density) { safeHeaderPaddingPx.toDp() },
+                        bottom = with(density) { safeFooterPaddingPx.toDp() },
+                        start = 8.dp,
+                        end = 8.dp
+                    )
+            ) {
+                content()
+            }
         }
     }
 }

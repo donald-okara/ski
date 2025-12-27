@@ -17,8 +17,6 @@ class FeatureConvention : Plugin<Project> {
             listOf(
                 "kotlinMultiplatformLibrary",
                 "composeMultiplatformPlugin",
-                "navigation3Convention",
-                "koinConvention"
             ).forEach { id ->
                 apply("${appIdentity.packageName}.$id")
             }
