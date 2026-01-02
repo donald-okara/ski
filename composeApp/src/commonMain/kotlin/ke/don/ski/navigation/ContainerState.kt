@@ -9,19 +9,19 @@ import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
 import androidx.savedstate.compose.serialization.serializers.MutableStateSerializer
 import ke.don.domain.NavDirection
-import ke.don.domain.Screen
+import ke.don.domain.Slide
 
 @Composable
 fun rememberContainerState(
-    screen: Screen = Screen.Introduction,
+    slide: Slide = Slide.Introduction,
     direction: NavDirection = NavDirection.Forward
 ): ContainerState {
-    val screenValue =
+    val slideValue =
         rememberSerializable(
-            screen,
-            serializer = MutableStateSerializer(Screen.serializer()),
+            slide,
+            serializer = MutableStateSerializer(Slide.serializer()),
         ) {
-            mutableStateOf(screen)
+            mutableStateOf(slide)
         }
 
     val directionValue =
@@ -31,15 +31,15 @@ fun rememberContainerState(
         ) {
             mutableStateOf(direction)
         }
-    val containerState = remember { ContainerState(screenValue, directionValue) }
+    val containerState = remember { ContainerState(slideValue, directionValue) }
     return containerState
 }
 
 class ContainerState(
-    screen: MutableState<Screen>,
+    slide: MutableState<Slide>,
     direction: MutableState<NavDirection>
 ){
-    var screen: Screen by screen
+    var slide: Slide by slide
     var direction: NavDirection by direction
 }
 

@@ -3,7 +3,7 @@ package ke.don.domain
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Screen(
+sealed class Slide(
     val label: String,
     val showHeader: Boolean = true,
     val showFooter: Boolean = true,
@@ -11,7 +11,7 @@ sealed class Screen(
     val transitionFromPrevious: ScreenTransition = ScreenTransition.Horizontal
 ){
     @Serializable
-    data object Introduction: Screen(
+    data object Introduction: Slide(
         label = "Introduction",
         showHeader = true,
         showFooter = true,
@@ -19,7 +19,7 @@ sealed class Screen(
         transitionFromPrevious = ScreenTransition.Fade
     )
 
-    data object ExampleScreen: Screen(
+    data object ExampleScreen: Slide(
         label = "Example",
     )
 
@@ -28,7 +28,7 @@ sealed class Screen(
     }
 
     companion object {
-        fun getScreens(): List<Screen> =
+        fun getScreens(): List<Slide> =
             listOf(
                 Introduction,
                 ExampleScreen

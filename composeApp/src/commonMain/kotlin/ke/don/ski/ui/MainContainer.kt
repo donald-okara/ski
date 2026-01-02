@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import ke.don.components.frames.SkiFrame
 import ke.don.design.theme.Values
 import ke.don.domain.NavDirection
-import ke.don.domain.Screen
+import ke.don.domain.Slide
 import ke.don.domain.ScreenTransition
 import ke.don.ski.navigation.ContainerState
 
@@ -46,7 +46,7 @@ fun MainContainer(
     header: (@Composable () -> Unit)? = mainHeader(state),
     footer: (@Composable () -> Unit)? = mainFooter(state),
     modifier: Modifier = Modifier,
-    content: @Composable (Screen) -> Unit,
+    content: @Composable (Slide) -> Unit,
 ) {
     frame.Render(
         modifier = modifier
@@ -56,10 +56,10 @@ fun MainContainer(
     ) {
         LookaheadScope {
             AnimatedContent(
-                targetState = state.screen,
+                targetState = state.slide,
                 transitionSpec = {
                     transitionFor(
-                        screen = targetState,
+                        slide = targetState,
                         direction = state.direction
                     )
                 },
@@ -74,7 +74,7 @@ fun MainContainer(
 }
 
 private fun mainFooter(state: ContainerState): @Composable (() -> Unit)? =
-    if (state.screen.showFooter) {
+    if (state.slide.showFooter) {
         {
             Row(
                 modifier = Modifier
@@ -98,17 +98,17 @@ private fun mainFooter(state: ContainerState): @Composable (() -> Unit)? =
                 Spacer(Modifier.width(10.dp))
 
                 AnimatedContent(
-                    targetState = state.screen.label,
+                    targetState = state.slide.label,
                     transitionSpec = {
                         transitionFor(
-                            screen = state.screen,
+                            slide = state.slide,
                             direction = state.direction
                         )
                     },
                     label = "text-change"
                 ) { value ->
                     Text(
-                        state.screen.label,
+                        state.slide.label,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -119,7 +119,7 @@ private fun mainFooter(state: ContainerState): @Composable (() -> Unit)? =
 
 
 private fun mainHeader(state: ContainerState): @Composable (() -> Unit)? =
-    if (state.screen.showHeader) {
+    if (state.slide.showHeader) {
         {
             Row(
                 modifier = Modifier
@@ -167,11 +167,11 @@ private fun mainHeader(state: ContainerState): @Composable (() -> Unit)? =
 
 
 fun transitionFor(
-    screen: Screen,
+    slide: Slide,
     direction: NavDirection,
 ): ContentTransform {
     val duration = 500
-    return when (screen.transitionFromPrevious) {
+    return when (slide.transitionFromPrevious) {
 
         ScreenTransition.None ->
             EnterTransition.None togetherWith ExitTransition.None

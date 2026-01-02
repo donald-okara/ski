@@ -9,12 +9,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import ke.don.components.frames.defaultSkiFrames
 import ke.don.design.theme.AppTheme
-import ke.don.domain.Screen
+import ke.don.domain.Slide
 import ke.don.ski.navigation.DeckKeyHandler
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.navigation.rememberContainerState
 import ke.don.ski.ui.MainContainer
-import ke.don.ski.ui.ScreenSwitcher
+import ke.don.ski.ui.SlideSwitcher
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Preview
@@ -23,7 +23,7 @@ fun App() {
     val containerState = rememberContainerState()
     val navigator = remember {
         DeckNavigator(
-            Screen.getScreens(), containerState
+            Slide.getScreens(), containerState
         )
     }
 
@@ -44,8 +44,8 @@ fun App() {
                 MainContainer(
                     state = containerState,
                     frame = frame
-                ) { screen ->
-                    ScreenSwitcher(modifier = Modifier, screen = screen)
+                ) { slide ->
+                    SlideSwitcher(modifier = Modifier, slide = slide)
                 }
             }
         }

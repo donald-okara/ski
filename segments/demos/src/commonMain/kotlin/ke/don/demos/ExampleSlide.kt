@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ExampleScreen(
+fun ExampleSlide(
     modifier: Modifier = Modifier
 ) {
     Column(

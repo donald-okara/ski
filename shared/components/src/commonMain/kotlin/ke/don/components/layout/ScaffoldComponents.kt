@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ke.don.components.frames.SkiFrame
-import ke.don.domain.Screen
+import ke.don.domain.Slide
 
 @Composable
 fun ToolBar(
@@ -75,9 +75,9 @@ fun ToolBar(
 fun TableOfContent(
     modifier: Modifier = Modifier,
     frame: SkiFrame,
-    screens: List<Screen>,
-    currentScreen: Screen,
-    onJumpToScreen: (Screen) -> Unit,
+    slides: List<Slide>,
+    currentSlide: Slide,
+    onJumpToScreen: (Slide) -> Unit,
 ) {
     frame.Render(
         modifier = modifier
@@ -101,7 +101,7 @@ fun TableOfContent(
             }
 
 
-            items(screens) { screen ->
+            items(slides) { screen ->
                 TextButton(
                     onClick = { onJumpToScreen(screen) },
                     modifier = Modifier
@@ -110,7 +110,7 @@ fun TableOfContent(
                     Text(
                         text = screen.label,
                         textAlign = TextAlign.Start,
-                        color = if (screen == currentScreen) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        color = if (screen == currentSlide) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                         fontWeight = if (screen.isTitleScreen) FontWeight.Bold else FontWeight.Normal,
                         modifier = Modifier
                             .fillMaxWidth()

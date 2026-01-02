@@ -33,34 +33,34 @@ import ke.don.components.guides.keys_shortcuts.ShortcutsDictionary
 import ke.don.components.layout.TableOfContent
 import ke.don.components.layout.ToolBar
 import ke.don.domain.NavDirection
-import ke.don.domain.Screen
+import ke.don.domain.Slide
 import ke.don.ski.ui.transitionFor
 import kotlinx.coroutines.yield
 
 class DeckNavigator(
-    val screens: List<Screen>,
+    val slides: List<Slide>,
     val state: ContainerState,
 ) {
     fun next() {
-        if (state.screen.index() < screens.lastIndex) {
+        if (state.slide.index() < slides.lastIndex) {
 
             state.direction = NavDirection.Forward
-            state.screen = screens[state.screen.index() + 1]
+            state.slide = slides[state.slide.index() + 1]
         }
     }
 
     fun previous() {
-        if (state.screen.index() > 0) {
+        if (state.slide.index() > 0) {
 
             state.direction = NavDirection.Backward
-            state.screen = screens[state.screen.index() - 1]
+            state.slide = slides[state.slide.index() - 1]
         }
     }
 
-    fun jumpToScreen(screen: Screen) {
+    fun jumpToScreen(slide: Slide) {
         state.direction =
-            if (screen.index() > state.screen.index()) NavDirection.Forward else NavDirection.Backward
-        state.screen = screen
+            if (slide.index() > state.slide.index()) NavDirection.Forward else NavDirection.Backward
+        state.slide = slide
     }
 }
 
@@ -157,10 +157,10 @@ fun DeckKeyHandler(
                 onThemeClick = switchTheme,
                 title = {
                     AnimatedContent(
-                        targetState = navigator.state.screen.label,
+                        targetState = navigator.state.slide.label,
                         transitionSpec = {
                             transitionFor(
-                                screen = navigator.state.screen,
+                                slide = navigator.state.slide,
                                 direction = navigator.state.direction
                             )
                         },
@@ -182,8 +182,8 @@ fun DeckKeyHandler(
                     modifier = Modifier
                         .width(300.dp)
                         .fillMaxHeight(),
-                    screens = navigator.screens,
-                    currentScreen = navigator.state.screen,
+                    slides = navigator.slides,
+                    currentSlide = navigator.state.slide,
                     onJumpToScreen = { navigator.jumpToScreen(it) },
                     frame = frame
                 )
