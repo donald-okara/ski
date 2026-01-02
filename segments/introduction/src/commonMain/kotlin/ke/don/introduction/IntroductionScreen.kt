@@ -69,6 +69,7 @@ private fun ImageSegment(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TextSegment(
     modifier: Modifier = Modifier,
@@ -85,7 +86,7 @@ private fun TextSegment(
     ) {
         Text(
             title,
-            style = MaterialTheme.typography.displayMedium,
+            style = MaterialTheme.typography.displayMediumEmphasized,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Start
         )

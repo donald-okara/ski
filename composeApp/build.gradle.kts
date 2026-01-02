@@ -4,6 +4,16 @@ plugins {
     alias(libs.plugins.kotlinMultiplatformApplication)
 }
 
+kotlin {
+
+    sourceSets {
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
+        }
+    }
+}
+
+
 compose.desktop {
     application {
         mainClass = "ke.don.ski_template.MainKt"

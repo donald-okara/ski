@@ -1,6 +1,7 @@
 package ke.don.resources
 
-import skitemplate.shared.resources.generated.resources.*
+import ski.shared.resources.generated.resources.*
+
 
 object Resources {
     object Strings {
