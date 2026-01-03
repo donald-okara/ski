@@ -8,6 +8,8 @@ android {
     namespace = "io.github.donald_okara"
 }
 
+group = "io.github.donald-okara"
+version = project.findProperty("version") ?: throw GradleException("Version property is required. Pass it with -Pversion=<version>")
 
 mavenPublishing {
     publishToMavenCentral() // or publishToMavenCentral(automaticRelease = true)
