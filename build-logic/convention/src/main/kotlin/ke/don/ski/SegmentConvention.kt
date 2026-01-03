@@ -2,6 +2,7 @@ package ke.don.ski
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
+import ke.don.ski.extensions.configureComponents
 import ke.don.ski.extensions.configureKotlinAndroid
 import ke.don.ski.extensions.configureKotlinMultiplatform
 import ke.don.ski.extensions.configureProjectDependencies
@@ -27,6 +28,7 @@ class SegmentConvention : Plugin<Project> {
 
         configureProjectDependencies(coreModules.all, sharedModules.all)
         extensions.configure<KotlinMultiplatformExtension>(::configureKotlinMultiplatform)
+        extensions.configure<KotlinMultiplatformExtension>(::configureComponents)
         extensions.configure<LibraryExtension>(::configureKotlinAndroid)
     }
 }
