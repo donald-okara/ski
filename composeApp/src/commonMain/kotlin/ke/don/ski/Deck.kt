@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import ke.don.design.theme.AppTheme
 import ke.don.domain.Slide
-import ke.don.navigation.DeckKeyHandler
-import ke.don.navigation.DeckNavigator
-import ke.don.navigation.rememberContainerState
-import ke.don.navigation.MainContainer
+import ke.don.ski.navigation.DeckNavigator
+import ke.don.ski.navigation.rememberContainerState
+import ke.don.ski.presentation.DeckKeyHandler
+import ke.don.ski.presentation.MainContainer
 import ke.don.ski.presentation.SlideSwitcher
 
 @Composable

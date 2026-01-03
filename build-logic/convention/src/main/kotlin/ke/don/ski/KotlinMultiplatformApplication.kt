@@ -1,6 +1,7 @@
 package ke.don.ski
 
 import com.android.build.api.dsl.ApplicationExtension
+import ke.don.ski.extensions.configureComponents
 import ke.don.ski.extensions.configureKotlinAndroid
 import ke.don.ski.extensions.configureKotlinMultiplatform
 import ke.don.ski.extensions.configureProjectDependencies
@@ -27,6 +28,7 @@ class KotlinMultiplatformApplication: Plugin<Project> {
 
         configureProjectDependencies(sharedModules.all, coreModules.all, segmentModules.all)
         extensions.configure<KotlinMultiplatformExtension>(::configureKotlinMultiplatform)
+        extensions.configure<KotlinMultiplatformExtension>(::configureComponents)
         extensions.configure<ApplicationExtension>(::configureKotlinAndroid)
     }
 }
