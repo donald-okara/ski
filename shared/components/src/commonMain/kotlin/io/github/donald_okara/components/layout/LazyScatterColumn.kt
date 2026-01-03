@@ -1,4 +1,4 @@
-package ke.don.components.layout
+package io.github.donald_okara.components.layout
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

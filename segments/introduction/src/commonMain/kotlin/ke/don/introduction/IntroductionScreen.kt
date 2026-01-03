@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ke.don.components.picture.BrushType
-import ke.don.components.picture.ExpressivePictureFrame
+import io.github.donald_okara.components.picture.BrushType
+import io.github.donald_okara.components.picture.ExpressivePictureFrame
 import ke.don.resources.Resources
 import org.jetbrains.compose.resources.DrawableResource
 

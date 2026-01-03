@@ -1,13 +1,10 @@
-package ke.don.components.frames
+package io.github.donald_okara.components.frames
 
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.Dp
 
 @Stable
 interface SkiFrame {

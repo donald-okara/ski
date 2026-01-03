@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import ke.don.components.frames.defaultSkiFrames
+import io.github.donald_okara.components.frames.defaultSkiFrames
 import ke.don.design.theme.AppTheme
 import ke.don.domain.Slide
 import ke.don.navigation.DeckKeyHandler

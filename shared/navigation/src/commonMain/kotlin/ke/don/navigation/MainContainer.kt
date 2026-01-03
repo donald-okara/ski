@@ -32,8 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import ke.don.components.frames.SkiFrame
-import ke.don.components.values.Values
+import io.github.donald_okara.components.frames.SkiFrame
+import io.github.donald_okara.components.values.Values
 import ke.don.domain.NavDirection
 import ke.don.domain.Slide
 import ke.don.domain.ScreenTransition

@@ -26,10 +26,10 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
-import ke.don.components.frames.SkiFrame
-import ke.don.components.guides.keys_shortcuts.DeckShortcuts
-import ke.don.components.guides.keys_shortcuts.KeyEventHandler
-import ke.don.components.guides.keys_shortcuts.ShortcutsDictionary
+import io.github.donald_okara.components.frames.SkiFrame
+import io.github.donald_okara.components.guides.keys_shortcuts.DeckShortcuts
+import io.github.donald_okara.components.guides.keys_shortcuts.KeyEventHandler
+import io.github.donald_okara.components.guides.keys_shortcuts.ShortcutsDictionary
 import ke.don.domain.NavDirection
 import ke.don.domain.Slide
 import kotlinx.coroutines.yield

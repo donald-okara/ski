@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ke.don.components.frames.SkiFrame
+import io.github.donald_okara.components.frames.SkiFrame
 import ke.don.domain.Slide
 
 @Composable
