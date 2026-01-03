@@ -1,4 +1,4 @@
-package ke.don.components.values
+package io.github.donald_okara.components.values
 
 import androidx.compose.ui.unit.dp
 

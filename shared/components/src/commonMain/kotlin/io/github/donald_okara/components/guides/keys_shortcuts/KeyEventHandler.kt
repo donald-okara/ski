@@ -1,4 +1,4 @@
-package ke.don.components.guides.keys_shortcuts
+package io.github.donald_okara.components.guides.keys_shortcuts
 
 import androidx.compose.ui.input.key.Key
 

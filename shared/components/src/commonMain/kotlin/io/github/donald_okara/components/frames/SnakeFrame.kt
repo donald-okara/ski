@@ -1,4 +1,4 @@
-package ke.don.components.frames
+package io.github.donald_okara.components.frames
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -22,7 +22,7 @@ import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import ke.don.components.values.Values
+import io.github.donald_okara.components.values.Values
 
 class SnakeFrame(
     private val leftToRight: Boolean = true,

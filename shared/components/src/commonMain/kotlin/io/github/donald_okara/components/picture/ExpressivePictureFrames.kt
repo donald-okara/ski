@@ -1,4 +1,4 @@
-package ke.don.components.picture
+package io.github.donald_okara.components.picture
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.InfiniteRepeatableSpec
