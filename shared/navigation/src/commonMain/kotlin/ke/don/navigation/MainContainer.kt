@@ -1,4 +1,4 @@
-package ke.don.ski.ui
+package ke.don.navigation
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
@@ -33,11 +33,10 @@ import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ke.don.components.frames.SkiFrame
-import ke.don.design.theme.Values
+import ke.don.components.values.Values
 import ke.don.domain.NavDirection
 import ke.don.domain.Slide
 import ke.don.domain.ScreenTransition
-import ke.don.ski.navigation.ContainerState
 
 @Composable
 fun MainContainer(

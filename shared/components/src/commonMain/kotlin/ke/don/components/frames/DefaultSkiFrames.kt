@@ -14,15 +14,6 @@ fun defaultSkiFrames(): SkiFrames {
                     leftToRight = true,
                 )
             }
-        },
-        minimal = {
-            rememberFrame(
-                colors.primary,
-            ) {
-                SnakeFrame(
-                    leftToRight = true,
-                )
-            }
         }
     )
 }

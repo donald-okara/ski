@@ -1,4 +1,4 @@
-package ke.don.ski.ui
+package ke.don.ski.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

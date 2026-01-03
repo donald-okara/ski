@@ -35,10 +35,5 @@ fun interface SkiFrameFactory {
 @Stable
 class SkiFrames(
     val  snake: SkiFrameFactory,
-    val minimal: SkiFrameFactory
     // future frames go here
 )
-
-val LocalSkiFrames = staticCompositionLocalOf<SkiFrames> {
-    error("No SkiFrames provided")
-}

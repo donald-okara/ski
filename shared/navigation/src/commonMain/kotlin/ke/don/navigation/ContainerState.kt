@@ -1,4 +1,4 @@
-package ke.don.ski.navigation
+package ke.don.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState

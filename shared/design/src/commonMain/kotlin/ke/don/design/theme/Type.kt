@@ -95,18 +95,12 @@ val AppTypography: Typography
             lineHeight = 28.sp
         ),
         labelLarge = baseline.labelLarge.copy(
-            fontFamily = bodyFontFamily,
-            fontSize = 24.sp,
-            lineHeight = 30.sp
+            fontFamily = bodyFontFamily
         ),
         labelMedium = baseline.labelMedium.copy(
-            fontFamily = bodyFontFamily,
-            fontSize = 20.sp,
-            lineHeight = 26.sp
+            fontFamily = bodyFontFamily
         ),
         labelSmall = baseline.labelSmall.copy(
-            fontFamily = subheadingsFontFamily,
-            fontSize = 18.sp,
-            lineHeight = 24.sp
+            fontFamily = subheadingsFontFamily
         ),
     )

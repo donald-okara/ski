@@ -1,4 +1,4 @@
-package ke.don.ski.navigation
+package ke.don.navigation
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -30,11 +30,8 @@ import ke.don.components.frames.SkiFrame
 import ke.don.components.guides.keys_shortcuts.DeckShortcuts
 import ke.don.components.guides.keys_shortcuts.KeyEventHandler
 import ke.don.components.guides.keys_shortcuts.ShortcutsDictionary
-import ke.don.components.layout.TableOfContent
-import ke.don.components.layout.ToolBar
 import ke.don.domain.NavDirection
 import ke.don.domain.Slide
-import ke.don.ski.ui.transitionFor
 import kotlinx.coroutines.yield
 
 class DeckNavigator(

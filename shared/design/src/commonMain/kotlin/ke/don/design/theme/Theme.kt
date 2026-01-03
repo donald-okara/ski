@@ -274,7 +274,3 @@ fun AppTheme(
         content = content
     )
 }
-object Values {
-    val cornerRadius = 32.dp
-    val lineThickness = 4.dp
-}

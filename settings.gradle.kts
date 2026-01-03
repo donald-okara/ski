@@ -44,6 +44,7 @@ include(":core")
 include(":shared:design")
 include(":shared:resources")
 include(":shared:components")
+include(":shared:navigation")
 
 // Core
 include(":core:domain")

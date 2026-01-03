@@ -22,7 +22,7 @@ import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import ke.don.design.theme.Values
+import ke.don.components.values.Values
 
 class SnakeFrame(
     private val leftToRight: Boolean = true,

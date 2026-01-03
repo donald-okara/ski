@@ -49,6 +49,7 @@ class SharedModules(private val project: Project) {
     val design get() = project.project(":shared:design")
     val resources get() = project.project(":shared:resources")
     val common get() = project.project(":shared:components")
+    val navigation get() = project.project(":shared:navigation")
 
-    val all get() = listOf(design, resources, common)
+    val all get() = listOf(design, resources, common, navigation)
 }

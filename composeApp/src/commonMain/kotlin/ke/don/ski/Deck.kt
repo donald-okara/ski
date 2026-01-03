@@ -10,16 +10,14 @@ import androidx.compose.ui.Modifier
 import ke.don.components.frames.defaultSkiFrames
 import ke.don.design.theme.AppTheme
 import ke.don.domain.Slide
-import ke.don.ski.navigation.DeckKeyHandler
-import ke.don.ski.navigation.DeckNavigator
-import ke.don.ski.navigation.rememberContainerState
-import ke.don.ski.ui.MainContainer
-import ke.don.ski.ui.SlideSwitcher
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import ke.don.navigation.DeckKeyHandler
+import ke.don.navigation.DeckNavigator
+import ke.don.navigation.rememberContainerState
+import ke.don.navigation.MainContainer
+import ke.don.ski.presentation.SlideSwitcher
 
-@Preview
 @Composable
-fun App() {
+fun Deck() {
     val containerState = rememberContainerState()
     val navigator = remember {
         DeckNavigator(

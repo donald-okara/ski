@@ -1,4 +1,4 @@
-package ke.don.components.layout
+package ke.don.navigation
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
