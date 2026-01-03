@@ -13,7 +13,7 @@ mavenPublishing {
     publishToMavenCentral() // or publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 
-    coordinates(group as String, "koffee", version as String)
+    coordinates(group as String, "ski", version as String)
 
     pom {
         name.set("Ski components library")
