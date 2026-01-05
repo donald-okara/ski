@@ -29,12 +29,15 @@ import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.navigation.DeckShortcutDispatcher
 import kotlinx.coroutines.yield
 
+enum class DeckMode { Presenter, Local }
+
 @Composable
 fun DeckKeyHandler(
     navigator: DeckNavigator,
+    mode: DeckMode,
     modifier: Modifier = Modifier,
     darkTheme: Boolean,
-    frame: SkiFrame,
+    frame: SkiFrame? = null, // only needed for Local mode
     switchTheme: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -44,34 +47,37 @@ fun DeckKeyHandler(
     var showShortcuts by remember { mutableStateOf(false) }
     var hasFocus by remember { mutableStateOf(false) }
 
-    val shortcutDispatcher = remember(navigator) {
+    val shortcutDispatcher = remember(navigator, mode) {
         DeckShortcutDispatcher(
             navigator = navigator,
             switchTheme = switchTheme,
             toggleToolbar = { showToolBar = !showToolBar },
             toggleToc = {
-                showTableOfContent = !showTableOfContent
-                showShortcuts = false
+                if (mode == DeckMode.Local) {
+                    showTableOfContent = !showTableOfContent
+                    showShortcuts = false
+                }
             },
             toggleShortcutsDeck = {
-                showShortcuts = !showShortcuts
-                showTableOfContent = false
+                if (mode == DeckMode.Local) {
+                    showShortcuts = !showShortcuts
+                    showTableOfContent = false
+                }
             },
             dismissAll = {
-                showTableOfContent = false
-                showShortcuts = false
                 showToolBar = false
+                if (mode == DeckMode.Local) {
+                    showTableOfContent = false
+                    showShortcuts = false
+                }
             }
         )
     }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
     LaunchedEffect(hasFocus) {
         if (!hasFocus) {
-            // small delay avoids fighting child focus transitions
             yield()
             focusRequester.requestFocus()
         }
@@ -81,9 +87,7 @@ fun DeckKeyHandler(
         modifier = modifier
             .focusRequester(focusRequester)
             .focusable()
-            .onFocusChanged { state ->
-                hasFocus = state.hasFocus || state.isFocused
-            }
+            .onFocusChanged { state -> hasFocus = state.hasFocus || state.isFocused }
             .onKeyEvent(shortcutDispatcher::handle)
     ) {
         AnimatedVisibility(showToolBar) {
@@ -106,35 +110,38 @@ fun DeckKeyHandler(
                             style = MaterialTheme.typography.titleLarge
                         )
                     }
-
                 }
             )
         }
 
-        Row(Modifier.weight(1f)) {
-            AnimatedVisibility(showTableOfContent) {
-                TableOfContent(
-                    modifier = Modifier
-                        .width(300.dp)
-                        .fillMaxHeight(),
-                    slides = navigator.slides,
-                    currentSlide = navigator.state.slide,
-                    onJumpToScreen = { navigator.jumpToScreen(it) },
-                    frame = frame
-                )
-            }
-            Box(Modifier.weight(1f)) {
-                content()
-            }
+        if (mode == DeckMode.Presenter) {
+            Box(Modifier.weight(1f)) { content() }
+        } else {
+            // Local mode layout with side panels
+            Row(Modifier.weight(1f)) {
+                AnimatedVisibility(showTableOfContent) {
+                    TableOfContent(
+                        modifier = Modifier
+                            .width(300.dp)
+                            .fillMaxHeight(),
+                        slides = navigator.slides,
+                        currentSlide = navigator.state.slide,
+                        onJumpToScreen = { navigator.jumpToScreen(it) },
+                        frame = frame!!
+                    )
+                }
 
-            AnimatedVisibility(showShortcuts) {
-                ShortcutsDictionary(
-                    shortcuts = DeckShortcuts,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(400.dp),
-                    frame = frame
-                )
+                Box(Modifier.weight(1f)) { content() }
+
+                AnimatedVisibility(showShortcuts) {
+                    ShortcutsDictionary(
+                        shortcuts = DeckShortcuts,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(400.dp),
+                        frame = frame!!
+                    )
+                }
             }
         }
     }

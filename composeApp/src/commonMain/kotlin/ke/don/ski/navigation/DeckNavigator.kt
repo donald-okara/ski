@@ -11,12 +11,14 @@ import ke.don.domain.Slide
 class DeckNavigator(
     val slides: List<Slide>,
     val state: ContainerState,
+    val navigateForWeb: () -> Unit = {}
 ) {
     fun next() {
         if (state.slide.index() < slides.lastIndex) {
 
             state.direction = NavDirection.Forward
             state.slide = slides[state.slide.index() + 1]
+            navigateForWeb()
         }
     }
 
@@ -25,6 +27,7 @@ class DeckNavigator(
 
             state.direction = NavDirection.Backward
             state.slide = slides[state.slide.index() - 1]
+            navigateForWeb()
         }
     }
 
@@ -32,6 +35,7 @@ class DeckNavigator(
         state.direction =
             if (slide.index() > state.slide.index()) NavDirection.Forward else NavDirection.Backward
         state.slide = slide
+        navigateForWeb()
     }
 }
 
