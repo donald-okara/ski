@@ -8,14 +8,6 @@ sealed class KeyEventHandler(
 ) {
     fun matches(key: Key): Boolean = key in keys
 
-    val shortcuts = listOf(
-        Next,
-        Previous,
-        SwitchTheme,
-        ShowToolBar,
-        ShowTableOfContent,
-    )
-
     data object Next : KeyEventHandler(
         hint = "Next Slide",
         keys = setOf(Key.DirectionRight, Key.Spacebar, Key.Enter)

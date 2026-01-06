@@ -126,7 +126,7 @@ fun MainContainer(
                     label = "text-change"
                 ) { value ->
                     Text(
-                        state.slide.label,
+                        value,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
