@@ -12,6 +12,14 @@ import ke.don.domain.NavDirection
 import ke.don.domain.Slide
 import kotlinx.serialization.Serializable
 
+/**
+ * Creates and remembers a ContainerState whose `slide` and `direction` are backed by
+ * serializable, remembered mutable states.
+ *
+ * @param slide Initial slide to store in the returned state.
+ * @param direction Initial navigation direction to store in the returned state.
+ * @return A ContainerState exposing `slide` and `direction` backed by serializable remembered mutable states.
+ */
 @Composable
 fun rememberContainerState(
     slide: Slide = Slide.Introduction,

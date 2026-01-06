@@ -75,6 +75,11 @@ val DeckShortcuts = listOf(
 )
 
 
+/**
+ * Provides a human-readable label for a Key suitable for UI display.
+ *
+ * @return A short label (symbol or name) for the key; falls back to the key's `toString()` for unmapped keys.
+ */
 fun Key.displayName(): String = when (this) {
     Key.DirectionRight -> "→"
     Key.DirectionLeft -> "←"

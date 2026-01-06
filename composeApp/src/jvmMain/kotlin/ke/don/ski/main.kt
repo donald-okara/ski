@@ -7,6 +7,13 @@ import androidx.compose.ui.window.application
 import ke.don.ski.navigation.rememberContainerState
 import ke.don.ski.presentation.DeckMode
 
+/**
+ * Starts the Compose for Desktop application and opens the Slides and Presenter Notes windows.
+ *
+ * The Slides window uses a fullscreen state and presents the deck in presenter mode; the
+ * Presenter Notes window displays the deck in local/notes mode and closing it does not exit
+ * the application. Both windows share the same container state so their views stay synchronized.
+ */
 fun main() = application {
     // Slides / Audience window
     val containerState = rememberContainerState()

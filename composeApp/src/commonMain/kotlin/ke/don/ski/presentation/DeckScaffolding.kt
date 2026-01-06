@@ -35,6 +35,20 @@ import kotlinx.coroutines.yield
 
 enum class DeckMode { Presenter, Local }
 
+/**
+ * Provides the overall layout and interactive scaffolding for a slide deck, switching between presenter and local multi-panel modes.
+ *
+ * Renders a top toolbar (toggleable), manages keyboard shortcuts and focus, and in Local mode arranges optional side panels: table of contents, shortcuts dictionary, notes, and a hint area.
+ *
+ * @param navigator Source of slide data and navigation state used to render current slide and drive title animations.
+ * @param mode Determines layout behavior: Presenter (single full-area content) or Local (multi-panel layout).
+ * @param modifier Modifier applied to the root container.
+ * @param darkTheme Controls toolbar theme styling.
+ * @param frame UI frame used by Local-mode side components (TableOfContent, ShortcutsDictionary, NotesComponent, NotesHint). Only required in Local mode.
+ * @param switchTheme Callback invoked when the user toggles the theme from the toolbar.
+ * @param notes Optional notes content to show in the Notes panel; defaults to notes for the current slide.
+ * @param content Composable that renders the main slide content area.
+ */
 @Composable
 fun DeckScaffolding(
     navigator: DeckNavigator,

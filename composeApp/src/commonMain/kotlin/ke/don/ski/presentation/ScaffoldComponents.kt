@@ -71,6 +71,18 @@ fun ToolBar(
     }
 }
 
+/**
+ * Renders a framed, scrollable table of contents that lists slides and allows navigating to a selected slide.
+ *
+ * The currently active slide is visually highlighted using the primary color, and slides marked as title screens
+ * are rendered with bold text.
+ *
+ * @param modifier Optional modifier applied to the outer frame.
+ * @param frame Frame renderer used to provide the surrounding frame for the table of contents.
+ * @param slides The list of slides to display in the table.
+ * @param currentSlide The slide considered active; used to determine highlight styling.
+ * @param onJumpToScreen Callback invoked with the selected slide when a list item is clicked.
+ */
 @Composable
 fun TableOfContent(
     modifier: Modifier = Modifier,

@@ -53,6 +53,23 @@ import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
+/**
+ * Renders a square composable that displays content framed by a polygonal outline which can rotate.
+ *
+ * The outline is drawn outside the content bounds; the content area is inset by [outlinePadding] and
+ * [contentPadding]. [strokeWidth] controls the outline thickness and [rotationDurationMs] controls
+ * the speed of a full rotation when [rotate] is true.
+ *
+ * @param modifier Modifier applied to the outer container.
+ * @param polygon The polygon used to produce the outline shape.
+ * @param color Color of the outline.
+ * @param rotate If true, the outline rotates continuously.
+ * @param rotationDurationMs Duration in milliseconds for one full rotation.
+ * @param contentPadding Padding between the outline and the content.
+ * @param outlinePadding Extra space reserved between the composable bounds and the content for the outline.
+ * @param strokeWidth Width of the outline stroke.
+ * @param content Composable content placed inside the framed area.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ExpressiveFrame(
@@ -126,6 +143,22 @@ fun ExpressiveFrame(
 }
 
 
+/**
+ * Renders a framed, clipped image area with a gradient background and optional floating animation.
+ *
+ * The frame is clipped to the provided polygon shape, the background color is animated toward
+ * `backgroundColor` and used to build a gradient (`brushType`), and the content is clipped using
+ * a split-image effect where the top half remains intact and the bottom half is clipped to the shape.
+ *
+ * @param polygon The rounded polygon shape used to clip the frame and image.
+ * @param backgroundColor Target color for the frame background; used to build the gradient brush.
+ * @param sizeDp Size of the frame in density-independent pixels (both width and height).
+ * @param index Seed used to derive a deterministic floating offset when `floating` is true.
+ * @param imageOffset Vertical offset in Dp applied to the image content (positive moves content down).
+ * @param floating When true, applies a subtle animated floating translation to the entire frame.
+ * @param brushType The gradient type used for the frame background (linear, sweep, radial, etc.).
+ * @param content Composable that provides the image or other content placed inside the clipped frame.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ExpressiveFrameClipped(

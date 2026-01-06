@@ -39,6 +39,17 @@ import ke.don.domain.Slide
 import ke.don.domain.ScreenTransition
 import ke.don.ski.navigation.ContainerState
 
+/**
+ * Renders the presentation container with optional header and footer and animates slide changes.
+ *
+ * @param state Provides the current slide and navigation direction used to drive content and transitions.
+ * @param frame Frame implementation that supplies the surrounding layout and rendering surface.
+ * @param mode Determines header content and styling (used by the default header).
+ * @param header Optional composable to display in the header area; by default uses `mainHeader(state, mode)` when the current slide requests a header.
+ * @param footer Optional composable to display in the footer area; by default uses `mainFooter(state)` when the current slide requests a footer.
+ * @param modifier Modifier applied to the container.
+ * @param content Composable lambda that renders the active `Slide`.
+ */
 @Composable
 fun MainContainer(
     state: ContainerState,
@@ -74,7 +85,13 @@ fun MainContainer(
     }
 }
 
-private fun mainFooter(state: ContainerState): @Composable (() -> Unit)? =
+/**
+     * Provides a footer composable for the current slide when the slide requests a footer.
+     *
+     * @param state The container state containing the current slide and navigation direction.
+     * @return A composable lambda that renders the slide footer, or `null` if the current slide's footer is hidden.
+     */
+    private fun mainFooter(state: ContainerState): @Composable (() -> Unit)? =
     if (state.slide.showFooter) {
         {
             Row(
@@ -119,7 +136,18 @@ private fun mainFooter(state: ContainerState): @Composable (() -> Unit)? =
     } else null
 
 
-private fun mainHeader(state: ContainerState, mode: DeckMode): @Composable (() -> Unit)? =
+/**
+     * Create a header composable for the current slide when the slide requests a header.
+     *
+     * The rendered header shows a short title ("Ski") and a mode-dependent subtitle:
+     * - If `mode` is `DeckMode.Presenter`, subtitle is "Presentation Demo" with `onSurfaceVariant` color.
+     * - Otherwise, subtitle is "Presenter's panel (Do not present)" with the `error` color.
+     *
+     * @param state The container state containing the current slide and related display flags.
+     * @param mode The deck mode used to decide subtitle text and color.
+     * @return A composable lambda that renders the header when `state.slide.showHeader` is `true`, or `null` when no header should be shown.
+     */
+    private fun mainHeader(state: ContainerState, mode: DeckMode): @Composable (() -> Unit)? =
     if (state.slide.showHeader) {
         {
             Row(

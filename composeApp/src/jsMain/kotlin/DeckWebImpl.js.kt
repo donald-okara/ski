@@ -72,7 +72,11 @@ actual fun DeckWebImpl() {
     )
 }
 
-// open notes tab
+/**
+ * Opens the presenter notes in a new browser window at "/?slides".
+ *
+ * The window is named "PresenterNotes" and is opened with size 800x600.
+ */
 fun openSlides() {
     window.open("/?slides", "PresenterNotes", "width=800,height=600")
 }

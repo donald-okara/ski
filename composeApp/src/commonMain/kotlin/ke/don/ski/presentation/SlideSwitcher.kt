@@ -8,6 +8,12 @@ import ke.don.demos.ExampleSlide
 import ke.don.domain.Slide
 import ke.don.introduction.IntroductionScreen
 
+/**
+ * Displays the UI screen corresponding to the provided slide.
+ *
+ * @param modifier Modifier to be applied to the displayed screen.
+ * @param slide The Slide value that determines which composable screen to show.
+ */
 @Composable
 fun SlideSwitcher(
     modifier: Modifier = Modifier,
@@ -19,6 +25,12 @@ fun SlideSwitcher(
     }
 }
 
+/**
+ * Provide speaker notes for the specified slide.
+ *
+ * @param slide The slide to produce notes for.
+ * @return `Notes` for the specified slide, or `null` if no notes are available.
+ */
 @Composable
 fun slidesNotes(
     slide: Slide,

@@ -18,6 +18,13 @@ import ke.don.ski.presentation.DeckMode
 import ke.don.ski.presentation.MainContainer
 import ke.don.ski.presentation.SlideSwitcher
 
+/**
+ * Composable entry point that renders the slide deck UI with theme support, navigation, and frame layout.
+ *
+ * @param containerState State object that manages the main container's scrolling and item positioning.
+ * @param navigator Navigator responsible for slide/screen navigation within the deck.
+ * @param mode Mode to use for the deck (for example local or remote presentation behavior).
+ */
 @Composable
 fun Deck(
     containerState: ContainerState = rememberContainerState(),
