@@ -34,6 +34,15 @@ import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.frames.SkiFrame
 import io.github.donald_okara.components.picture.ExpressiveFrame
 
+/**
+ * Renders a slide-note panel inside the provided SkiFrame.
+ *
+ * Displays the notes title (or "No notes") followed by a short divider, then either a vertically
+ * spaced list of bullet points for each note or a centered message "This slide has no notes"
+ * when `notes` is null.
+ *
+ * @param notes The notes to display. If null, a placeholder message is shown instead of bullets.
+ */
 @Composable
 fun NotesComponent(
     modifier: Modifier = Modifier,
@@ -86,6 +95,11 @@ fun NotesComponent(
     }
 }
 
+/**
+ * Renders a single bullet point consisting of a small colored circular marker and the provided text.
+ *
+ * @param text The content to display next to the bullet as an AnnotatedString.
+ */
 @Composable
 private fun NoteBullet(text: AnnotatedString) {
     Row(
@@ -108,6 +122,13 @@ private fun NoteBullet(text: AnnotatedString) {
 }
 
 
+/**
+ * Displays a hint row suggesting keystrokes for showing slide notes and dismissing the hint.
+ *
+ * Renders the hint content inside the provided SkiFrame with 16.dp outer padding and no header or footer.
+ *
+ * @param frame The SkiFrame used to render the frame wrapper for the hint content.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NotesHint(
