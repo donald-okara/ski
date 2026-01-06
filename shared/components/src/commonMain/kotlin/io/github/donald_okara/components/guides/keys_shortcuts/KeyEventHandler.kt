@@ -50,6 +50,16 @@ sealed class KeyEventHandler(
         hint = "Dismiss All",
         keys = setOf(Key.Escape)
     )
+
+    data object ShowHint : KeyEventHandler(
+        hint = "Show/Hide hint",
+        keys = setOf(Key.H, Key.DirectionDown)
+    )
+
+    data object ShowNotes : KeyEventHandler(
+        hint = "Show/Hide Notes",
+        keys = setOf(Key.N)
+    )
 }
 
 val DeckShortcuts = listOf(
@@ -59,13 +69,16 @@ val DeckShortcuts = listOf(
     KeyEventHandler.ShowToolBar,
     KeyEventHandler.ShowTableOfContent,
     KeyEventHandler.ShowShortcutGuide,
-    KeyEventHandler.DismissAll
+    KeyEventHandler.DismissAll,
+    KeyEventHandler.ShowNotes,
+    KeyEventHandler.ShowHint
 )
 
 
 fun Key.displayName(): String = when (this) {
     Key.DirectionRight -> "→"
     Key.DirectionLeft -> "←"
+    Key.DirectionDown -> "↓"
     Key.Spacebar -> "Space"
     Key.Enter -> "Enter"
     Key.Backspace -> "BackSpace"
@@ -74,5 +87,7 @@ fun Key.displayName(): String = when (this) {
     Key.C -> "C"
     Key.DirectionUp -> "↑"
     Key.Escape -> "Esc"
+    Key.H -> "H"
+    Key.N -> "N"
     else -> Key.toString()
 }

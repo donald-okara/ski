@@ -13,7 +13,7 @@ import ke.don.domain.Slide
 import ke.don.ski.navigation.ContainerState
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.navigation.rememberContainerState
-import ke.don.ski.presentation.DeckKeyHandler
+import ke.don.ski.presentation.DeckScaffolding
 import ke.don.ski.presentation.DeckMode
 import ke.don.ski.presentation.MainContainer
 import ke.don.ski.presentation.SlideSwitcher
@@ -36,7 +36,7 @@ fun Deck(
         val frame = defaultSkiFrames().snake.create()
 
         Surface {
-            DeckKeyHandler(
+            DeckScaffolding(
                 navigator = navigator,
                 switchTheme = { darkMode = !darkMode },
                 darkTheme = darkMode,
@@ -45,7 +45,8 @@ fun Deck(
             ) {
                 MainContainer(
                     state = containerState,
-                    frame = frame
+                    frame = frame,
+                    mode = mode
                 ) { slide ->
                     SlideSwitcher(modifier = Modifier, slide = slide)
                 }

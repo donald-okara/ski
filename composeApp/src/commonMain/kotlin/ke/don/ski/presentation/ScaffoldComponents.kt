@@ -110,6 +110,7 @@ fun TableOfContent(
                     Text(
                         text = screen.label,
                         textAlign = TextAlign.Start,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = if (screen == currentSlide) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                         fontWeight = if (screen.isTitleScreen) FontWeight.Bold else FontWeight.Normal,
                         modifier = Modifier

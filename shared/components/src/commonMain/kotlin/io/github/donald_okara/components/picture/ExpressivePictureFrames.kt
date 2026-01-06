@@ -5,11 +5,16 @@ import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
@@ -18,21 +23,28 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
@@ -40,6 +52,79 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
 import kotlin.random.Random
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun ExpressiveFrame(
+    modifier: Modifier = Modifier,
+    polygon: RoundedPolygon = frameShapes.random(),
+    color: Color = MaterialTheme.colorScheme.primary,
+    rotate: Boolean = true,
+    rotationDurationMs: Int = 4000,
+    contentPadding: Dp = 8.dp,
+    outlinePadding: Dp = 6.dp,   // 👈 NEW: space for the outline
+    strokeWidth: Dp = 2.dp,
+    content: @Composable BoxScope.() -> Unit
+) {
+    val shape = polygon.toShape()
+
+    val infiniteTransition = rememberInfiniteTransition(label = "rotation")
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(rotationDurationMs, easing = LinearEasing)
+        ),
+        label = "rotationAnim"
+    )
+
+    Box(
+        modifier = modifier
+            .aspectRatio(1f),
+        contentAlignment = Alignment.Center
+    ) {
+
+        // Rotating outline — OUTSIDE content bounds
+        Canvas(
+            modifier = Modifier
+                .matchParentSize()
+                .aspectRatio(1f)
+                .then(
+                    if (rotate) {
+                        Modifier.graphicsLayer { rotationZ = rotation }
+                    } else Modifier
+                )
+        ) {
+            val strokePx = strokeWidth.toPx()
+            val inset = strokePx / 2
+
+            inset(inset) {
+                drawOutline(
+                    outline = shape.createOutline(
+                        size = Size(
+                            width = size.width - strokePx,
+                            height = size.height - strokePx
+                        ),
+                        layoutDirection = layoutDirection,
+                        density = this
+                    ),
+                    style = Stroke(width = strokePx),
+                    color = color
+                )
+            }
+        }
+
+        // Content box defines minimum size
+        Box(
+            modifier = Modifier
+                .padding(outlinePadding)
+                .padding(contentPadding),
+            contentAlignment = Alignment.Center,
+            content = content
+        )
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

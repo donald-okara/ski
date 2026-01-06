@@ -43,7 +43,8 @@ import ke.don.ski.navigation.ContainerState
 fun MainContainer(
     state: ContainerState,
     frame: SkiFrame,
-    header: (@Composable () -> Unit)? = mainHeader(state),
+    mode: DeckMode,
+    header: (@Composable () -> Unit)? = mainHeader(state, mode),
     footer: (@Composable () -> Unit)? = mainFooter(state),
     modifier: Modifier = Modifier,
     content: @Composable (Slide) -> Unit,
@@ -118,7 +119,7 @@ private fun mainFooter(state: ContainerState): @Composable (() -> Unit)? =
     } else null
 
 
-private fun mainHeader(state: ContainerState): @Composable (() -> Unit)? =
+private fun mainHeader(state: ContainerState, mode: DeckMode): @Composable (() -> Unit)? =
     if (state.slide.showHeader) {
         {
             Row(
@@ -156,9 +157,9 @@ private fun mainHeader(state: ContainerState): @Composable (() -> Unit)? =
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        "Presentation Demo",
+                        if (mode == DeckMode.Presenter) "Presentation Demo" else "Presenter's panel (Do not present)",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (mode == DeckMode.Presenter) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error
                     )
                 }
             }

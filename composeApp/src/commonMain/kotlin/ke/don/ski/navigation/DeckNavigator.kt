@@ -45,7 +45,9 @@ class DeckShortcutDispatcher(
     toggleToolbar: () -> Unit,
     toggleToc: () -> Unit,
     toggleShortcutsDeck: () -> Unit,
-    dismissAll: () -> Unit
+    dismissAll: () -> Unit,
+    showHint: () -> Unit,
+    showNotes: () -> Unit
 ) {
     private val actions: Map<KeyEventHandler, () -> Unit> = mapOf(
         KeyEventHandler.Next to { navigator.next() },
@@ -54,7 +56,9 @@ class DeckShortcutDispatcher(
         KeyEventHandler.ShowToolBar to toggleToolbar,
         KeyEventHandler.ShowTableOfContent to toggleToc,
         KeyEventHandler.ShowShortcutGuide to toggleShortcutsDeck,
-        KeyEventHandler.DismissAll to dismissAll
+        KeyEventHandler.DismissAll to dismissAll,
+        KeyEventHandler.ShowHint to showHint,
+        KeyEventHandler.ShowNotes to showNotes
     )
 
     fun handle(event: KeyEvent): Boolean {

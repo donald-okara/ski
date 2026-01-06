@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,6 +26,9 @@ import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.frames.SkiFrame
 import io.github.donald_okara.components.guides.keys_shortcuts.DeckShortcuts
 import io.github.donald_okara.components.guides.keys_shortcuts.ShortcutsDictionary
+import io.github.donald_okara.components.guides.notes.Notes
+import io.github.donald_okara.components.guides.notes.NotesComponent
+import io.github.donald_okara.components.guides.notes.NotesHint
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.navigation.DeckShortcutDispatcher
 import kotlinx.coroutines.yield
@@ -32,19 +36,24 @@ import kotlinx.coroutines.yield
 enum class DeckMode { Presenter, Local }
 
 @Composable
-fun DeckKeyHandler(
+fun DeckScaffolding(
     navigator: DeckNavigator,
     mode: DeckMode,
     modifier: Modifier = Modifier,
     darkTheme: Boolean,
     frame: SkiFrame? = null, // only needed for Local mode
     switchTheme: () -> Unit,
+    notes: Notes? = slidesNotes(navigator.state.slide),
     content: @Composable () -> Unit,
 ) {
-    val focusRequester = remember { FocusRequester() }
     var showToolBar by remember { mutableStateOf(false) }
     var showTableOfContent by remember { mutableStateOf(false) }
     var showShortcuts by remember { mutableStateOf(false) }
+
+    var showNotes by remember { mutableStateOf(true) }
+    var showHint by remember { mutableStateOf(true) }
+
+    val focusRequester = remember { FocusRequester() }
     var hasFocus by remember { mutableStateOf(false) }
 
     val shortcutDispatcher = remember(navigator, mode) {
@@ -56,20 +65,40 @@ fun DeckKeyHandler(
                 if (mode == DeckMode.Local) {
                     showTableOfContent = !showTableOfContent
                     showShortcuts = false
+                    showNotes = false
+                    showHint = false
                 }
             },
             toggleShortcutsDeck = {
                 if (mode == DeckMode.Local) {
                     showShortcuts = !showShortcuts
                     showTableOfContent = false
+                    showNotes = false
+                    showHint = false
                 }
             },
             dismissAll = {
                 showToolBar = false
                 if (mode == DeckMode.Local) {
+                    showHint = false
+                    showNotes = false
                     showTableOfContent = false
                     showShortcuts = false
                 }
+            },
+            showHint = {
+                if (mode == DeckMode.Local) {
+                    showHint = !showHint
+                }
+            },
+            showNotes = {
+                if (mode == DeckMode.Local) {
+                    showNotes = !showNotes
+                    showShortcuts = false
+                    showTableOfContent = false
+                    showHint = false
+                }
+
             }
         )
     }
@@ -142,7 +171,25 @@ fun DeckKeyHandler(
                         frame = frame!!
                     )
                 }
+
+                AnimatedVisibility(showNotes) {
+                    NotesComponent(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(400.dp),
+                        notes = notes,
+                        frame = frame!!
+                    )
+                }
             }
+        }
+
+        AnimatedVisibility(showHint && mode == DeckMode.Local) {
+            NotesHint(
+                modifier = Modifier
+                    .height(100.dp),
+                frame = frame!!
+            )
         }
     }
 }
