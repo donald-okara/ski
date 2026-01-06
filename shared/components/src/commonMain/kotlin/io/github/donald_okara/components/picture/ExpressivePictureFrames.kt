@@ -81,37 +81,33 @@ fun ExpressiveFrame(
     contentPadding: Dp = 8.dp,
     outlinePadding: Dp = 6.dp,
     strokeWidth: Dp = 2.dp,
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable BoxScope.() -> Unit,
 ) {
     val shape = polygon.toShape()
 
-    val infiniteTransition = rememberInfiniteTransition(label = "rotation")
-    val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(rotationDurationMs, easing = LinearEasing)
-        ),
-        label = "rotationAnim"
-    )
+    val rotation = if (rotate) {
+        val infiniteTransition = rememberInfiniteTransition(label = "rotation")
+        val anim by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(rotationDurationMs, easing = LinearEasing)
+            ),
+            label = "rotationAnim"
+        )
+        anim
+    } else 0f
 
     Box(
-        modifier = modifier
-            .aspectRatio(1f),
-        contentAlignment = Alignment.Center
+        modifier = modifier.aspectRatio(1f), contentAlignment = Alignment.Center
     ) {
 
         // Rotating outline — OUTSIDE content bounds
         Canvas(
-            modifier = Modifier
-                .matchParentSize()
-                .aspectRatio(1f)
-                .then(
-                    if (rotate) {
-                        Modifier.graphicsLayer { rotationZ = rotation }
-                    } else Modifier
-                )
-        ) {
+            modifier = Modifier.matchParentSize().aspectRatio(1f).then(
+                if (rotate) {
+                    Modifier.graphicsLayer { rotationZ = rotation }
+                } else Modifier)) {
             val strokePx = strokeWidth.toPx()
             val inset = strokePx / 2
 
@@ -119,23 +115,16 @@ fun ExpressiveFrame(
                 drawOutline(
                     outline = shape.createOutline(
                         size = Size(
-                            width = size.width - strokePx,
-                            height = size.height - strokePx
-                        ),
-                        layoutDirection = layoutDirection,
-                        density = this
-                    ),
-                    style = Stroke(width = strokePx),
-                    color = color
+                            width = size.width - strokePx, height = size.height - strokePx
+                        ), layoutDirection = layoutDirection, density = this
+                    ), style = Stroke(width = strokePx), color = color
                 )
             }
         }
 
         // Content box defines minimum size
         Box(
-            modifier = Modifier
-                .padding(outlinePadding)
-                .padding(contentPadding),
+            modifier = Modifier.padding(outlinePadding).padding(contentPadding),
             contentAlignment = Alignment.Center,
             content = content
         )
@@ -177,9 +166,7 @@ fun ExpressiveFrameClipped(
     val imageOffsetPx = with(density) { imageOffset.dp.toPx() }
 
     val animatedColor by animateColorAsState(
-        targetValue = backgroundColor,
-        animationSpec = tween(500),
-        label = "FrameColor"
+        targetValue = backgroundColor, animationSpec = tween(500), label = "FrameColor"
     )
 
     val brushColors = listOf(
@@ -203,38 +190,23 @@ fun ExpressiveFrameClipped(
     val (offsetX, offsetY) = randomFloatingOffset(seed = index, (sizeDp / 4).toFloat())
 
     Box(
-        modifier = modifier
-            .size(sizeDp.dp)
-            .then(
-                if (floating)
-                    Modifier.offset {
-                        IntOffset(offsetX.roundToInt(), offsetY.roundToInt())
-                    }
-                else Modifier
-            )
-    ) {
+        modifier = modifier.size(sizeDp.dp).then(if (floating) Modifier.offset {
+            IntOffset(offsetX.roundToInt(), offsetY.roundToInt())
+        }
+        else Modifier)) {
         // Background frame
         Box(
-            Modifier
-                .clip(shape)
-                .matchParentSize()
-                .drawBehind {
-                    drawRoundRect(
-                        brush = brush,
-                        size = size,
-                        cornerRadius = CornerRadius(16.dp.toPx())
-                    )
-                }
-        )
+            Modifier.clip(shape).matchParentSize().drawBehind {
+                drawRoundRect(
+                    brush = brush, size = size, cornerRadius = CornerRadius(16.dp.toPx())
+                )
+            })
 
         // Image (drawn ONCE)
         Box(
-            modifier = Modifier
-                .matchParentSize()
-                .expressiveImageClip(
-                    shape = shape,
-                    imageOffsetPx = imageOffsetPx
-                )
+            modifier = Modifier.matchParentSize().expressiveImageClip(
+                shape = shape, imageOffsetPx = imageOffsetPx
+            )
         ) {
             content()
         }
@@ -291,10 +263,7 @@ fun Modifier.expressiveImageClip(
 
     // 1. Draw TOP half (no clipping)
     clipRect(
-        left = 0f,
-        top = 0f,
-        right = w,
-        bottom = halfH
+        left = 0f, top = 0f, right = w, bottom = halfH
     ) {
         translate(top = imageOffsetPx) {
             this@drawWithContent.drawContent()
@@ -304,10 +273,7 @@ fun Modifier.expressiveImageClip(
     // 2. Draw BOTTOM half (clipped to shape)
     clipPath(shapePath) {
         clipRect(
-            left = 0f,
-            top = halfH,
-            right = w,
-            bottom = h
+            left = 0f, top = halfH, right = w, bottom = h
         ) {
             translate(top = imageOffsetPx) {
                 this@drawWithContent.drawContent()
@@ -330,23 +296,17 @@ fun randomFloatingOffset(seed: Int = 0, animationDistance: Float = 50f): Pair<Fl
     val infiniteTransition = rememberInfiniteTransition(label = "Floating_$seed")
 
     val offsetX by infiniteTransition.animateFloat(
-        initialValue = -rangeX,
-        targetValue = rangeX,
-        animationSpec = InfiniteRepeatableSpec(
+        initialValue = -rangeX, targetValue = rangeX, animationSpec = InfiniteRepeatableSpec(
             animation = tween(durationMillis = durationX, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
-        ),
-        label = "OffsetX_$seed"
+        ), label = "OffsetX_$seed"
     )
 
     val offsetY by infiniteTransition.animateFloat(
-        initialValue = -rangeY,
-        targetValue = rangeY,
-        animationSpec = InfiniteRepeatableSpec(
+        initialValue = -rangeY, targetValue = rangeY, animationSpec = InfiniteRepeatableSpec(
             animation = tween(durationMillis = durationY, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
-        ),
-        label = "OffsetY_$seed"
+        ), label = "OffsetY_$seed"
     )
 
     return offsetX to offsetY
