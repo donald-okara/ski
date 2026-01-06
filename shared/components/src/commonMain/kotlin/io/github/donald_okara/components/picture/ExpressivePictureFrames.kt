@@ -79,7 +79,7 @@ fun ExpressiveFrame(
     rotate: Boolean = true,
     rotationDurationMs: Int = 4000,
     contentPadding: Dp = 8.dp,
-    outlinePadding: Dp = 6.dp,   // 👈 NEW: space for the outline
+    outlinePadding: Dp = 6.dp,
     strokeWidth: Dp = 2.dp,
     content: @Composable BoxScope.() -> Unit
 ) {
