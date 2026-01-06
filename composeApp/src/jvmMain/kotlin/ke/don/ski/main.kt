@@ -27,7 +27,6 @@ fun main() = application {
     // Presenter / Notes window
     Window(
         onCloseRequest = {}, // closing notes shouldn't kill slides
-        state = windowState,
         title = "Presenter Notes"
     ) {
         Deck(

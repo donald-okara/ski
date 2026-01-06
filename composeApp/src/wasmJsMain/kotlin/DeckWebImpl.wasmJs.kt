@@ -1,4 +1,5 @@
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import ke.don.domain.Slide
@@ -42,21 +43,25 @@ actual fun DeckWebImpl() {
         }
     } else {
         // Notes tab listens for slide updates
-        LaunchedEffect(Unit) {
-            window.addEventListener("storage", { e ->
-                val event = e as? StorageEvent ?: return@addEventListener
-                if (event.key != "deckState") return@addEventListener
+        DisposableEffect(Unit) {
+            val listener: (org.w3c.dom.events.Event) -> Unit = { e ->
+                val event = e as? StorageEvent
 
-                val state = event.newValue
+                val state = event?.newValue
                     ?.let { Json.decodeFromString<DeckSyncState>(it) }
-                    ?: return@addEventListener
 
-                containerState.slide = navigator.slides[state.slideIndex]
-                containerState.direction = state.direction
+                if (state?.slideIndex in navigator.slides.indices) {
+                    containerState.slide = navigator.slides[state?.slideIndex ?: error("Slide index is null")]
+                    containerState.direction = state.direction
+                }
             }
-            )
-        }
+            window.addEventListener("storage", listener)
 
+            onDispose {
+                window.removeEventListener("storage", listener)
+            }
+
+        }
     }
 
 

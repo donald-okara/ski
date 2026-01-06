@@ -57,7 +57,7 @@ import kotlin.random.Random
 @Composable
 fun ExpressiveFrame(
     modifier: Modifier = Modifier,
-    polygon: RoundedPolygon = frameShapes.random(),
+    polygon: RoundedPolygon,
     color: Color = MaterialTheme.colorScheme.primary,
     rotate: Boolean = true,
     rotationDurationMs: Int = 4000,

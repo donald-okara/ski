@@ -41,7 +41,7 @@ fun DeckScaffolding(
     mode: DeckMode,
     modifier: Modifier = Modifier,
     darkTheme: Boolean,
-    frame: SkiFrame? = null, // only needed for Local mode
+    frame: SkiFrame, // only needed for Local mode
     switchTheme: () -> Unit,
     notes: Notes? = slidesNotes(navigator.state.slide),
     content: @Composable () -> Unit,
@@ -156,7 +156,7 @@ fun DeckScaffolding(
                         slides = navigator.slides,
                         currentSlide = navigator.state.slide,
                         onJumpToScreen = { navigator.jumpToScreen(it) },
-                        frame = frame!!
+                        frame = frame
                     )
                 }
 
@@ -168,7 +168,7 @@ fun DeckScaffolding(
                         modifier = Modifier
                             .fillMaxHeight()
                             .width(400.dp),
-                        frame = frame!!
+                        frame = frame
                     )
                 }
 
@@ -178,7 +178,7 @@ fun DeckScaffolding(
                             .fillMaxHeight()
                             .width(400.dp),
                         notes = notes,
-                        frame = frame!!
+                        frame = frame
                     )
                 }
             }
@@ -188,7 +188,7 @@ fun DeckScaffolding(
             NotesHint(
                 modifier = Modifier
                     .height(100.dp),
-                frame = frame!!
+                frame = frame
             )
         }
     }
