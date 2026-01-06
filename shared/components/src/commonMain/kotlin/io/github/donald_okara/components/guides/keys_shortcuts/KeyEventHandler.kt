@@ -8,14 +8,6 @@ sealed class KeyEventHandler(
 ) {
     fun matches(key: Key): Boolean = key in keys
 
-    val shortcuts = listOf(
-        Next,
-        Previous,
-        SwitchTheme,
-        ShowToolBar,
-        ShowTableOfContent,
-    )
-
     data object Next : KeyEventHandler(
         hint = "Next Slide",
         keys = setOf(Key.DirectionRight, Key.Spacebar, Key.Enter)
@@ -50,6 +42,16 @@ sealed class KeyEventHandler(
         hint = "Dismiss All",
         keys = setOf(Key.Escape)
     )
+
+    data object ShowHint : KeyEventHandler(
+        hint = "Show/Hide hint",
+        keys = setOf(Key.H, Key.DirectionDown)
+    )
+
+    data object ShowNotes : KeyEventHandler(
+        hint = "Show/Hide Notes",
+        keys = setOf(Key.N)
+    )
 }
 
 val DeckShortcuts = listOf(
@@ -59,13 +61,21 @@ val DeckShortcuts = listOf(
     KeyEventHandler.ShowToolBar,
     KeyEventHandler.ShowTableOfContent,
     KeyEventHandler.ShowShortcutGuide,
-    KeyEventHandler.DismissAll
+    KeyEventHandler.DismissAll,
+    KeyEventHandler.ShowNotes,
+    KeyEventHandler.ShowHint
 )
 
 
+/**
+ * Provides a human-readable label for a Key suitable for UI display.
+ *
+ * @return A short label (symbol or name) for the key; falls back to the key's `toString()` for unmapped keys.
+ */
 fun Key.displayName(): String = when (this) {
     Key.DirectionRight -> "→"
     Key.DirectionLeft -> "←"
+    Key.DirectionDown -> "↓"
     Key.Spacebar -> "Space"
     Key.Enter -> "Enter"
     Key.Backspace -> "BackSpace"
@@ -74,5 +84,7 @@ fun Key.displayName(): String = when (this) {
     Key.C -> "C"
     Key.DirectionUp -> "↑"
     Key.Escape -> "Esc"
-    else -> Key.toString()
+    Key.H -> "H"
+    Key.N -> "N"
+    else -> toString()
 }

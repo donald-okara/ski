@@ -10,7 +10,16 @@ import androidx.compose.runtime.setValue
 import androidx.savedstate.compose.serialization.serializers.MutableStateSerializer
 import ke.don.domain.NavDirection
 import ke.don.domain.Slide
+import kotlinx.serialization.Serializable
 
+/**
+ * Creates and remembers a ContainerState whose `slide` and `direction` are backed by
+ * serializable, remembered mutable states.
+ *
+ * @param slide Initial slide to store in the returned state.
+ * @param direction Initial navigation direction to store in the returned state.
+ * @return A ContainerState exposing `slide` and `direction` backed by serializable remembered mutable states.
+ */
 @Composable
 fun rememberContainerState(
     slide: Slide = Slide.Introduction,
@@ -43,7 +52,8 @@ class ContainerState(
     var direction: NavDirection by direction
 }
 
-data class DeckState(
-    val screenIndex: Int,
-    val direction: NavDirection = NavDirection.Forward
+@Serializable
+data class DeckSyncState(
+    val slideIndex: Int,
+    val direction: NavDirection,
 )
