@@ -2,6 +2,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     alias(libs.plugins.kotlinMultiplatformApplication)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -9,6 +10,9 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
+        }
+        commonMain.dependencies {
+            implementation(libs.bundles.serialization)
         }
     }
 }
@@ -25,7 +29,6 @@ compose.desktop {
         }
     }
 }
-
 //tasks.register<JavaExec>("runDesktopPreview") {
 //    group = "application"
 //    description = "Run the desktop application for preview"

@@ -4,9 +4,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import ke.don.domain.Slide
 import ke.don.ski.Deck
 import ke.don.ski.navigation.DeckNavigator
+import ke.don.ski.navigation.DeckSyncState
 import ke.don.ski.navigation.rememberContainerState
 import ke.don.ski.presentation.DeckMode
 import kotlinx.browser.window
+import kotlinx.serialization.json.Json
 import org.w3c.dom.StorageEvent
 
 @Composable
@@ -19,37 +21,41 @@ actual fun DeckWebImpl() {
         slides = Slide.getScreens(),
         state = containerState,
         navigateForWeb = {
-            window.localStorage.setItem("currentSlide", containerState.slide.index().toString())
+            val syncState = DeckSyncState(
+                slideIndex = containerState.slide.index(),
+                direction = containerState.direction
+            )
+
+            window.localStorage.setItem(
+                "deckState",
+                Json.encodeToString(syncState)
+            )
         }
     )
 
-    val isNotesTab = window.location.search.contains("notes=true")
+    val isSlides = window.location.search.contains("slides")
 
     // Only open notes tab from the slides tab
-    if (!isNotesTab) {
+    if (!isSlides) {
         LaunchedEffect(Unit) {
-            openPresenterTab()
+            openSlides()
         }
     } else {
         // Notes tab listens for slide updates
-        window.addEventListener("storage", { e ->
-            val event = e as? StorageEvent ?: return@addEventListener
-            if (event.key == "currentSlide") {
-                val index = event.newValue?.toIntOrNull() ?: return@addEventListener
-                containerState.slide = navigator.slides[index]
-            }
-        })
-    }
+        LaunchedEffect(Unit) {
+            window.addEventListener("storage", { e ->
+                val event = e as? StorageEvent ?: return@addEventListener
+                if (event.key != "deckState") return@addEventListener
 
+                val state = event.newValue
+                    ?.let { Json.decodeFromString<DeckSyncState>(it) }
+                    ?: return@addEventListener
 
-    if (isNotesTab) {
-        window.addEventListener("storage", { e ->
-            val event = e as? StorageEvent ?: return@addEventListener
-            if (event.key == "currentSlide") {
-                val index = event.newValue?.toIntOrNull() ?: return@addEventListener
-                containerState.slide = navigator.slides[index]
+                containerState.slide = navigator.slides[state.slideIndex]
+                containerState.direction = state.direction
             }
-        })
+            )
+        }
 
     }
 
@@ -57,11 +63,11 @@ actual fun DeckWebImpl() {
     Deck(
         containerState = containerState,
         navigator = navigator,
-        mode = if (isNotesTab) DeckMode.Local else DeckMode.Presenter
+        mode = if (isSlides) DeckMode.Presenter else DeckMode.Local
     )
 }
 
 // open notes tab
-fun openPresenterTab() {
-    window.open("/?notes=true", "PresenterNotes", "width=800,height=600")
+fun openSlides() {
+    window.open("/?slides", "PresenterNotes", "width=800,height=600")
 }

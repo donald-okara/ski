@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.savedstate.compose.serialization.serializers.MutableStateSerializer
 import ke.don.domain.NavDirection
 import ke.don.domain.Slide
+import kotlinx.serialization.Serializable
 
 @Composable
 fun rememberContainerState(
@@ -43,7 +44,8 @@ class ContainerState(
     var direction: NavDirection by direction
 }
 
-data class DeckState(
-    val screenIndex: Int,
-    val direction: NavDirection = NavDirection.Forward
+@Serializable
+data class DeckSyncState(
+    val slideIndex: Int,
+    val direction: NavDirection,
 )
