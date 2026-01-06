@@ -86,5 +86,5 @@ fun Key.displayName(): String = when (this) {
     Key.Escape -> "Esc"
     Key.H -> "H"
     Key.N -> "N"
-    else -> Key.toString()
+    else -> toString()
 }
