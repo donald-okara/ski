@@ -1,0 +1,8 @@
+{
+  "buildCommand": "./gradlew :composeApp:wasmJsBrowserDistribution",
+  "outputDirectory": "composeApp/build/dist/wasmJs/productionExecutable",
+  "framework": null,
+  "routes": [
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
