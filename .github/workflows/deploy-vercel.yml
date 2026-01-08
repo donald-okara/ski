@@ -1,0 +1,52 @@
+name: Build WASM + Deploy to Vercel
+
+on:
+  push:
+    branches: [ main ]     # change if you deploy from a different branch
+  workflow_dispatch: {}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'   # stable OpenJDK distribution
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Verify Java
+        run: java -version
+
+      - name: Cache Gradle (additional safety)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-cache-${{ runner.os }}-
+
+      - name: Build wasm distribution
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution --no-daemon --stacktrace
+
+      - name: Show build output (for debugging)
+        run: ls -la composeApp/build/dist/wasmJs/productionExecutable
+
+      - name: Set up Node.js (for vercel CLI)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          # ensure vercel is available via npx and deploy the static folder
+          npx vercel --version
+          npx vercel --prod --token "$VERCEL_TOKEN" --confirm --cwd composeApp/build/dist/wasmJs/productionExecutable
