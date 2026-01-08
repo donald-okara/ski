@@ -1,6 +1,6 @@
 {
-  "buildCommand": "./gradlew :composeApp:wasmJsBrowserDistribution",
-  "outputDirectory": "composeApp/build/dist/wasmJs/productionExecutable",
+  "buildCommand": null,
+  "installCommand": null,
   "framework": null,
   "rewrites": [
     {

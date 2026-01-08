@@ -47,6 +47,9 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          # ensure vercel is available via npx and deploy the static folder
-          npx vercel --version
-          npx vercel --prod --token "$VERCEL_TOKEN" --confirm --cwd composeApp/build/dist/wasmJs/productionExecutable
+          npx vercel deploy \
+            --prod \
+            --confirm \
+            --token "$VERCEL_TOKEN" \
+            --project "$VERCEL_PROJECT_ID" \
+            --cwd composeApp/build/dist/wasmJs/productionExecutable
