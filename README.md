@@ -1,76 +1,47 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM).
+# Ski: A Compose Multiplatform Slide Template
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+Ski is a template for creating presentations and slides using Compose Multiplatform, with a primary focus on **Web** and **Desktop** applications. It provides a foundation for building beautiful, animated, and interactive slide decks with the power and flexibility of Kotlin and Compose.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Features
 
-### Build and Run Android Application
+*   **Compose Multiplatform:** Write your presentation logic once in Kotlin and run it on the web (Wasm), desktop (JVM), and other platforms.
+*   **Web & Desktop First:** Optimized for web and desktop experiences, providing a seamless presentation experience on larger screens.
+*   **Modular Architecture:** The project is structured with a modular approach, making it easy to manage and scale your presentation content.
+*   **Customizable Theming:** Easily customize the look and feel of your slides to match your branding.
+*   **Ready-to-use Components:** Includes a set of pre-built components to get you started with your slides quickly.
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+## Project Structure
 
-### Build and Run Desktop (JVM) Application
+*   `./composeApp`: Shared code for your Compose Multiplatform applications.
+    *   `commonMain`: Code common to all targets.
+    *   Platform-specific folders (`jvmMain`, `wasmJsMain`, etc.): Code specific to each platform.
+*   `./shared`: Contains shared modules like design, resources, and components.
+*   `./segments`:  Individual slide decks or sections of your presentation.
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+## Getting Started
 
-### Build and Run Web Application
+### Building and Running
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
+#### Web (Wasm)
 
-### Build and Run iOS Application
+```shell
+# macOS/Linux
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+# Windows
+.\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
+```
+
+#### Desktop (JVM)
+
+```shell
+# macOS/Linux
+./gradlew :composeApp:run
+
+# Windows
+.\gradlew.bat :composeApp:run
+```
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
-
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).# ski
+Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html) and [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform).
