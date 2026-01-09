@@ -1,5 +1,5 @@
 {
-  "buildCommand": "./gradlew wasmJsBrowserDistribution",
+  "buildCommand": "export JAVA_HOME=/vercel/.java/openjdk17 && ./gradlew clean wasmJsBrowserDistribution --no-daemon",
   "outputDirectory": "build/dist/wasmJs/productionExecutable",
   "headers": [
     {
