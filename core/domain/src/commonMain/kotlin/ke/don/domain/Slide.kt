@@ -23,6 +23,12 @@ sealed class Slide(
         label = "Example",
     )
 
+    data object KodeViewer: Slide(
+        label = "Kode Viewer",
+    )
+
+
+
     fun index(): Int {
         return getScreens().indexOf(this)
     }
@@ -31,7 +37,8 @@ sealed class Slide(
         fun getScreens(): List<Slide> =
             listOf(
                 Introduction,
-                ExampleScreen
+                ExampleScreen,
+                KodeViewer
             )
     }
 }

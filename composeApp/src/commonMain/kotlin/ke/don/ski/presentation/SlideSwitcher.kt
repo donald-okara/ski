@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import io.github.donald_okara.components.guides.notes.Notes
 import ke.don.demos.ExampleSlide
+import ke.don.demos.KodeViewerSlide
 import ke.don.domain.Slide
 import ke.don.introduction.IntroductionScreen
 
@@ -22,6 +23,7 @@ fun SlideSwitcher(
     when (slide) {
         Slide.Introduction -> IntroductionScreen(modifier)
         Slide.ExampleScreen -> ExampleSlide(modifier)
+        Slide.KodeViewer -> KodeViewerSlide(modifier)
     }
 }
 
