@@ -1,5 +1,11 @@
 package io.github.donald_okara.components.guides.code_viewer
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,10 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.UnfoldLess
+import androidx.compose.material.icons.outlined.UnfoldMore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -18,7 +27,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -29,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.icon.IconButtonToken
 
 @Composable
-fun KotlinCodeViewer(
+fun KotlinCodeViewerCard(
     modifier: Modifier = Modifier,
     darkTheme: Boolean = true,
     toggleFocus: () -> Unit = {},
@@ -44,18 +57,15 @@ fun KotlinCodeViewer(
 
     val colorScheme = animateCodeTheme(targetTheme)
 
-    val source = remember { code() }
+    var foldLambdas by rememberSaveable { mutableStateOf(false) }
 
-    val highlighted = remember(source, colorScheme) {
-        highlightKotlin(source, colorScheme)
-    }
+    val source = remember { code() }
 
     Surface(
         shape = MaterialTheme.shapes.medium,
         tonalElevation = 1.dp,
         color = colorScheme.background,
-        modifier = modifier
-            .padding(vertical = 4.dp),
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -67,12 +77,18 @@ fun KotlinCodeViewer(
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButtonToken(
+                    icon = if (foldLambdas)
+                        Icons.Outlined.UnfoldMore
+                    else
+                        Icons.Outlined.UnfoldLess,
+                    accentColor = colorScheme.normal,
+                    sizeInt = 48,
+                    onClick = { foldLambdas = !foldLambdas }
+                )
+
+                IconButtonToken(
                     icon = Icons.Default.Fullscreen,
-                    accentColor = if (darkTheme){
-                        Color.White
-                    } else {
-                        Color.Black
-                    },
+                    accentColor = colorScheme.normal,
                     sizeInt = 48,
                     onClick = toggleFocus
                 )
@@ -83,92 +99,70 @@ fun KotlinCodeViewer(
                     } else {
                         Icons.Outlined.DarkMode
                     },
-                    accentColor = if (darkTheme){
-                        Color.White
-                    } else {
-                        Color.Black
-                    },
+                    accentColor = colorScheme.normal,
                     sizeInt = 48,
                     onClick = toggleTheme
                 )
 
             }
-            Text(
-                text = highlighted,
-                fontFamily = FontFamily.Monospace,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(12.dp),
+            KotlinCodeViewer(
+                darkTheme = darkTheme,
+                foldLambdas = foldLambdas,
+                codeTheme = colorScheme,
+                code = source,
             )
         }
     }
 }
 
-
-fun highlightKotlin(
+@Composable
+fun KotlinCodeViewer(
+    modifier: Modifier = Modifier,
     code: String,
-    theme: CodeTheme
-): AnnotatedString {
-    val builder = AnnotatedString.Builder()
+    darkTheme: Boolean = true,
+    codeTheme: CodeTheme = if (darkTheme) {
+        CodeThemes.Dark
+    } else {
+        CodeThemes.Light
+    },
+    textScale: Float = 1f,
+    foldLambdas: Boolean = true
+) {
+    val processedCode = remember(code, foldLambdas) {
+        foldLambdas(code, foldLambdas)
+    }
 
-    val keywords = listOf(
-        "val","var","fun","if","else","for","while","when","return",
-        "class","object","interface","package","import","override",
-        "private","public","protected","internal","sealed","data",
-        "companion","enum","do","break","continue"
-    )
+    val baseStyle = MaterialTheme.typography.bodyLarge
 
-    val keywordPattern = "\\b(${keywords.joinToString("|")})\\b".toRegex()
-    val typePattern = "\\b([A-Z][A-Za-z0-9_]*)\\b".toRegex()
-    val stringPattern = "\".*?\"".toRegex()
-    val commentPattern = "//.*|/\\*(.|\\R)*?\\*/".toRegex()
-    val annotationPattern = "@[A-Za-z0-9_]+".toRegex()
+    AnimatedContent(
+        targetState = processedCode,
+        label = "code-fold",
+        transitionSpec = {
+            fadeIn() + expandVertically() togetherWith
+                    fadeOut() + shrinkVertically()
+        }
+    ) { animatedCode ->
 
-    val matches = buildList {
-        addAll(keywordPattern.findAll(code))
-        addAll(stringPattern.findAll(code))
-        addAll(commentPattern.findAll(code))
-        addAll(annotationPattern.findAll(code))
-        addAll(typePattern.findAll(code))
-    }.sortedBy { it.range.first }
-        .fold(mutableListOf<MatchResult>()) { acc, match ->
-            if (acc.none { it.range.overlaps(match.range) }) acc.add(match)
-            acc
+        val highlighted = remember(animatedCode, codeTheme) {
+            highlightKotlin(animatedCode, codeTheme)
         }
 
-    var index = 0
-
-    for (match in matches) {
-        if (match.range.first > index) {
-            builder.withStyle(SpanStyle(color = theme.normal)) {
-                append(code.substring(index, match.range.first))
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            tonalElevation = 1.dp,
+            color = codeTheme.background,
+            modifier = modifier
+                .padding(4.dp),
+        ) {
+            SelectionContainer{
+                Text(
+                    text = highlighted,
+                    fontFamily = FontFamily.Monospace,
+                    style = baseStyle.scaled(textScale),
+                    modifier = modifier
+                )
             }
-        }
 
-        val color = when {
-            commentPattern.matches(match.value) -> theme.comment
-            stringPattern.matches(match.value) -> theme.string
-            annotationPattern.matches(match.value) -> theme.annotation
-            keywordPattern.matches(match.value) -> theme.keyword
-            typePattern.matches(match.value) -> theme.type
-            else -> theme.normal
-        }
-
-        builder.withStyle(SpanStyle(color = color)) {
-            append(match.value)
-        }
-
-        index = match.range.last + 1
-    }
-
-    if (index < code.length) {
-        builder.withStyle(SpanStyle(color = theme.normal)) {
-            append(code.substring(index))
         }
     }
-
-    return builder.toAnnotatedString()
 }
-
-
-private fun IntRange.overlaps(other: IntRange): Boolean =
-    this.first <= other.last && other.first <= this.last

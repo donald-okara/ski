@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import io.github.donald_okara.components.guides.code_viewer.FocusKotlinViewer
 import io.github.donald_okara.components.guides.code_viewer.KotlinCodeViewer
+import io.github.donald_okara.components.guides.code_viewer.KotlinCodeViewerCard
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -51,7 +52,7 @@ fun KodeViewerSlide(
             .fillMaxSize(),
         contentAlignment = Alignment.CenterStart
     ) {
-        KotlinCodeViewer(
+        KotlinCodeViewerCard(
             modifier = Modifier.fillMaxWidth(0.7f),
             darkTheme = isDark,
             toggleFocus = { isFocused = !isFocused },
