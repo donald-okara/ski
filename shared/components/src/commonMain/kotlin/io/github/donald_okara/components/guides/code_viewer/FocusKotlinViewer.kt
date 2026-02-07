@@ -109,7 +109,11 @@ fun FocusKotlinViewer(
                     ),
                     navigationIcon = {
                         IconButton(onClick = onDismiss) {
-                            Icon(Icons.Default.Close, contentDescription = "Close")
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close",
+                                tint = colorScheme.normal
+                            )
                         }
                     },
                     actions = {
@@ -179,7 +183,9 @@ fun FocusKotlinViewer(
                         codeTheme = colorScheme,
                         textScale = animatedScale,
                         foldLambdas = foldLambdas,
-                        modifier = Modifier.padding(12.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp)
                     )
                 }
             }

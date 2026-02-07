@@ -152,7 +152,7 @@ fun KotlinCodeViewer(
             tonalElevation = 1.dp,
             color = codeTheme.background,
             modifier = modifier
-                .padding(4.dp),
+                .padding(vertical = 4.dp, horizontal = 8.dp),
         ) {
             SelectionContainer{
                 Text(

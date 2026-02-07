@@ -1,13 +1,9 @@
 package ke.don.demos
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,10 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import io.github.donald_okara.components.guides.code_viewer.FocusKotlinViewer
-import io.github.donald_okara.components.guides.code_viewer.KotlinCodeViewer
 import io.github.donald_okara.components.guides.code_viewer.KotlinCodeViewerCard
 
 
@@ -27,7 +20,10 @@ import io.github.donald_okara.components.guides.code_viewer.KotlinCodeViewerCard
 fun KodeViewerSlide(
     modifier: Modifier = Modifier
 ) {
-    var isDark by remember {
+    var isCardDark by remember {
+        mutableStateOf(true)
+    }
+    var isFocusDark by remember {
         mutableStateOf(true)
     }
     var isFocused by remember {
@@ -54,9 +50,9 @@ fun KodeViewerSlide(
     ) {
         KotlinCodeViewerCard(
             modifier = Modifier.fillMaxWidth(0.7f),
-            darkTheme = isDark,
+            darkTheme = isCardDark,
             toggleFocus = { isFocused = !isFocused },
-            toggleTheme = { isDark = !isDark }
+            toggleTheme = { isCardDark = !isCardDark }
         ){
            code
         }
@@ -65,8 +61,8 @@ fun KodeViewerSlide(
     if (isFocused){
         FocusKotlinViewer(
             onDismiss = { isFocused = false },
-            darkTheme = isDark,
-            toggleTheme = { isDark = !isDark }
+            darkTheme = isFocusDark,
+            toggleTheme = { isFocusDark = !isFocusDark }
         ){
             code
         }
