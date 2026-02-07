@@ -119,7 +119,7 @@ fun KotlinCodeViewer(
     } else {
         CodeThemes.Light
     },
-    textScale: Float = 1f,
+    textScale: Float = 0.75f,
     shouldFoldLambdas: Boolean = true
 ) {
     val processedCode = remember(code, shouldFoldLambdas) {
