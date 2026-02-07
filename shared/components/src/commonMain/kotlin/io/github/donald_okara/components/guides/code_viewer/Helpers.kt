@@ -20,14 +20,14 @@ fun highlightKotlin(
     val keywordPattern = "\\b(${keywords.joinToString("|")})\\b".toRegex()
     val typePattern = "\\b([A-Z][A-Za-z0-9_]*)\\b".toRegex()
     val stringPattern = "\".*?\"".toRegex()
-    val commentPattern = "//.*|/\\*(.|\\R)*?\\*/".toRegex()
+    val commentPattern = "//.*|/\\*(.|\\n|\\r)*?\\*/".toRegex()
     val annotationPattern = "@[A-Za-z0-9_]+".toRegex()
 
     val matches = buildList {
-        addAll(keywordPattern.findAll(code))
         addAll(stringPattern.findAll(code))
         addAll(commentPattern.findAll(code))
         addAll(annotationPattern.findAll(code))
+        addAll(keywordPattern.findAll(code))
         addAll(typePattern.findAll(code))
     }.sortedBy { it.range.first }
         .fold(mutableListOf<MatchResult>()) { acc, match ->

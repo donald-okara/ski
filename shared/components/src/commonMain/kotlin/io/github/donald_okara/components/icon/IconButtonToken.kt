@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 fun IconButtonToken(
     modifier: Modifier = Modifier,
     icon: ImageVector,
+    contentDescription: String?,
     accentColor: Color,
     containerColor: Color = Color.Transparent,
     sizeInt: Int,
@@ -46,7 +47,7 @@ fun IconButtonToken(
         ) { targetIcon ->
             Icon(
                 imageVector = targetIcon,
-                contentDescription = null,
+                contentDescription = contentDescription,
                 modifier = Modifier.size(sizeInt.dp)
             )
         }

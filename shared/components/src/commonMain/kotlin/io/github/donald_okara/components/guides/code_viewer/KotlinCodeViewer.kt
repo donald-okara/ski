@@ -9,10 +9,8 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fullscreen
@@ -20,9 +18,6 @@ import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.UnfoldLess
 import androidx.compose.material.icons.outlined.UnfoldMore
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,11 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.icon.IconButtonToken
 
@@ -81,6 +72,7 @@ fun KotlinCodeViewerCard(
                         Icons.Outlined.UnfoldMore
                     else
                         Icons.Outlined.UnfoldLess,
+                    contentDescription = "Fold Lambdas",
                     accentColor = colorScheme.normal,
                     sizeInt = 48,
                     onClick = { foldLambdas = !foldLambdas }
@@ -89,6 +81,7 @@ fun KotlinCodeViewerCard(
                 IconButtonToken(
                     icon = Icons.Default.Fullscreen,
                     accentColor = colorScheme.normal,
+                    contentDescription = "Toggle Fullscreen",
                     sizeInt = 48,
                     onClick = toggleFocus
                 )
@@ -99,6 +92,7 @@ fun KotlinCodeViewerCard(
                     } else {
                         Icons.Outlined.DarkMode
                     },
+                    contentDescription = "Toggle Theme",
                     accentColor = colorScheme.normal,
                     sizeInt = 48,
                     onClick = toggleTheme
@@ -107,7 +101,7 @@ fun KotlinCodeViewerCard(
             }
             KotlinCodeViewer(
                 darkTheme = darkTheme,
-                foldLambdas = foldLambdas,
+                shouldFoldLambdas = foldLambdas,
                 codeTheme = colorScheme,
                 code = source,
             )
@@ -126,10 +120,10 @@ fun KotlinCodeViewer(
         CodeThemes.Light
     },
     textScale: Float = 1f,
-    foldLambdas: Boolean = true
+    shouldFoldLambdas: Boolean = true
 ) {
-    val processedCode = remember(code, foldLambdas) {
-        foldLambdas(code, foldLambdas)
+    val processedCode = remember(code, shouldFoldLambdas) {
+        foldLambdas(code, shouldFoldLambdas)
     }
 
     val baseStyle = MaterialTheme.typography.bodyLarge
@@ -159,7 +153,7 @@ fun KotlinCodeViewer(
                     text = highlighted,
                     fontFamily = FontFamily.Monospace,
                     style = baseStyle.scaled(textScale),
-                    modifier = modifier
+                    modifier = Modifier
                 )
             }
 
