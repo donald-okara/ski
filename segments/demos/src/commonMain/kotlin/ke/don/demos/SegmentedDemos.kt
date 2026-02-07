@@ -19,7 +19,7 @@ fun HorizontalSegmentsDemo(
 ) {
     HorizontallySegmentedScreen(
         modifier = modifier,
-        initialSegments = segments
+        initialSegments = segments,
     )
 }
 
@@ -29,7 +29,7 @@ fun VerticalSegmentsDemo(
 ) {
     VerticallySegmentedScreen(
         modifier = modifier,
-        initialSegments = segments
+        initialSegments = segments,
     )
 }
 val segments = listOf(
@@ -51,7 +51,7 @@ fun SegmentItem(
         footer = null,
     ) {
         Box(
-            modifier = modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ){
             Text(

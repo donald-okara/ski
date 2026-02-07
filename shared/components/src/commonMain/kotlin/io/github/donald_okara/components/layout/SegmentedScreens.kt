@@ -47,10 +47,7 @@ fun VerticallySegmentedScreen(
                     .weight(weights[index])
                     .fillMaxWidth()
             ) {
-                AnimatedContent(
-                    targetState = content,
-                    label = "Segment-$index"
-                ) { it() }
+                 content()
             }
 
             if (index < initialSegments.lastIndex && enableDrag) {
@@ -88,10 +85,7 @@ fun HorizontallySegmentedScreen(
                     .weight(weights[index])
                     .fillMaxHeight()
             ) {
-                AnimatedContent(
-                    targetState = content,
-                    label = "Segment-$index"
-                ) { it() }
+                content()
             }
 
             if (index < initialSegments.lastIndex && enableDrag) {
