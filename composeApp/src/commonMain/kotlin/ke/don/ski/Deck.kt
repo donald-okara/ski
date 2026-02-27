@@ -10,6 +10,9 @@ import ke.don.ski.domain.SlideConfig
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.presentation.PresentationDeck
 import ke.don.ski.presentation.ui.skiPresentationSlides
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Composable entry point that renders the slide deck UI with theme support, navigation, and frame layout.
@@ -38,3 +41,4 @@ fun Deck(
     }
 }
 
+val SESSION_DURATION = 10.seconds

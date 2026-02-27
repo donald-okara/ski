@@ -13,7 +13,7 @@ class DeckBuilder(
 
     fun slide(
         label: String,
-        notes: List<AnnotatedString> = emptyList(),
+        notes: List<AnnotatedString>? = null,
         transition: ScreenTransition = ScreenTransition.Horizontal,
         showHeader: Boolean = true,
         content: @Composable () -> Unit

@@ -11,10 +11,11 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class TimerController(
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    totalDuration: Duration = 10.seconds
 ) {
 
-    private val _state = MutableStateFlow(TimerState())
+    private val _state = MutableStateFlow(TimerState(totalTime = totalDuration))
     val state = _state.asStateFlow()
 
     private var tickingJob: Job? = null

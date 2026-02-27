@@ -23,7 +23,7 @@ fun main() = application {
     val windowState = WindowState(
         placement = WindowPlacement.Fullscreen
     )
-    val doubleLaunch = true
+    val doubleLaunch = false
 
     if (doubleLaunch) {
         Window(

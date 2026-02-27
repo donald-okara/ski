@@ -11,19 +11,22 @@ import ke.don.demos.KodeViewerSlide
 import ke.don.demos.VerticalSegmentsDemo
 import ke.don.domain.ScreenTransition
 import ke.don.introduction.IntroductionScreen
+import ke.don.ski.SESSION_DURATION
 import ke.don.ski.domain.SlideConfig
 import ke.don.ski.domain.generateDeck
+import kotlin.time.Duration
 
 @Composable
-fun skiPresentationSlides(): List<SlideConfig> {
-    val timerController = rememberTimerController()
+fun skiPresentationSlides(sessionDuration: Duration = SESSION_DURATION): List<SlideConfig> {
+    val timerController = rememberTimerController(sessionDuration)
 
     val slides = generateDeck(
         timerController = timerController
     ) {
         slide(
             "Introduction",
-            transition = ScreenTransition.Fade
+            transition = ScreenTransition.Fade,
+            notes = introductionNotes
         ) {
             IntroductionScreen()
         }
@@ -43,9 +46,11 @@ fun skiPresentationSlides(): List<SlideConfig> {
     return slides
 }
 @Composable
-fun rememberTimerController(): TimerController {
+fun rememberTimerController(
+    sessionDuration: Duration
+): TimerController {
     val scope = rememberCoroutineScope()
     return remember(scope) {
-        TimerController(scope)
+        TimerController(scope, sessionDuration)
     }
 }

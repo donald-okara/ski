@@ -51,7 +51,6 @@ fun DeckScaffolding(
     frame: SkiFrame, // only needed for Local mode
     slides: List<SlideConfig>,
     switchTheme: () -> Unit,
-    notes: Notes? = null, // null for now
     content: @Composable () -> Unit,
 ) {
     val mode = LocalDeckMode.current
@@ -175,7 +174,12 @@ fun DeckScaffolding(
                         modifier = Modifier
                             .fillMaxHeight()
                             .width(400.dp),
-                        notes = notes,
+                        notes = navigator.currentSlide.notes?.let {
+                            Notes(
+                                title = navigator.currentSlide.label,
+                                points = it
+                            )
+                        },
                         frame = frame
                     )
                 }

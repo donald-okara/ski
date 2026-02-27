@@ -19,7 +19,7 @@ import ke.don.ski.presentation.ui.MainHeader
 
 data class SlideConfig(
     val label: String,
-    val notes: List<AnnotatedString> = emptyList(),
+    val notes: List<AnnotatedString>? = null,
     val frame: @Composable () -> SkiFrame = {
         defaultSkiFrames()
             .snake

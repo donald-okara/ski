@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import io.github.donald_okara.components.DotBullet
+import io.github.donald_okara.components.LinearBullet
 import io.github.donald_okara.components.timer.TimerComponent
 import io.github.donald_okara.components.timer.TimerIntentHandler
 import io.github.donald_okara.components.timer.TimerState
@@ -64,14 +66,7 @@ fun MainFooter(
                 .padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(8.dp)
-                    .background(
-                        MaterialTheme.colorScheme.primary,
-                        CircleShape
-                    )
-            )
+            DotBullet()
 
             Spacer(Modifier.width(10.dp))
 
@@ -114,15 +109,7 @@ fun MainHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Accent rail
-        Box(
-            modifier = Modifier
-                .width(4.dp)
-                .height(40.dp)
-                .background(
-                    MaterialTheme.colorScheme.primary,
-                    RoundedCornerShape(2.dp)
-                )
-        )
+        LinearBullet()
 
         Spacer(Modifier.width(16.dp))
 
