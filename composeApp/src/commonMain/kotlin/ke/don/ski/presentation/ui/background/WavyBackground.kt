@@ -103,13 +103,13 @@ fun DiagonalWavyBackground(
             while (x < size.width + waveLengthPx) {
                 val yOffset = yOffsetBase + x * diagonalSlope
 
-                path.quadraticBezierTo(
+                path.quadraticTo(
                     x + waveLengthPx / 4,
                     yOffset - waveHeightPx,
                     x + waveLengthPx / 2,
                     yOffset
                 )
-                path.quadraticBezierTo(
+                path.quadraticTo(
                     x + 3 * waveLengthPx / 4,
                     yOffset + waveHeightPx,
                     x + waveLengthPx,
@@ -174,13 +174,13 @@ fun AnimatedDiagonalWavyBackground(
             while (x < size.width + waveLengthPx) {
                 val yOffset = yOffsetBase + x * diagonalSlope
 
-                path.quadraticBezierTo(
+                path.quadraticTo(
                     x + waveLengthPx / 4,
                     yOffset - waveHeightPx,
                     x + waveLengthPx / 2,
                     yOffset
                 )
-                path.quadraticBezierTo(
+                path.quadraticTo(
                     x + 3 * waveLengthPx / 4,
                     yOffset + waveHeightPx,
                     x + waveLengthPx,
