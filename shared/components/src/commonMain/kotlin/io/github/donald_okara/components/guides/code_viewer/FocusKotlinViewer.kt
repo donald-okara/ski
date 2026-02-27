@@ -82,7 +82,7 @@ fun FocusKotlinViewer(
         Surface(
             modifier = Modifier.fillMaxSize(0.8f),
             color = colorScheme.background,
-            shape = RoundedCornerShape(Values.Dimens.mediumPadding)
+            shape = RoundedCornerShape(Values.cornerRadius)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
