@@ -38,7 +38,7 @@ fun ShortcutsDictionary(
         LazyColumn(
             modifier = modifier
                 .matchParentSize()
-                .padding(16.dp),
+                .padding(Values.Dimens.mediumPadding),
             verticalArrangement = Arrangement.spacedBy(Values.Dimens.smallPadding)
         ) {
             item {

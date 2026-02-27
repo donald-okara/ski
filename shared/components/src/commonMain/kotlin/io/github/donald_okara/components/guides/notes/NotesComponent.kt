@@ -51,18 +51,18 @@ fun NotesComponent(
     frame: SkiFrame
 ) {
     frame.Render(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(Values.Dimens.mediumPadding),
         header = null,
         footer = null,
     ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(Values.Dimens.mediumPadding),
+            verticalArrangement = Arrangement.spacedBy(Values.Dimens.smallPadding)
         ) {
             item {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(Values.Dimens.tinyPadding)) {
                     Text(
                         text = notes?.title ?: "No notes",
                         style = MaterialTheme.typography.titleLarge,
