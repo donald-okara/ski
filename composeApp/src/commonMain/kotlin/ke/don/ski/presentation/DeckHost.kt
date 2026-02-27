@@ -25,7 +25,7 @@ import ke.don.ski.navigation.DeckNavigator
 @Composable
 fun DeckHost(
     slides: List<SlideConfig>,
-    navigator: DeckNavigator = remember { DeckNavigator(slides) },
+    navigator: DeckNavigator,
     modifier: Modifier = Modifier
 ) {
     val slide = navigator.currentSlide
@@ -42,7 +42,7 @@ fun DeckHost(
             .padding(MaterialTheme.dimens.mediumPadding)
             .fillMaxSize()
     ) { index ->
-        slides[index].content()
+        slides[index].Render()
     }
 }
 

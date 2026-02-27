@@ -104,9 +104,6 @@ private fun mainFooter(state: ContainerState, showTimer: Boolean): @Composable (
                 modifier = Modifier
                     .animateContentSize()
             ) {
-                if (showTimer) {
-                    TimerComponent(totalTime = 40.minutes)
-                }
 
                 Row(
                     modifier = Modifier

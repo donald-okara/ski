@@ -8,6 +8,7 @@ import ke.don.domain.Slide
 import ke.don.ski.navigation.deprecated.ContainerState
 import ke.don.ski.navigation.deprecated.DeckNavigator
 import ke.don.ski.navigation.deprecated.rememberContainerState
+import ke.don.ski.presentation.PresentationDeck
 import ke.don.ski.presentation.deprecated.DeckMode
 import ke.don.ski.presentation.deprecated.PresenterDsl
 
@@ -28,14 +29,10 @@ fun Deck(
     },
     mode: DeckMode = DeckMode.Local
 ) {
-    val presentationFrame = defaultSkiFrames().snake.create(Values.cornerRadius, 0.5f)
     val guidesFrame = defaultSkiFrames().basic.create(Values.cornerRadius, 0.5f)
 
-    PresenterDsl(
+    PresentationDeck(
         deckMode = mode,
-        navigator = navigator,
-        containerState = containerState,
-        presentationFrame = presentationFrame,
         guidesFrame = guidesFrame,
     )
 }

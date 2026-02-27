@@ -38,29 +38,15 @@ import kotlinx.coroutines.delay
 @Composable
 fun TimerComponent(
     modifier: Modifier = Modifier,
-    totalTime: Duration = 10.seconds,
-    interval: Duration = 1.seconds
+    timerState: TimerState,
+    onIntent: (TimerIntentHandler) -> Unit
 ) {
-    var status by rememberSaveable { mutableStateOf(TimerStatus.Idle) }
-    var timeLeft by rememberSaveable { mutableStateOf(totalTime) }
-
     // Fraction 0f..1f
-    val progress = (timeLeft / totalTime).coerceIn(0.toDouble(), 1.toDouble())
+    val progress = (timerState.timeLeft / timerState.totalTime).coerceIn(0.toDouble(), 1.toDouble())
     val animatedProgress by animateFloatAsState(
         targetValue = progress.toFloat(),
         animationSpec = tween(durationMillis = 300, easing = LinearOutSlowInEasing)
     )
-
-    // Timer loop
-    LaunchedEffect(status) {
-        if (status == TimerStatus.Resumed) {
-            while (timeLeft > Duration.ZERO) {
-                delay(interval.inWholeMilliseconds)
-                timeLeft -= interval
-            }
-            status = TimerStatus.Stopped
-        }
-    }
 
     Box(
         contentAlignment = Alignment.CenterStart,
@@ -71,12 +57,11 @@ fun TimerComponent(
             .clip(RoundedCornerShape(Values.cornerRadius))
             .background(Color.DarkGray)
             .clickable {
-                if (status == TimerStatus.Resumed && timeLeft <= Duration.ZERO) {
-                    timeLeft = totalTime
-                }
-                status = when (status) {
-                    TimerStatus.Idle, TimerStatus.Stopped, TimerStatus.Paused -> TimerStatus.Resumed
-                    else -> TimerStatus.Paused
+                when (timerState.status) {
+                    TimerStatus.Idle -> onIntent(TimerIntentHandler.Start)
+                    TimerStatus.Resumed -> onIntent(TimerIntentHandler.Pause)
+                    TimerStatus.Paused -> onIntent(TimerIntentHandler.Start)
+                    TimerStatus.Stopped -> onIntent(TimerIntentHandler.Reset)
                 }
             }
     ) {
@@ -86,12 +71,12 @@ fun TimerComponent(
             progress = animatedProgress,
             modifier = Modifier.matchParentSize(),
             colors = when {
-                (status == TimerStatus.Stopped) || (status == TimerStatus.Idle) || (status == TimerStatus.Paused) -> listOf(
+                (timerState.status == TimerStatus.Stopped) || (timerState.status == TimerStatus.Idle) || (timerState.status == TimerStatus.Paused) -> listOf(
                     Color.Transparent,
                     Color.DarkGray
                 )
 
-                timeLeft <= Duration.ZERO -> listOf(Color.Red, Color.Red)
+                timerState.timeLeft <= Duration.ZERO -> listOf(Color.Red, Color.Red)
                 progress <= 0.33f -> listOf(Color.Yellow, Color.Yellow)
                 else -> listOf(Color(0xFFFF6E40), MaterialTheme.colorScheme.primary)
             }
@@ -99,8 +84,8 @@ fun TimerComponent(
 
         // Timer text + dot
         TimerContent(
-            status = status,
-            timeLeft = timeLeft,
+            status = timerState.status,
+            timeLeft = timerState.timeLeft,
             modifier = Modifier.matchParentSize()
         )
     }
