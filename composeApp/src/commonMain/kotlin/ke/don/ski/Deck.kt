@@ -29,7 +29,6 @@ fun Deck(
 
     val guidesFrame = defaultSkiFrames().basic.create(Values.cornerRadius, 0.5f)
 
-
     CompositionLocalProvider(
         LocalDeckMode provides mode
     ) {

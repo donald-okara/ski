@@ -3,9 +3,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import ke.don.ski.Deck
+import ke.don.ski.domain.DeckMode
+import ke.don.ski.domain.DeckSyncState
 import ke.don.ski.navigation.DeckNavigator
-import ke.don.ski.navigation.deprecated.DeckSyncState
-import ke.don.ski.presentation.deprecated.DeckMode
 import ke.don.ski.presentation.ui.skiPresentationSlides
 import kotlinx.browser.window
 import kotlinx.serialization.json.Json
