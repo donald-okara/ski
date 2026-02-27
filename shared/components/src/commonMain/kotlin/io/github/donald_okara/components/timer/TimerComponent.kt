@@ -71,12 +71,12 @@ fun TimerComponent(
             .clip(RoundedCornerShape(Values.cornerRadius))
             .background(Color.DarkGray)
             .clickable {
+                if (status == TimerStatus.Resumed && timeLeft <= Duration.ZERO) {
+                    timeLeft = totalTime
+                }
                 status = when (status) {
                     TimerStatus.Idle, TimerStatus.Stopped, TimerStatus.Paused -> TimerStatus.Resumed
                     else -> TimerStatus.Paused
-                }
-                if (status == TimerStatus.Resumed && timeLeft <= Duration.ZERO) {
-                    timeLeft = totalTime
                 }
             }
     ) {
