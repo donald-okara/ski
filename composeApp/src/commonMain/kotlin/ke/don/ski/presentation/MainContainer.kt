@@ -59,7 +59,7 @@ fun MainContainer(
     frame: SkiFrame,
     mode: DeckMode,
     header: (@Composable () -> Unit)? = mainHeader(state, mode),
-    footer: (@Composable () -> Unit)? = mainFooter(state, mode == DeckMode.Presenter),
+    footer: (@Composable () -> Unit)? = mainFooter(state, mode == DeckMode.Local),
     modifier: Modifier = Modifier,
     content: @Composable (Slide) -> Unit,
 ) {

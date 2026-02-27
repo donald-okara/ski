@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,8 +41,8 @@ fun TimerComponent(
     totalTime: Duration = 10.seconds,
     interval: Duration = 1.seconds
 ) {
-    var status by remember { mutableStateOf(TimerStatus.Idle) }
-    var timeLeft by remember { mutableStateOf(totalTime) }
+    var status by rememberSaveable { mutableStateOf(TimerStatus.Idle) }
+    var timeLeft by rememberSaveable { mutableStateOf(totalTime) }
 
     // Fraction 0f..1f
     val progress = (timeLeft / totalTime).coerceIn(0.toDouble(), 1.toDouble())

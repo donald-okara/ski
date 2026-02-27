@@ -20,15 +20,19 @@ fun main() = application {
     val windowState = WindowState(
         placement = WindowPlacement.Fullscreen
     )
-    Window(
-        onCloseRequest = ::exitApplication,
-        state = windowState,
-        title = "Slides"
-    ) {
-        Deck(
-            containerState = containerState,
-            mode = DeckMode.Presenter
-        )
+    val doubleLaunch = true
+
+    if (doubleLaunch) {
+        Window(
+            onCloseRequest = ::exitApplication,
+            state = windowState,
+            title = "Slides"
+        ) {
+            Deck(
+                containerState = containerState,
+                mode = DeckMode.Presenter
+            )
+        }
     }
 
     // Presenter / Notes window
