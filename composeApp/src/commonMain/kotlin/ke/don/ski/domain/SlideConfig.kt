@@ -1,5 +1,8 @@
 package ke.don.ski.domain
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -9,10 +12,10 @@ import io.github.donald_okara.components.frames.SkiFrame
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.timer.TimerController
 import io.github.donald_okara.components.values.Values
+import ke.don.design.theme.dimens
 import ke.don.domain.ScreenTransition
 import ke.don.ski.presentation.ui.MainFooter
 import ke.don.ski.presentation.ui.MainHeader
-import ke.don.ski.presentation.deprecated.DeckMode
 
 data class SlideConfig(
     val label: String,
@@ -26,23 +29,32 @@ data class SlideConfig(
     val showHeader: Boolean = true,
     val content: @Composable () -> Unit,
     val timer: TimerController
-){
+) {
     @Composable
-    fun Render(modifier: Modifier = Modifier){
+    fun Render(modifier: Modifier = Modifier) {
         val timerState by timer.state.collectAsState()
+        val deckMode = LocalDeckMode.current
+
         frame().Render(
             modifier = modifier,
-            header = if (showHeader) { { MainHeader(mode = DeckMode.Local) } } else null,
+            header = if (showHeader) {
+                { MainHeader(mode = deckMode) }
+            } else null,
             footer = {
                 MainFooter(
-                    showTimer = true,
+                    showTimer = deckMode == DeckMode.Local,
                     label = label,
                     timerState = timerState,
                     onIntent = timer::handleIntent
                 )
             }
-        ){
-            content()
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(
+                        horizontal = MaterialTheme.dimens.mediumPadding
+                    )
+            ) { content() }
         }
     }
 }

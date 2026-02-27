@@ -9,6 +9,7 @@ import ke.don.demos.ExampleSlide
 import ke.don.demos.HorizontalSegmentsDemo
 import ke.don.demos.KodeViewerSlide
 import ke.don.demos.VerticalSegmentsDemo
+import ke.don.domain.ScreenTransition
 import ke.don.introduction.IntroductionScreen
 import ke.don.ski.domain.SlideConfig
 import ke.don.ski.domain.generateDeck
@@ -21,7 +22,8 @@ fun skiPresentationSlides(): List<SlideConfig> {
         timerController = timerController
     ) {
         slide(
-            "Introduction"
+            "Introduction",
+            transition = ScreenTransition.Fade
         ) {
             IntroductionScreen()
         }

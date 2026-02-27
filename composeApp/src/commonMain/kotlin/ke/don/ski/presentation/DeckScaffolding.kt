@@ -35,17 +35,17 @@ import io.github.donald_okara.components.guides.notes.Notes
 import io.github.donald_okara.components.guides.notes.NotesComponent
 import io.github.donald_okara.components.guides.notes.NotesHint
 import ke.don.design.theme.dimens
+import ke.don.ski.domain.DeckMode
+import ke.don.ski.domain.LocalDeckMode
 import ke.don.ski.domain.SlideConfig
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.navigation.DeckShortcutHandler
-import ke.don.ski.presentation.deprecated.DeckMode
-import ke.don.ski.presentation.deprecated.ToolBar
+import ke.don.ski.presentation.ui.ToolBar
 import kotlinx.coroutines.yield
 
 @Composable
 fun DeckScaffolding(
     navigator: DeckNavigator,
-    mode: DeckMode,
     modifier: Modifier = Modifier,
     darkTheme: Boolean,
     frame: SkiFrame, // only needed for Local mode
@@ -54,6 +54,7 @@ fun DeckScaffolding(
     notes: Notes? = null, // null for now
     content: @Composable () -> Unit,
 ) {
+    val mode = LocalDeckMode.current
     var showToolBar by remember { mutableStateOf(false) }
     var showTableOfContent by remember { mutableStateOf(false) }
     var showShortcuts by remember { mutableStateOf(false) }

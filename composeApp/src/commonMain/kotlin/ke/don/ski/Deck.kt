@@ -1,14 +1,14 @@
 package ke.don.ski
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.values.Values
+import ke.don.ski.domain.DeckMode
+import ke.don.ski.domain.LocalDeckMode
 import ke.don.ski.domain.SlideConfig
 import ke.don.ski.navigation.DeckNavigator
-import ke.don.ski.navigation.deprecated.ContainerState
-import ke.don.ski.navigation.deprecated.rememberContainerState
 import ke.don.ski.presentation.PresentationDeck
-import ke.don.ski.presentation.deprecated.DeckMode
 import ke.don.ski.presentation.ui.skiPresentationSlides
 
 /**
@@ -19,17 +19,22 @@ import ke.don.ski.presentation.ui.skiPresentationSlides
  */
 @Composable
 fun Deck(
+    mode: DeckMode = DeckMode.Local,
     slides: List<SlideConfig> = skiPresentationSlides(),
     navigator: DeckNavigator = DeckNavigator(slides),
-    mode: DeckMode = DeckMode.Local
 ) {
+
     val guidesFrame = defaultSkiFrames().basic.create(Values.cornerRadius, 0.5f)
 
-    PresentationDeck(
-        deckMode = mode,
-        guidesFrame = guidesFrame,
-        slides = slides,
-        navigator = navigator
-    )
+
+    CompositionLocalProvider(
+        LocalDeckMode provides mode
+    ) {
+        PresentationDeck(
+            guidesFrame = guidesFrame,
+            navigator = navigator,
+            slides = slides
+        )
+    }
 }
 

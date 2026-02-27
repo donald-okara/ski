@@ -4,9 +4,8 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import ke.don.ski.domain.DeckMode
 import ke.don.ski.navigation.DeckNavigator
-import ke.don.ski.navigation.deprecated.rememberContainerState
-import ke.don.ski.presentation.deprecated.DeckMode
 import ke.don.ski.presentation.ui.skiPresentationSlides
 
 /**
@@ -42,7 +41,7 @@ fun main() = application {
 
     // Presenter / Notes window
     Window(
-        onCloseRequest = {}, // closing notes shouldn't kill slides
+        onCloseRequest = { if(doubleLaunch.not()) exitApplication() }, // closing notes shouldn't kill slides
         title = "Presenter Notes"
     ) {
         Deck(

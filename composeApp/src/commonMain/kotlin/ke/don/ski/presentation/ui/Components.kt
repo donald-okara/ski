@@ -25,8 +25,7 @@ import io.github.donald_okara.components.timer.TimerComponent
 import io.github.donald_okara.components.timer.TimerIntentHandler
 import io.github.donald_okara.components.timer.TimerState
 import io.github.donald_okara.components.values.Values
-import ke.don.ski.presentation.deprecated.DeckMode
-import kotlin.time.Duration.Companion.minutes
+import ke.don.ski.domain.DeckMode
 
 
 /**

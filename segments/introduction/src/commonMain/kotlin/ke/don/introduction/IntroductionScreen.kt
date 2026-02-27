@@ -32,10 +32,9 @@ fun IntroductionScreen(
 ) {
     Row(
         modifier = modifier
-            .padding(16.dp)
             .fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         TextSegment(
             title = "Building Slides with Jetpack Compose on Ski",
