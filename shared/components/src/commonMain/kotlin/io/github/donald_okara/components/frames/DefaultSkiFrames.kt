@@ -10,18 +10,20 @@ fun defaultSkiFrames(): SkiFrames {
     val colors = MaterialTheme.colorScheme
 
     return SkiFrames(
-        snake = { curve ->
-            rememberFrame(colors.primary, curve) {
+        snake = { curve, opacity ->
+            rememberFrame(colors.primary, curve, opacity) {
                 SnakeFrame(
                     leftToRight = true,
                     curve = curve,
+                    opacity = opacity
                 )
             }
         },
-        basic = { curve ->
-            rememberFrame(colors.primary, curve) {
+        basic = { curve, opacity ->
+            rememberFrame(colors.primary, curve, opacity) {
                 BasicFrame(
                     curve = curve,
+                    opacity = opacity
                 )
             }
         }

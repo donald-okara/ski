@@ -32,10 +32,9 @@ fun IntroductionScreen(
 ) {
     Row(
         modifier = modifier
-            .padding(16.dp)
             .fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         TextSegment(
             title = "Building Slides with Jetpack Compose on Ski",
@@ -63,7 +62,7 @@ private fun ImageSegment(
             image = painter,
             sizeDp = 400,
             polygon = MaterialShapes.Clover4Leaf,
-            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            backgroundColor = MaterialTheme.colorScheme.primary,
             brushType = BrushType.SWEEP
         )
     }
@@ -75,12 +74,13 @@ private fun TextSegment(
     modifier: Modifier = Modifier,
     title: String,
     presenter: String,
-    organisation: String? = null
+    organisation: String? = null,
+    occupation: String? = null
 ) {
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .fillMaxWidth(0.5f),
+            .fillMaxWidth(0.6f),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
@@ -93,14 +93,22 @@ private fun TextSegment(
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             presenter,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold
         )
 
+        occupation?.let {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                occupation,
+                style = MaterialTheme.typography.bodyMediumEmphasized
+            )
+        }
         organisation?.let {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                organisation,
-                style = MaterialTheme.typography.bodyMedium
+                "At $organisation",
+                style = MaterialTheme.typography.bodySmall
             )
         }
     }

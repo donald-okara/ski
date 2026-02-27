@@ -3,6 +3,7 @@ package io.github.donald_okara.components.frames.snake_frame
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -29,6 +30,7 @@ import io.github.donald_okara.components.values.Values
 class SnakeFrame(
     private val leftToRight: Boolean = true,
     private val curve: Dp = Values.cornerRadius,
+    private val opacity: Float
 ) : SkiFrame {
 
     @Composable
@@ -44,6 +46,7 @@ class SnakeFrame(
             modifier = modifier,
             header = header,
             footer = footer,
+            opacity = opacity,
             content = content,
         )
     }
@@ -53,6 +56,7 @@ class SnakeFrame(
 fun AnimatedSnakeFramedCard(
     modifier: Modifier = Modifier,
     leftToRight: Boolean = true,
+    opacity: Float,
     curve: Dp = Values.cornerRadius,
     header: (@Composable () -> Unit)? = null,
     footer: (@Composable () -> Unit)? = null,
@@ -94,7 +98,13 @@ fun AnimatedSnakeFramedCard(
                 animationSpec = tween(durationMillis = duration)
             )
 
-            Canvas(Modifier.matchParentSize()) {
+            Canvas(
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.surface.copy(opacity)
+                    )
+                    .matchParentSize()
+            ) {
                 val w = size.width
                 val h = size.height
                 val r = rawRadiusPx.coerceAtMost(minOf(w, h) / 2f)

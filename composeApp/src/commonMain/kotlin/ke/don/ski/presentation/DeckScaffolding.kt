@@ -1,16 +1,20 @@
 package ke.don.ski.presentation
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,6 +26,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.frames.SkiFrame
 import io.github.donald_okara.components.guides.keys_shortcuts.DeckShortcuts
@@ -29,37 +34,26 @@ import io.github.donald_okara.components.guides.keys_shortcuts.ShortcutsDictiona
 import io.github.donald_okara.components.guides.notes.Notes
 import io.github.donald_okara.components.guides.notes.NotesComponent
 import io.github.donald_okara.components.guides.notes.NotesHint
+import ke.don.design.theme.dimens
+import ke.don.ski.domain.DeckMode
+import ke.don.ski.domain.LocalDeckMode
+import ke.don.ski.domain.SlideConfig
 import ke.don.ski.navigation.DeckNavigator
-import ke.don.ski.navigation.DeckShortcutDispatcher
+import ke.don.ski.navigation.DeckShortcutHandler
+import ke.don.ski.presentation.ui.ToolBar
 import kotlinx.coroutines.yield
 
-enum class DeckMode { Presenter, Local }
-
-/**
- * Provides the overall layout and interactive scaffolding for a slide deck, switching between presenter and local multi-panel modes.
- *
- * Renders a top toolbar (toggleable), manages keyboard shortcuts and focus, and in Local mode arranges optional side panels: table of contents, shortcuts dictionary, notes, and a hint area.
- *
- * @param navigator Source of slide data and navigation state used to render current slide and drive title animations.
- * @param mode Determines layout behavior: Presenter (single full-area content) or Local (multi-panel layout).
- * @param modifier Modifier applied to the root container.
- * @param darkTheme Controls toolbar theme styling.
- * @param frame UI frame used by Local-mode side components (TableOfContent, ShortcutsDictionary, NotesComponent, NotesHint). Only required in Local mode.
- * @param switchTheme Callback invoked when the user toggles the theme from the toolbar.
- * @param notes Optional notes content to show in the Notes panel; defaults to notes for the current slide.
- * @param content Composable that renders the main slide content area.
- */
 @Composable
 fun DeckScaffolding(
     navigator: DeckNavigator,
-    mode: DeckMode,
     modifier: Modifier = Modifier,
     darkTheme: Boolean,
     frame: SkiFrame, // only needed for Local mode
+    slides: List<SlideConfig>,
     switchTheme: () -> Unit,
-    notes: Notes? = slidesNotes(navigator.state.slide),
     content: @Composable () -> Unit,
 ) {
+    val mode = LocalDeckMode.current
     var showToolBar by remember { mutableStateOf(false) }
     var showTableOfContent by remember { mutableStateOf(false) }
     var showShortcuts by remember { mutableStateOf(false) }
@@ -71,7 +65,7 @@ fun DeckScaffolding(
     var hasFocus by remember { mutableStateOf(false) }
 
     val shortcutDispatcher = remember(navigator, mode) {
-        DeckShortcutDispatcher(
+        DeckShortcutHandler(
             navigator = navigator,
             switchTheme = switchTheme,
             toggleToolbar = { showToolBar = !showToolBar },
@@ -138,21 +132,10 @@ fun DeckScaffolding(
                 darkTheme = darkTheme,
                 onThemeClick = switchTheme,
                 title = {
-                    AnimatedContent(
-                        targetState = navigator.state.slide.label,
-                        transitionSpec = {
-                            transitionFor(
-                                slide = navigator.state.slide,
-                                direction = navigator.state.direction
-                            )
-                        },
-                        label = "text-change"
-                    ) { value ->
-                        Text(
-                            text = value,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
+                    Text(
+                        text = navigator.currentSlide.label,
+                        style = MaterialTheme.typography.titleLarge
+                    )
                 }
             )
         }
@@ -167,9 +150,9 @@ fun DeckScaffolding(
                         modifier = Modifier
                             .width(400.dp)
                             .fillMaxHeight(),
-                        slides = navigator.slides,
-                        currentSlide = navigator.state.slide,
-                        onJumpToScreen = { navigator.jumpToScreen(it) },
+                        slides = slides,
+                        currentSlide = navigator.currentSlide,
+                        onJumpToScreen = { navigator.goTo(it) },
                         frame = frame
                     )
                 }
@@ -191,7 +174,12 @@ fun DeckScaffolding(
                         modifier = Modifier
                             .fillMaxHeight()
                             .width(400.dp),
-                        notes = notes,
+                        notes = navigator.currentSlide.notes?.let {
+                            Notes(
+                                title = navigator.currentSlide.label,
+                                points = it
+                            )
+                        },
                         frame = frame
                     )
                 }
@@ -204,6 +192,57 @@ fun DeckScaffolding(
                     .height(100.dp),
                 frame = frame
             )
+        }
+    }
+}
+
+@Composable
+fun TableOfContent(
+    modifier: Modifier = Modifier,
+    frame: SkiFrame,
+    slides: List<SlideConfig>,
+    currentSlide: SlideConfig,
+    onJumpToScreen: (Int) -> Unit,
+) {
+    frame.Render(
+        modifier = modifier
+            .padding(
+                vertical = MaterialTheme.dimens.mediumPadding,
+                horizontal = MaterialTheme.dimens.smallPadding
+            ),
+        header = null,
+        footer = null,
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(MaterialTheme.dimens.mediumPadding)
+                .matchParentSize(),
+        ) {
+            item {
+                Text(
+                    text = "Table of content",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+
+            itemsIndexed(slides) { index, screen ->
+                TextButton(
+                    onClick = { onJumpToScreen(index) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = screen.label,
+                        textAlign = TextAlign.Start,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (screen == currentSlide) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+
+            }
         }
     }
 }

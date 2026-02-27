@@ -1,66 +1,52 @@
 package ke.don.ski
 
-import androidx.compose.material3.Surface
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.values.Values
-import ke.don.design.theme.AppTheme
-import ke.don.domain.Slide
-import ke.don.ski.navigation.ContainerState
+import ke.don.ski.SlidesConstants.FRAME_OPACITY
+import ke.don.ski.domain.DeckMode
+import ke.don.ski.domain.LocalDeckMode
+import ke.don.ski.domain.SlideConfig
 import ke.don.ski.navigation.DeckNavigator
-import ke.don.ski.navigation.rememberContainerState
-import ke.don.ski.presentation.DeckScaffolding
-import ke.don.ski.presentation.DeckMode
-import ke.don.ski.presentation.MainContainer
-import ke.don.ski.presentation.SlideSwitcher
+import ke.don.ski.presentation.PresentationDeck
+import ke.don.ski.presentation.ui.background.AnimatedDiagonalWavyBackground
+import ke.don.ski.presentation.ui.background.LeftThirdCircleGrid
+import ke.don.ski.presentation.ui.skiPresentationSlides
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Composable entry point that renders the slide deck UI with theme support, navigation, and frame layout.
  *
- * @param containerState State object that manages the main container's scrolling and item positioning.
  * @param navigator Navigator responsible for slide/screen navigation within the deck.
  * @param mode Mode to use for the deck (for example local or remote presentation behavior).
  */
 @Composable
 fun Deck(
-    containerState: ContainerState = rememberContainerState(),
-    navigator: DeckNavigator = remember {
-        DeckNavigator(
-            Slide.getScreens(), containerState
-        )
-    },
-    mode: DeckMode = DeckMode.Local
+    mode: DeckMode = DeckMode.Local,
+    slides: List<SlideConfig> = skiPresentationSlides(),
+    navigator: DeckNavigator = remember { DeckNavigator(slides) },
 ) {
-    var darkMode by rememberSaveable(mode) { mutableStateOf(mode == DeckMode.Local) }
+    val animatedFloat by animateFloatAsState(FRAME_OPACITY)
 
-    AppTheme(
-        darkTheme = darkMode,
+    val guidesFrame = defaultSkiFrames().basic.create(Values.cornerRadius, animatedFloat)
+
+    CompositionLocalProvider(
+        LocalDeckMode provides mode
     ) {
-        val presentationFrame = defaultSkiFrames().snake.create(Values.cornerRadius)
-        val hintsFrame = defaultSkiFrames().basic.create(Values.cornerRadius)
-
-        Surface {
-            DeckScaffolding(
-                navigator = navigator,
-                switchTheme = { darkMode = !darkMode },
-                darkTheme = darkMode,
-                frame = hintsFrame,
-                mode = mode
-            ) {
-                MainContainer(
-                    state = containerState,
-                    frame = presentationFrame,
-                    mode = mode
-                ) { slide ->
-                    SlideSwitcher(modifier = Modifier, slide = slide)
-                }
-            }
-        }
+        PresentationDeck(
+            guidesFrame = guidesFrame,
+            background = { LeftThirdCircleGrid() },
+            navigator = navigator,
+            slides = slides
+        )
     }
+}
+
+object SlidesConstants {
+    val SESSION_DURATION = 10.seconds
+    const val FRAME_OPACITY = 0.7f
 }

@@ -45,7 +45,8 @@ fun SegmentItem(
     modifier: Modifier = Modifier,
     index: Int
 ) {
-    val frame = defaultSkiFrames().basic.create(Values.cornerRadius)
+    val frame = defaultSkiFrames().basic.create(Values.cornerRadius, opacity = 0.5f)
+
     frame.Render(
         modifier = modifier
             .padding(MaterialTheme.dimens.mediumPadding),

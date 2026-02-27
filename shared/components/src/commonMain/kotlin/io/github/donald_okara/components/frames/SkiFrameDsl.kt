@@ -28,7 +28,7 @@ fun <T : SkiFrame> rememberFrame(
 
 fun interface SkiFrameFactory {
     @Composable
-    fun create(curve: Dp): SkiFrame
+    fun create(curve: Dp, opacity: Float): SkiFrame
 }
 
 @Stable
