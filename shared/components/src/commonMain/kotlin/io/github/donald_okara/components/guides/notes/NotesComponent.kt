@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.frames.SkiFrame
 import io.github.donald_okara.components.picture.ExpressiveFrame
+import io.github.donald_okara.components.values.Values
 
 /**
  * Renders a slide-note panel inside the provided SkiFrame.
@@ -50,18 +51,18 @@ fun NotesComponent(
     frame: SkiFrame
 ) {
     frame.Render(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(Values.Dimens.mediumPadding),
         header = null,
         footer = null,
     ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(Values.Dimens.mediumPadding),
+            verticalArrangement = Arrangement.spacedBy(Values.Dimens.smallPadding)
         ) {
             item {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(Values.Dimens.tinyPadding)) {
                     Text(
                         text = notes?.title ?: "No notes",
                         style = MaterialTheme.typography.titleLarge,
@@ -137,20 +138,20 @@ fun NotesHint(
 ) {
     frame.Render(
         modifier = modifier
-            .padding(16.dp),
+            .padding(Values.Dimens.mediumPadding),
         header = null,
         footer = null,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+                .padding(Values.Dimens.mediumPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(Values.Dimens.smallPadding, Alignment.Start)
         ) {
             ExpressiveFrame(
                 polygon = MaterialShapes.Sunny,
-                contentPadding = 4.dp
+                contentPadding = Values.Dimens.tinyPadding
             ) {
                 Box(
                     modifier = Modifier

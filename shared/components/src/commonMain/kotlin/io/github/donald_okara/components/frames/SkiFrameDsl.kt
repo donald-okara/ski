@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @Stable
 interface SkiFrame {
@@ -26,11 +28,12 @@ fun <T : SkiFrame> rememberFrame(
 
 fun interface SkiFrameFactory {
     @Composable
-    fun create(): SkiFrame
+    fun create(curve: Dp): SkiFrame
 }
 
 @Stable
 class SkiFrames(
-    val  snake: SkiFrameFactory,
+    val snake: SkiFrameFactory,
+    val basic: SkiFrameFactory,
     // future frames go here
 )

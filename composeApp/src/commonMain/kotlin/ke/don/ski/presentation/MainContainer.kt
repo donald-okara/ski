@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.frames.SkiFrame
 import io.github.donald_okara.components.timer.TimerComponent
 import io.github.donald_okara.components.values.Values
+import ke.don.design.theme.dimens
 import ke.don.domain.NavDirection
 import ke.don.domain.Slide
 import ke.don.domain.ScreenTransition
@@ -65,7 +66,7 @@ fun MainContainer(
 ) {
     frame.Render(
         modifier = modifier
-            .padding(16.dp),
+            .padding(MaterialTheme.dimens.mediumPadding),
         header = header,
         footer = footer,
     ) {
@@ -79,7 +80,7 @@ fun MainContainer(
                     )
                 },
                 modifier = modifier
-                    .padding(16.dp)
+                    .padding(MaterialTheme.dimens.mediumPadding)
                     .fillMaxSize()
             ) { screen ->
                 content(screen)

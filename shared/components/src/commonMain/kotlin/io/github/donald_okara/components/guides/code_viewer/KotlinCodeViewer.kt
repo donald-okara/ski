@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fullscreen
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.icon.IconButtonToken
+import io.github.donald_okara.components.values.Values
 
 @Composable
 fun KotlinCodeViewerCard(
@@ -53,7 +55,7 @@ fun KotlinCodeViewerCard(
     val source = remember { code() }
 
     Surface(
-        shape = MaterialTheme.shapes.medium,
+        shape = RoundedCornerShape(Values.cornerRadius),
         tonalElevation = 1.dp,
         color = colorScheme.background,
         modifier = modifier,
@@ -142,11 +144,10 @@ fun KotlinCodeViewer(
         }
 
         Surface(
-            shape = MaterialTheme.shapes.medium,
             tonalElevation = 1.dp,
             color = codeTheme.background,
             modifier = modifier
-                .padding(vertical = 4.dp, horizontal = 8.dp),
+                .padding(vertical = Values.Dimens.tinyPadding, horizontal = Values.Dimens.smallPadding),
         ) {
             SelectionContainer{
                 Text(

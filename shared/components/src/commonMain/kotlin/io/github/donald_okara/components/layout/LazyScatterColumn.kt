@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.github.donald_okara.components.values.Values
 
 @Composable
 fun <T> LazyScatterFlow(
@@ -20,18 +21,18 @@ fun <T> LazyScatterFlow(
 ) {
     LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
+        verticalArrangement = Arrangement.spacedBy(Values.Dimens.mediumPadding, Alignment.CenterVertically)
     ) {
         item {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 maxItemsInEachRow = itemsPerRow,
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(Values.Dimens.mediumPadding, Alignment.CenterHorizontally),
                 verticalArrangement = Arrangement.SpaceBetween,
                 itemVerticalAlignment = Alignment.CenterVertically,
             ) {
                 items.forEachIndexed { index, item ->
-                    Box(modifier = Modifier.padding(4.dp)) {
+                    Box(modifier = Modifier.padding(Values.Dimens.tinyPadding)) {
                         content(index, item)
                     }
                 }
