@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.frames.SkiFrame
 import io.github.donald_okara.components.picture.ExpressiveFrame
+import io.github.donald_okara.components.values.Values
 
 /**
  * Renders a slide-note panel inside the provided SkiFrame.
@@ -57,7 +58,7 @@ fun NotesComponent(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 12.dp),
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
@@ -144,9 +145,9 @@ fun NotesHint(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+                .padding(Values.Dimens.mediumPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(Values.Dimens.smallPadding, Alignment.Start)
         ) {
             ExpressiveFrame(
                 polygon = MaterialShapes.Sunny,

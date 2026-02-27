@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.frames.SkiFrame
+import io.github.donald_okara.components.values.Values
 
 @Composable
 fun ShortcutsDictionary(
@@ -30,7 +31,7 @@ fun ShortcutsDictionary(
 ) {
     frame.Render(
         modifier = modifier
-            .padding(16.dp),
+            .padding(Values.Dimens.mediumPadding),
         header = null,
         footer = null,
     ) {
@@ -38,7 +39,7 @@ fun ShortcutsDictionary(
             modifier = modifier
                 .matchParentSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(Values.Dimens.smallPadding)
         ) {
             item {
                 Text(
@@ -75,7 +76,7 @@ private fun ShortcutRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = Values.Dimens.mediumPadding, vertical = Values.Dimens.smallPadding),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top
         ) {
@@ -88,8 +89,8 @@ private fun ShortcutRow(
 
             // 4. Use FlowRow here to allow key chips to wrap if needed on smaller screens
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                horizontalArrangement = Arrangement.spacedBy(Values.Dimens.smallPadding),
+                verticalArrangement = Arrangement.spacedBy(Values.Dimens.smallPadding, Alignment.CenterVertically),
                 maxItemsInEachRow = 2
             ) {
                 keys.forEach { key ->
@@ -107,14 +108,14 @@ private fun KeyChip(key: Key) {
         modifier = Modifier
             .background(
                 MaterialTheme.colorScheme.secondaryContainer,
-                RoundedCornerShape(8.dp)
+                RoundedCornerShape(Values.Dimens.smallPadding)
             )
             .border(
                 1.dp,
                 MaterialTheme.colorScheme.outline,
-                RoundedCornerShape(8.dp)
+                RoundedCornerShape(Values.Dimens.smallPadding)
             )
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = Values.Dimens.smallPadding, vertical = Values.Dimens.tinyPadding)
     ) {
         Text(
             text = key.displayName(),

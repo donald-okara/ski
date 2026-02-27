@@ -165,7 +165,7 @@ fun DeckScaffolding(
                 AnimatedVisibility(showTableOfContent) {
                     TableOfContent(
                         modifier = Modifier
-                            .width(300.dp)
+                            .width(400.dp)
                             .fillMaxHeight(),
                         slides = navigator.slides,
                         currentSlide = navigator.state.slide,

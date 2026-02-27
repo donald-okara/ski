@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.github.donald_okara.components.icon.IconButtonToken
+import io.github.donald_okara.components.values.Values
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +82,7 @@ fun FocusKotlinViewer(
         Surface(
             modifier = Modifier.fillMaxSize(0.8f),
             color = colorScheme.background,
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(Values.Dimens.mediumPadding)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -137,7 +138,7 @@ fun FocusKotlinViewer(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = Values.Dimens.mediumPadding),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -177,7 +178,7 @@ fun FocusKotlinViewer(
                         shouldFoldLambdas = foldLambdas,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp)
+                            .padding(Values.Dimens.mediumPadding)
                     )
                 }
             }

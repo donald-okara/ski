@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.donald_okara.components.values.Values
 
 @Composable
 fun VerticallySegmentedScreen(
@@ -147,7 +148,7 @@ private fun VerticalDragHandle(
 
 @Composable
 private fun HorizontalDragHandle(
-    width: Dp = 12.dp,
+    width: Dp = Values.Dimens.mediumPadding,
     onDrag: (Float) -> Unit
 ) {
     Box(

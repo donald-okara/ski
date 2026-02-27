@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.icon.IconButtonToken
+import io.github.donald_okara.components.values.Values
 
 @Composable
 fun KotlinCodeViewerCard(
@@ -146,7 +147,7 @@ fun KotlinCodeViewer(
             tonalElevation = 1.dp,
             color = codeTheme.background,
             modifier = modifier
-                .padding(vertical = 4.dp, horizontal = 8.dp),
+                .padding(vertical = Values.Dimens.tinyPadding, horizontal = Values.Dimens.smallPadding),
         ) {
             SelectionContainer{
                 Text(

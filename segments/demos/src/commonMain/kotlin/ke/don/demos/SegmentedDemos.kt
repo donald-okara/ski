@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.frames.defaultSkiFrames
+import io.github.donald_okara.components.values.Values
 import io.github.donald_okara.components.layout.HorizontallySegmentedScreen
 import io.github.donald_okara.components.layout.VerticallySegmentedScreen
 
@@ -43,7 +44,7 @@ fun SegmentItem(
     modifier: Modifier = Modifier,
     index: Int
 ) {
-    val frame = defaultSkiFrames().snake.create()
+    val frame = defaultSkiFrames().snake.create(Values.cornerRadius)
     frame.Render(
         modifier = modifier
             .padding(16.dp),

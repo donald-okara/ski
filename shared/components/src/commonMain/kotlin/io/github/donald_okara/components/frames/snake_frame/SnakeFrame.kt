@@ -1,4 +1,4 @@
-package io.github.donald_okara.components.frames
+package io.github.donald_okara.components.frames.snake_frame
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -21,11 +21,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.donald_okara.components.frames.SkiFrame
 import io.github.donald_okara.components.values.Values
 
 class SnakeFrame(
     private val leftToRight: Boolean = true,
+    private val curve: Dp = Values.cornerRadius,
 ) : SkiFrame {
 
     @Composable
@@ -37,6 +40,7 @@ class SnakeFrame(
     ) {
         AnimatedSnakeFramedCard(
             leftToRight = leftToRight,
+            curve = curve,
             modifier = modifier,
             header = header,
             footer = footer,
@@ -49,14 +53,15 @@ class SnakeFrame(
 fun AnimatedSnakeFramedCard(
     modifier: Modifier = Modifier,
     leftToRight: Boolean = true,
+    curve: Dp = Values.cornerRadius,
     header: (@Composable () -> Unit)? = null,
     footer: (@Composable () -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
     val strokeColor = MaterialTheme.colorScheme.onSurface
     val strokeWidth = Values.lineThickness
-    val cornerRadius = Values.cornerRadius
-    val extraPadding = 8.dp
+    val extraPadding = Values.Dimens.smallPadding
+    val cornerRadius = curve + extraPadding
     val duration = 500
 
     LookaheadScope {

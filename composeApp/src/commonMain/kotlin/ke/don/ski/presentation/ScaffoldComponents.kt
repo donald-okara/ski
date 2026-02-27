@@ -99,10 +99,7 @@ fun TableOfContent(
     ) {
         LazyColumn(
             modifier = Modifier
-                .padding(
-                    vertical = 16.dp,
-                    horizontal = 4.dp
-                )
+                .padding(16.dp)
                 .matchParentSize(),
         ) {
             item {
