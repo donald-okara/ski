@@ -1,29 +1,31 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import ke.don.domain.Slide
 import ke.don.ski.Deck
-import ke.don.ski.navigation.deprecated.DeckNavigator
+import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.navigation.deprecated.DeckSyncState
 import ke.don.ski.navigation.deprecated.rememberContainerState
 import ke.don.ski.presentation.deprecated.DeckMode
+import ke.don.ski.presentation.ui.skiPresentationSlides
 import kotlinx.browser.window
 import kotlinx.serialization.json.Json
 import org.w3c.dom.StorageEvent
 
 @Composable
 actual fun DeckWebImpl() {
-    // initialize containerState, DeckNavigator
-    val containerState = rememberContainerState()
+    val slides = skiPresentationSlides()
+    val navigator = remember { DeckNavigator(slides) }
 
+    val isSlides = window.location.search.contains("slides")
 
-    val navigator = DeckNavigator(
-        slides = Slide.getScreens(),
-        state = containerState,
-        navigateForWeb = {
+    // Presenter tab writes to localStorage
+    if (!isSlides) {
+        LaunchedEffect(navigator.currentIndex, navigator.direction) {
             val syncState = DeckSyncState(
-                slideIndex = containerState.slide.index(),
-                direction = containerState.direction
+                slideIndex = navigator.currentIndex,
+                direction = navigator.direction
             )
 
             window.localStorage.setItem(
@@ -31,12 +33,7 @@ actual fun DeckWebImpl() {
                 Json.encodeToString(syncState)
             )
         }
-    )
 
-    val isSlides = window.location.search.contains("slides")
-
-    // Only open notes tab from the slides tab
-    if (!isSlides) {
         LaunchedEffect(Unit) {
             openSlides()
         }
@@ -46,27 +43,26 @@ actual fun DeckWebImpl() {
             val listener: (org.w3c.dom.events.Event) -> Unit = { e ->
                 val event = e as? StorageEvent
 
-                event?.newValue
-                    ?.let { Json.decodeFromString<DeckSyncState>(it) }
-                    ?.takeIf { it.slideIndex in navigator.slides.indices }
-                    ?.let { syncState ->
-                        containerState.slide = navigator.slides[syncState.slideIndex]
-                        containerState.direction = syncState.direction
+                if (event != null) {
+                    val syncState = event.newValue
+                        ?.let { Json.decodeFromString<DeckSyncState>(it) }
+
+                    if (syncState != null && syncState.slideIndex in slides.indices) {
+                        navigator.goTo(syncState.slideIndex)
                     }
+                }
             }
+
             window.addEventListener("storage", listener)
 
             onDispose {
                 window.removeEventListener("storage", listener)
             }
-
         }
-
     }
 
-
     Deck(
-        containerState = containerState,
+        slides = slides,
         navigator = navigator,
         mode = if (isSlides) DeckMode.Presenter else DeckMode.Local
     )

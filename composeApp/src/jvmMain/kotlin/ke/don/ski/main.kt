@@ -4,8 +4,10 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.navigation.deprecated.rememberContainerState
 import ke.don.ski.presentation.deprecated.DeckMode
+import ke.don.ski.presentation.ui.skiPresentationSlides
 
 /**
  * Starts the Compose for Desktop application and opens the Slides and Presenter Notes windows.
@@ -15,8 +17,10 @@ import ke.don.ski.presentation.deprecated.DeckMode
  * the application. Both windows share the same container state so their views stay synchronized.
  */
 fun main() = application {
+    val slides = skiPresentationSlides()
+    val navigator = DeckNavigator(slides)
+
     // Slides / Audience window
-    val containerState = rememberContainerState()
     val windowState = WindowState(
         placement = WindowPlacement.Fullscreen
     )
@@ -29,8 +33,9 @@ fun main() = application {
             title = "Slides"
         ) {
             Deck(
-                containerState = containerState,
-                mode = DeckMode.Presenter
+                mode = DeckMode.Presenter,
+                slides = slides,
+                navigator = navigator
             )
         }
     }
@@ -41,8 +46,9 @@ fun main() = application {
         title = "Presenter Notes"
     ) {
         Deck(
-            containerState = containerState,
-            mode = DeckMode.Local
+            mode = DeckMode.Local,
+            slides = slides,
+            navigator = navigator
         )
     }
 }
