@@ -1,24 +1,15 @@
 package ke.don.ski
 
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.values.Values
-import ke.don.design.theme.AppTheme
 import ke.don.domain.Slide
 import ke.don.ski.navigation.ContainerState
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.navigation.rememberContainerState
-import ke.don.ski.presentation.DeckScaffolding
 import ke.don.ski.presentation.DeckMode
-import ke.don.ski.presentation.MainContainer
-import ke.don.ski.presentation.SlideSwitcher
+import ke.don.ski.presentation.PresenterDsl
 
 /**
  * Composable entry point that renders the slide deck UI with theme support, navigation, and frame layout.
@@ -37,30 +28,15 @@ fun Deck(
     },
     mode: DeckMode = DeckMode.Local
 ) {
-    var darkMode by rememberSaveable(mode) { mutableStateOf(mode == DeckMode.Local) }
+    val presentationFrame = defaultSkiFrames().snake.create(Values.cornerRadius)
+    val guidesFrame = defaultSkiFrames().basic.create(Values.cornerRadius)
 
-    AppTheme(
-        darkTheme = darkMode,
-    ) {
-        val presentationFrame = defaultSkiFrames().snake.create(Values.cornerRadius)
-        val hintsFrame = defaultSkiFrames().basic.create(Values.cornerRadius)
-
-        Surface {
-            DeckScaffolding(
-                navigator = navigator,
-                switchTheme = { darkMode = !darkMode },
-                darkTheme = darkMode,
-                frame = hintsFrame,
-                mode = mode
-            ) {
-                MainContainer(
-                    state = containerState,
-                    frame = presentationFrame,
-                    mode = mode
-                ) { slide ->
-                    SlideSwitcher(modifier = Modifier, slide = slide)
-                }
-            }
-        }
-    }
+    PresenterDsl(
+        deckMode = mode,
+        navigator = navigator,
+        containerState = containerState,
+        presentationFrame = presentationFrame,
+        guidesFrame = guidesFrame,
+    )
 }
+
