@@ -1,4 +1,4 @@
-package ke.don.ski.presentation
+package ke.don.ski.presentation.deprecated
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -8,11 +8,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import io.github.donald_okara.components.frames.SkiFrame
-import io.github.donald_okara.components.frames.defaultSkiFrames
-import io.github.donald_okara.components.values.Values
 import ke.don.design.theme.AppTheme
-import ke.don.ski.navigation.ContainerState
-import ke.don.ski.navigation.DeckNavigator
+import ke.don.ski.navigation.deprecated.ContainerState
+import ke.don.ski.navigation.deprecated.DeckNavigator
 
 @Composable
 fun PresenterDsl(

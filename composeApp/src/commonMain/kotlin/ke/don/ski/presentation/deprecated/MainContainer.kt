@@ -1,4 +1,4 @@
-package ke.don.ski.presentation
+package ke.don.ski.presentation.deprecated
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
@@ -40,7 +40,7 @@ import ke.don.design.theme.dimens
 import ke.don.domain.NavDirection
 import ke.don.domain.Slide
 import ke.don.domain.ScreenTransition
-import ke.don.ski.navigation.ContainerState
+import ke.don.ski.navigation.deprecated.ContainerState
 import kotlin.time.Duration.Companion.minutes
 
 /**

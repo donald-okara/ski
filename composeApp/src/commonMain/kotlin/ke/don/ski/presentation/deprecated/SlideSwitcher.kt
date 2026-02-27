@@ -1,4 +1,4 @@
-package ke.don.ski.presentation
+package ke.don.ski.presentation.deprecated
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

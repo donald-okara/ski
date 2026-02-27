@@ -4,8 +4,8 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import ke.don.ski.navigation.rememberContainerState
-import ke.don.ski.presentation.DeckMode
+import ke.don.ski.navigation.deprecated.rememberContainerState
+import ke.don.ski.presentation.deprecated.DeckMode
 
 /**
  * Starts the Compose for Desktop application and opens the Slides and Presenter Notes windows.

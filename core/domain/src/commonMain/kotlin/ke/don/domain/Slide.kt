@@ -2,6 +2,9 @@ package ke.don.domain
 
 import kotlinx.serialization.Serializable
 
+@Deprecated(
+    message = "Use SlideConfig instead",
+)
 @Serializable
 sealed class Slide(
     val label: String,

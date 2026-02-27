@@ -1,4 +1,4 @@
-package ke.don.ski.presentation
+package ke.don.ski.presentation.deprecated
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
