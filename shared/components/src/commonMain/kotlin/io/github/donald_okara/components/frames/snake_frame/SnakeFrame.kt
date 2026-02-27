@@ -67,7 +67,7 @@ fun AnimatedSnakeFramedCard(
     LookaheadScope {
         BoxWithConstraints(modifier) {
             val density = LocalDensity.current
-            val r = with(density) { cornerRadius.toPx() }
+            val rawRadiusPx = with(density) { cornerRadius.toPx() }
             val strokePx = with(density) { strokeWidth.toPx() }
             val extraPx = with(density) { extraPadding.toPx() }
 
@@ -97,6 +97,7 @@ fun AnimatedSnakeFramedCard(
             Canvas(Modifier.matchParentSize()) {
                 val w = size.width
                 val h = size.height
+                val r = rawRadiusPx.coerceAtMost(minOf(w, h) / 2f)
 
                 val path = if (leftToRight)
                     headerFooterSnakePath(

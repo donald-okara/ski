@@ -51,7 +51,11 @@ fun BasicFrameComponent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         header?.invoke()
-        CurvedBox(curve = curve, content = content)
+        CurvedBox(
+            modifier = Modifier.weight(1f),
+            curve = curve,
+            content = content
+        )
         footer?.invoke()
     }
 }

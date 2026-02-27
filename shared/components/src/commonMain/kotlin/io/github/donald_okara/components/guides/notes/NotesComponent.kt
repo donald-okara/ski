@@ -138,7 +138,7 @@ fun NotesHint(
 ) {
     frame.Render(
         modifier = modifier
-            .padding(16.dp),
+            .padding(Values.Dimens.mediumPadding),
         header = null,
         footer = null,
     ) {
@@ -151,7 +151,7 @@ fun NotesHint(
         ) {
             ExpressiveFrame(
                 polygon = MaterialShapes.Sunny,
-                contentPadding = 4.dp
+                contentPadding = Values.Dimens.tinyPadding
             ) {
                 Box(
                     modifier = Modifier

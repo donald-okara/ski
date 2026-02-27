@@ -13,6 +13,7 @@ import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.values.Values
 import io.github.donald_okara.components.layout.HorizontallySegmentedScreen
 import io.github.donald_okara.components.layout.VerticallySegmentedScreen
+import ke.don.design.theme.dimens
 
 @Composable
 fun HorizontalSegmentsDemo(
@@ -44,10 +45,10 @@ fun SegmentItem(
     modifier: Modifier = Modifier,
     index: Int
 ) {
-    val frame = defaultSkiFrames().snake.create(Values.cornerRadius)
+    val frame = defaultSkiFrames().basic.create(Values.cornerRadius)
     frame.Render(
         modifier = modifier
-            .padding(16.dp),
+            .padding(MaterialTheme.dimens.mediumPadding),
         header = null,
         footer = null,
     ) {

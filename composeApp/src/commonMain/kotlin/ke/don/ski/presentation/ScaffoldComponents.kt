@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.frames.SkiFrame
+import ke.don.design.theme.dimens
 import ke.don.domain.Slide
 
 @Composable
@@ -93,13 +94,16 @@ fun TableOfContent(
 ) {
     frame.Render(
         modifier = modifier
-            .padding(16.dp),
+            .padding(
+                vertical = MaterialTheme.dimens.mediumPadding,
+                horizontal = MaterialTheme.dimens.smallPadding
+            ),
         header = null,
         footer = null,
     ) {
         LazyColumn(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(MaterialTheme.dimens.mediumPadding)
                 .matchParentSize(),
         ) {
             item {
