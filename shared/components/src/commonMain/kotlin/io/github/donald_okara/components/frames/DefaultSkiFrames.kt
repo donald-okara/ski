@@ -11,7 +11,7 @@ fun defaultSkiFrames(): SkiFrames {
 
     return SkiFrames(
         snake = { curve, opacity ->
-            rememberFrame(colors.primary, curve) {
+            rememberFrame(colors.primary, curve, opacity) {
                 SnakeFrame(
                     leftToRight = true,
                     curve = curve,

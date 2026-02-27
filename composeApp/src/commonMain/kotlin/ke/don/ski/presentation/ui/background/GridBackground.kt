@@ -14,6 +14,14 @@ fun LeftThirdCircleGrid(
     circleSpacing: Float = 100f,
     circleColor: Color = Color.Gray
 ) {
+    require(circleRadius.isFinite() && circleRadius > 0f) {
+        "circleRadius must be finite and > 0"
+    }
+    val step = (circleRadius * 2f) + circleSpacing
+    require(step.isFinite() && step > 0f) {
+        "circleSpacing is too small; computed step must be > 0"
+    }
+
     Canvas(modifier = modifier.fillMaxSize()) {
         val maxWidth = size.width / 3   // only left 1/3
         val maxHeight = size.height
@@ -23,9 +31,9 @@ fun LeftThirdCircleGrid(
             var x = circleRadius
             while (x + circleRadius <= maxWidth) {
                 drawCircle(color = circleColor, radius = circleRadius, center = Offset(x, y))
-                x += circleRadius * 2 + circleSpacing
+                x += step
             }
-            y += circleRadius * 2 + circleSpacing
+            y += step
         }
     }
 }

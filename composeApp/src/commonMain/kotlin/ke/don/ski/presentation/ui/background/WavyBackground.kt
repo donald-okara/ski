@@ -31,6 +31,13 @@ fun WavyBackground(
         MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
     )
 ) {
+    require(waveLength > 0.dp) { "waveLength must be > 0.dp" }
+    require(waveCount >= 0) { "waveCount must be >= 0" }
+
+    require(waveCount == 0 || colors.isNotEmpty()) {
+        "colors must not be empty when waveCount > 0"
+    }
+
     val density = LocalDensity.current
 
     Canvas(modifier = modifier.fillMaxSize()) {
@@ -84,6 +91,13 @@ fun DiagonalWavyBackground(
         MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
     )
 ) {
+    require(waveLength > 0.dp) { "waveLength must be > 0.dp" }
+    require(waveCount >= 0) { "waveCount must be >= 0" }
+
+    require(waveCount == 0 || colors.isNotEmpty()) {
+        "colors must not be empty when waveCount > 0"
+    }
+
     val density = LocalDensity.current
 
     Canvas(modifier = modifier.fillMaxSize()) {
@@ -141,6 +155,13 @@ fun AnimatedDiagonalWavyBackground(
     ),
     animationDuration: Int = 8000 // milliseconds
 ) {
+    require(waveLength > 0.dp) { "waveLength must be > 0.dp" }
+    require(waveCount >= 0) { "waveCount must be >= 0" }
+
+    require(waveCount == 0 || colors.isNotEmpty()) {
+        "colors must not be empty when waveCount > 0"
+    }
+    
     val density = LocalDensity.current
 
     // Infinite horizontal offset animation
