@@ -36,7 +36,10 @@ fun ToolBar(
 ) {
     Column(
         modifier = modifier
-            .padding(16.dp)
+            .padding(
+                vertical = MaterialTheme.dimens.mediumPadding,
+                horizontal = MaterialTheme.dimens.smallPadding
+            )
             .fillMaxWidth()
     ) {
         Row(
