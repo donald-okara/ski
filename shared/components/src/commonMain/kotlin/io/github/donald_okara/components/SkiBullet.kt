@@ -23,8 +23,8 @@ fun LinearBullet(
 ) {
     Box(
         modifier = modifier
-            .width((height/10).dp)
-            .height(height.dp)
+            .width((height.coerceAtLeast(1) / 10f).dp)
+            .height(height.coerceAtLeast(1).dp)
             .clip(RoundedCornerShape(2.dp))
             .background(
                 brush = Brush.verticalGradient(

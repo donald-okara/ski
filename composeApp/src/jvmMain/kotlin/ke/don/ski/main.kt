@@ -1,5 +1,6 @@
 package ke.don.ski
 
+import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
@@ -17,13 +18,13 @@ import ke.don.ski.presentation.ui.skiPresentationSlides
  */
 fun main() = application {
     val slides = skiPresentationSlides()
-    val navigator = DeckNavigator(slides)
+    val navigator = remember { DeckNavigator(slides) }
 
     // Slides / Audience window
     val windowState = WindowState(
         placement = WindowPlacement.Fullscreen
     )
-    val doubleLaunch = false
+    val doubleLaunch = true
 
     if (doubleLaunch) {
         Window(

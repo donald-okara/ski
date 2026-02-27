@@ -43,7 +43,7 @@ actual fun DeckWebImpl() {
 
                 if (event != null && event.key == "deckState") {
                     val syncState = event.newValue
-                        ?.let { Json.decodeFromString<DeckSyncState>(it) }
+                        ?.let { raw -> runCatching { Json.decodeFromString<DeckSyncState>(raw) }.getOrNull() }
 
                     if (syncState != null && syncState.slideIndex in slides.indices) {
                         navigator.goTo(syncState.slideIndex)

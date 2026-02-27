@@ -32,10 +32,17 @@ import kotlin.time.Duration
 
 @Composable
 fun TimerComponent(
-    modifier: Modifier = Modifier, timerState: TimerState, onIntent: (TimerIntentHandler) -> Unit
+    modifier: Modifier = Modifier,
+    timerState: TimerState,
+    onIntent: (TimerIntentHandler) -> Unit
 ) {
     // Fraction 0f..1f
-    val progress = (timerState.timeLeft / timerState.totalTime).coerceIn(0.toDouble(), 1.toDouble())
+    val progress = if (timerState.totalTime > Duration.ZERO) {
+        (timerState.timeLeft / timerState.totalTime).coerceIn(0.0, 1.0)
+    } else {
+        0.0
+    }
+
     val animatedProgress by animateFloatAsState(
         targetValue = progress.toFloat(),
         animationSpec = tween(durationMillis = 300, easing = LinearOutSlowInEasing)

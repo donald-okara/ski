@@ -47,6 +47,7 @@ class TimerController(
     }
 
     fun onReset() {
+        startTicking()
         _state.update {
             it.copy(
                 timeLeft = it.totalTime,

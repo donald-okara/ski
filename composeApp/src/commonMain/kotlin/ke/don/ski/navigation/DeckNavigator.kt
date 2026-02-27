@@ -14,6 +14,10 @@ import ke.don.ski.domain.SlideConfig
 class DeckNavigator(
     private val slides: List<SlideConfig>
 ) {
+    init {
+        require(slides.isNotEmpty()) { "DeckNavigator requires at least one slide." }
+
+    }
     var direction by mutableStateOf(NavDirection.Forward)
 
     var currentIndex by mutableStateOf(0)
@@ -33,10 +37,9 @@ class DeckNavigator(
     }
 
     fun goTo(index: Int) {
+        if (index !in slides.indices || index == currentIndex) return
         direction = if (index > currentIndex) NavDirection.Forward else NavDirection.Backward
-        if (index in slides.indices) {
-            currentIndex = index
-        }
+        currentIndex = index
     }
 }
 

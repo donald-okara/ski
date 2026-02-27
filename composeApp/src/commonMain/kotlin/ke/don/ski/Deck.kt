@@ -2,6 +2,7 @@ package ke.don.ski
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.values.Values
 import ke.don.ski.domain.DeckMode
@@ -24,7 +25,7 @@ import kotlin.time.Duration.Companion.seconds
 fun Deck(
     mode: DeckMode = DeckMode.Local,
     slides: List<SlideConfig> = skiPresentationSlides(),
-    navigator: DeckNavigator = DeckNavigator(slides),
+    navigator: DeckNavigator = remember { DeckNavigator(slides) },
 ) {
 
     val guidesFrame = defaultSkiFrames().basic.create(Values.cornerRadius, 0.5f)

@@ -20,29 +20,31 @@ import kotlin.time.Duration
 fun skiPresentationSlides(sessionDuration: Duration = SESSION_DURATION): List<SlideConfig> {
     val timerController = rememberTimerController(sessionDuration)
 
-    val slides = generateDeck(
-        timerController = timerController
-    ) {
-        slide(
-            "Introduction",
-            transition = ScreenTransition.Fade,
-            notes = introductionNotes
-        ) {
-            IntroductionScreen()
+    val slides = remember(timerController) {
+            generateDeck(
+                timerController = timerController
+            ) {
+                slide(
+                    "Introduction",
+                    transition = ScreenTransition.Fade,
+                    notes = introductionNotes
+                ) {
+                    IntroductionScreen()
+                }
+                slide("Example Screen") {
+                    ExampleSlide()
+                }
+                slide("Kode Viewer") {
+                    KodeViewerSlide()
+                }
+                slide("Vertical Segments Demo") {
+                    VerticalSegmentsDemo()
+                }
+                slide("Horizontal Segments Demo") {
+                    HorizontalSegmentsDemo()
+                }
+            }
         }
-        slide("Example Screen") {
-            ExampleSlide()
-        }
-        slide("Kode Viewer") {
-            KodeViewerSlide()
-        }
-        slide("Vertical Segments Demo") {
-            VerticalSegmentsDemo()
-        }
-        slide("Horizontal Segments Demo") {
-            HorizontalSegmentsDemo()
-        }
-    }
     return slides
 }
 @Composable
@@ -50,7 +52,7 @@ fun rememberTimerController(
     sessionDuration: Duration
 ): TimerController {
     val scope = rememberCoroutineScope()
-    return remember(scope) {
+    return remember(scope, sessionDuration) {
         TimerController(scope, sessionDuration)
     }
 }
