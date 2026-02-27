@@ -14,6 +14,7 @@ import io.github.donald_okara.components.timer.TimerController
 import io.github.donald_okara.components.values.Values
 import ke.don.design.theme.dimens
 import ke.don.domain.ScreenTransition
+import ke.don.ski.SlidesConstants.FRAME_OPACITY
 import ke.don.ski.presentation.ui.MainFooter
 import ke.don.ski.presentation.ui.MainHeader
 
@@ -23,7 +24,7 @@ data class SlideConfig(
     val frame: @Composable () -> SkiFrame = {
         defaultSkiFrames()
             .snake
-            .create(Values.cornerRadius, 0.5f)
+            .create(Values.cornerRadius, FRAME_OPACITY)
     },
     val transition: ScreenTransition = ScreenTransition.Horizontal,
     val showHeader: Boolean = true,

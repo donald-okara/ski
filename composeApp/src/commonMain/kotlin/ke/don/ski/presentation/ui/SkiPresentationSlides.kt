@@ -3,7 +3,6 @@ package ke.don.ski.presentation.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import io.github.donald_okara.components.timer.TimerController
 import ke.don.demos.ExampleSlide
 import ke.don.demos.HorizontalSegmentsDemo
@@ -11,7 +10,7 @@ import ke.don.demos.KodeViewerSlide
 import ke.don.demos.VerticalSegmentsDemo
 import ke.don.domain.ScreenTransition
 import ke.don.introduction.IntroductionScreen
-import ke.don.ski.SESSION_DURATION
+import ke.don.ski.SlidesConstants.SESSION_DURATION
 import ke.don.ski.domain.SlideConfig
 import ke.don.ski.domain.generateDeck
 import kotlin.time.Duration

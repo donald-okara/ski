@@ -19,6 +19,7 @@ import io.github.donald_okara.components.values.Values
 
 class BasicFrame(
     private val curve: Dp = Values.cornerRadius,
+    val opacity: Float = 0.5f
 ): SkiFrame {
     @Composable
     override fun Render(
@@ -31,6 +32,7 @@ class BasicFrame(
             modifier = modifier,
             curve = curve,
             header = header,
+            opacity = opacity,
             footer = footer,
             content = content
         )
@@ -41,6 +43,7 @@ class BasicFrame(
 fun BasicFrameComponent(
     modifier: Modifier = Modifier,
     curve: Dp = Values.cornerRadius,
+    opacity: Float,
     header: (@Composable () -> Unit)? = null,
     footer: (@Composable () -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit
@@ -54,7 +57,8 @@ fun BasicFrameComponent(
         CurvedBox(
             modifier = Modifier.weight(1f),
             curve = curve,
-            content = content
+            content = content,
+            opacity = opacity
         )
         footer?.invoke()
     }
@@ -64,6 +68,7 @@ fun BasicFrameComponent(
 private fun CurvedBox(
     modifier: Modifier = Modifier,
     thickness: Dp = Values.lineThickness,
+    opacity: Float,
     curve: Dp = Values.cornerRadius,
     content: @Composable BoxScope.() -> Unit
 ){
@@ -72,6 +77,7 @@ private fun CurvedBox(
             width = thickness,
             color = MaterialTheme.colorScheme.onSurface
         ),
+        color = MaterialTheme.colorScheme.surface.copy(opacity),
         shape = RoundedCornerShape(curve),
         modifier = modifier
             .fillMaxSize()

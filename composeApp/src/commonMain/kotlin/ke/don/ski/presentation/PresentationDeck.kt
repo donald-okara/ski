@@ -21,6 +21,7 @@ import ke.don.ski.navigation.DeckNavigator
 fun PresentationDeck(
     slides: List<SlideConfig>,
     navigator: DeckNavigator,
+    background: (@Composable () -> Unit)? = null,
     guidesFrame: SkiFrame
 ) {
     val deckMode = LocalDeckMode.current
@@ -30,6 +31,8 @@ fun PresentationDeck(
         darkTheme = darkMode,
     ) {
         Surface {
+            background?.invoke()
+
             DeckScaffolding(
                 modifier = Modifier
                     .padding(MaterialTheme.dimens.mediumPadding),
