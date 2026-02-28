@@ -10,9 +10,11 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
+            implementation(libs.bundles.preview)
         }
         commonMain.dependencies {
             implementation(libs.bundles.serialization)
+            implementation(compose.components.uiToolingPreview)
         }
     }
 }
