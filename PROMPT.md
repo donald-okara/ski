@@ -1,8 +1,6 @@
-<p align="center">
-  <img src="ski_logo.png" 
-       alt="Ski Logo" 
-       width="180" />
-</p>
+<div align="center">
+    <img src="ski_logo.png" alt="Description" style="border-radius: 16px; max-width: 80%;">
+</div>
 
 # PROMPT.md
 

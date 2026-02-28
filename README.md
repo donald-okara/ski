@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="ski_logo.png" alt="Description" style="border-radius: 16px; max-width: 80%;">
+</div>
+
 <p align="center">
   <img src="ski_logo.png" 
        alt="Ski Logo" 
