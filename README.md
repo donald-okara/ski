@@ -154,5 +154,6 @@ This flag can be toggled in `gradle.properties`.
 ```
 
 ---
+Please check the [suggested prompt](PROMPT.md) to use with your AI tool of choice.
 
 Happy pitching!
