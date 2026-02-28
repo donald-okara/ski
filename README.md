@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="ski_logo.png" alt="Description" style="border-radius: 16px; max-width: 80%;">
+</div>
+
 # Ski: A Compose Multiplatform Presentation Framework
 
 Ski is a programmable presentation framework built on Compose Multiplatform. It allows Kotlin engineers to build slide decks the same way they build UI: with composables, state, and reusable components.

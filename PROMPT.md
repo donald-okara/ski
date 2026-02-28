@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="ski_logo.png" alt="Description" style="border-radius: 16px; max-width: 80%;">
+</div>
+
 # PROMPT.md
 
 This file provides a structured prompt engineers can give to Gemini or any Android Studio AI assistant to generate a slide deck using Ski.
