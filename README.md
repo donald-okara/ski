@@ -54,7 +54,7 @@ Build animated lists, counters, diagrams, and charts using Compose animation API
 Ski launches two synchronized windows:
 
 * **Presenter Panel** — Notes, table of contents, and keyboard shortcuts
-* **Presentation Surface** — Clean output intended for projection
+* **Slides** — Clean output intended for projection
 
 Both windows stay synchronized on the current slide index. Screen-specific animation state is intentionally isolated per window.
 
