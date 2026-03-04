@@ -19,5 +19,6 @@ object Resources {
         val IAN = Res.drawable.ian_dooley
         val IVANA = Res.drawable.ivana_cajina
         val RAFAELLA = Res.drawable.rafaella_mendes
+        val ANDROID_ROBOT = Res.drawable.android_head_3D
     }
 }

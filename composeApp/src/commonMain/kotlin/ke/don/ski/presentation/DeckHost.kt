@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import ke.don.design.theme.dimens
 import ke.don.domain.NavDirection
@@ -33,10 +32,7 @@ fun DeckHost(
     AnimatedContent(
         targetState = navigator.currentIndex,
         transitionSpec = {
-            transitionFor(
-                slide = slide,
-                direction = navigator.direction
-            )
+            navigator.contentTransform()
         },
         modifier = modifier
             .padding(MaterialTheme.dimens.mediumPadding)
@@ -46,12 +42,9 @@ fun DeckHost(
     }
 }
 
-fun transitionFor(
-    slide: SlideConfig,
-    direction: NavDirection,
-): ContentTransform {
+fun DeckNavigator.contentTransform(): ContentTransform {
     val duration = 500
-    return when (slide.transition) {
+    return when (this.currentSlide.transition) {
 
         ScreenTransition.None ->
             EnterTransition.None togetherWith ExitTransition.None

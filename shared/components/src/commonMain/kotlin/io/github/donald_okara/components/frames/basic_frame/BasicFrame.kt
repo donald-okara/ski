@@ -77,8 +77,8 @@ private fun CurvedBox(
             width = thickness,
             color = MaterialTheme.colorScheme.onSurface
         ),
-        color = MaterialTheme.colorScheme.surface.copy(opacity),
         shape = RoundedCornerShape(curve),
+        color = MaterialTheme.colorScheme.surface.copy(opacity),
         modifier = modifier
             .fillMaxSize()
     ){

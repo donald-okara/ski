@@ -14,6 +14,7 @@ import ke.don.ski.domain.SlideConfig
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.presentation.PresentationDeck
 import ke.don.ski.presentation.ui.background.AnimatedDiagonalWavyBackground
+import ke.don.ski.presentation.ui.background.BackgroundHolder
 import ke.don.ski.presentation.ui.background.LeftThirdCircleGrid
 import ke.don.ski.presentation.ui.skiPresentationSlides
 import kotlin.time.Duration.Companion.seconds
@@ -39,7 +40,7 @@ fun Deck(
     ) {
         PresentationDeck(
             guidesFrame = guidesFrame,
-            background = { LeftThirdCircleGrid() },
+            background = { BackgroundHolder { LeftThirdCircleGrid() } },
             navigator = navigator,
             slides = slides
         )

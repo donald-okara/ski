@@ -26,7 +26,8 @@ fun skiPresentationSlides(sessionDuration: Duration = SESSION_DURATION): List<Sl
                 slide(
                     "Introduction",
                     transition = ScreenTransition.Fade,
-                    notes = introductionNotes
+                    notes = introductionNotes,
+                    footer = null
                 ) {
                     IntroductionScreen()
                 }
