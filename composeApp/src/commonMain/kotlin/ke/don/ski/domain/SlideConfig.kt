@@ -21,34 +21,20 @@ import ke.don.ski.presentation.ui.MainHeader
 data class SlideConfig(
     val label: String,
     val notes: List<AnnotatedString>? = null,
-    val frame: @Composable () -> SkiFrame = {
-        defaultSkiFrames()
-            .snake
-            .create(Values.cornerRadius, FRAME_OPACITY)
-    },
     val transition: ScreenTransition = ScreenTransition.Horizontal,
+    val timer: TimerController,
     val showHeader: Boolean = true,
+    val frame: (@Composable () -> SkiFrame)?,
+    val header: (@Composable () -> Unit)? = null,
+    val footer: (@Composable () -> Unit)? = null,
     val content: @Composable () -> Unit,
-    val timer: TimerController
 ) {
     @Composable
     fun Render(modifier: Modifier = Modifier) {
-        val timerState by timer.state.collectAsState()
-        val deckMode = LocalDeckMode.current
-
-        frame().Render(
+        frame?.invoke()?.Render(
             modifier = modifier,
-            header = if (showHeader) {
-                { MainHeader(mode = deckMode) }
-            } else null,
-            footer = {
-                MainFooter(
-                    showTimer = deckMode == DeckMode.Local,
-                    label = label,
-                    timerState = timerState,
-                    onIntent = timer::handleIntent
-                )
-            }
+            header = header,
+            footer = footer
         ) {
             Box(
                 modifier = Modifier
@@ -56,6 +42,6 @@ data class SlideConfig(
                         horizontal = MaterialTheme.dimens.mediumPadding
                     )
             ) { content() }
-        }
+        } ?: content()
     }
 }
