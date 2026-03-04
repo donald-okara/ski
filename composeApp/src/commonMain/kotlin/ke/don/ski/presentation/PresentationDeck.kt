@@ -56,7 +56,7 @@ fun PresentationDeck(
 
                 /**
                  * Uncomment this segment and set footer, header and
-                 * frame params in [ke.don.ski.domain.DeckBuilder] to null to use a shared frame
+                 * frame params in [ke.don.ski.domain.DeckBuilder.slide] to null to use a shared frame
                  */
 
 //                val timerController = rememberTimerController(SESSION_DURATION)
