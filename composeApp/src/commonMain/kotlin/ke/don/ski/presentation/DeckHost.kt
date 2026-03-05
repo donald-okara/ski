@@ -27,8 +27,6 @@ fun DeckHost(
     navigator: DeckNavigator,
     modifier: Modifier = Modifier
 ) {
-    val slide = navigator.currentSlide
-
     AnimatedContent(
         targetState = navigator.currentIndex,
         transitionSpec = {

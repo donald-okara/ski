@@ -16,6 +16,7 @@ import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.values.Values
 import ke.don.design.theme.AppTheme
 import ke.don.design.theme.dimens
+import ke.don.ski.SlidesConstants.FRAME_OPACITY
 import ke.don.ski.SlidesConstants.SESSION_DURATION
 import ke.don.ski.domain.DeckMode
 import ke.don.ski.domain.LocalDeckMode
@@ -71,7 +72,7 @@ fun PresentationDeck(
                     if (shareFrame) {
                         val timerController = rememberTimerController(SESSION_DURATION)
 
-                        val frame = defaultSkiFrames().snake.create(Values.cornerRadius, 0.5f)
+                        val frame = defaultSkiFrames().snake.create(Values.cornerRadius, FRAME_OPACITY)
                         val timerState by timerController.state.collectAsState()
 
                         frame.Render(header = { MainHeader(deckMode) }, footer = {

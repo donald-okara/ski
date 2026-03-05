@@ -49,5 +49,5 @@ fun Deck(
 
 object SlidesConstants {
     val SESSION_DURATION = 10.seconds
-    const val FRAME_OPACITY = 0.7f
+    const val FRAME_OPACITY = Values.FRAME_OPACITY
 }
