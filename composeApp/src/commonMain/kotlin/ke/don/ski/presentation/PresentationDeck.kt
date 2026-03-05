@@ -24,11 +24,27 @@ import ke.don.ski.presentation.ui.MainFooter
 import ke.don.ski.presentation.ui.MainHeader
 import ke.don.ski.presentation.ui.rememberTimerController
 
+
+/**
+ * Composable that serves as the main entry point for the presentation deck.
+ *
+ * It manages the presentation's theme (light/dark mode), applies the base scaffolding,
+ * and handles the navigation between slides.
+ *
+ * @param slides The list of [SlideConfig] objects defining the content of the presentation.
+ * @param shareFrame Flag for whether or not all the slides will be rendered on the same frame
+ * * If set to true, all slides will be rendered on the same frame, otherwise each slide will have its own frame.
+ * * Please set frame, header and footer parameters to null in [ke.don.ski.domain.DeckBuilder.slide] if you intend on using shared frames
+ * @param navigator The [DeckNavigator] used to manage the current slide state and transitions.
+ * @param background An optional composable function to render a custom background behind the deck.
+ * @param guidesFrame The [SkiFrame] used to provide structural layout and visual framing for the deck.
+ */
 @Composable
 fun PresentationDeck(
     slides: List<SlideConfig>,
     navigator: DeckNavigator,
     background: (@Composable () -> Unit)? = null,
+    shareFrame: Boolean = false,
     guidesFrame: SkiFrame
 ) {
     val deckMode = LocalDeckMode.current
@@ -48,37 +64,33 @@ fun PresentationDeck(
                 slides = slides,
                 navigator = navigator
             ) {
-                DeckHost(
-                    slides = slides,
-                    navigator = navigator,
-                )
+                if (shareFrame) {
+                    val timerController = rememberTimerController(SESSION_DURATION)
 
+                    val frame = defaultSkiFrames().snake.create(Values.cornerRadius, 0.5f)
+                    val timerState by timerController.state.collectAsState()
 
-                /**
-                 * Uncomment this segment and set footer, header and
-                 * frame params in [ke.don.ski.domain.DeckBuilder.slide] to null to use a shared frame
-                 */
+                    frame.Render(header = { MainHeader(deckMode) }, footer = {
+                        MainFooter(
+                            showTimer = deckMode == DeckMode.Local,
+                            label = navigator.currentSlide.label,
+                            timerState = timerState,
+                            onIntent = timerController::handleIntent,
+                            transitionSpec = navigator.contentTransform()
 
-//                val timerController = rememberTimerController(SESSION_DURATION)
-//
-//                val frame = defaultSkiFrames().snake.create(Values.cornerRadius, 0.5f)
-//                val timerState by timerController.state.collectAsState()
-//
-//                frame.Render(header = { MainHeader(deckMode) }, footer = {
-//                    MainFooter(
-//                        showTimer = deckMode == DeckMode.Local,
-//                        label = navigator.currentSlide.label,
-//                        timerState = timerState,
-//                        onIntent = timerController::handleIntent,
-//                        transitionSpec = navigator.contentTransform()
-//
-//                    )
-//                }) {
-//                    DeckHost(
-//                        slides = slides,
-//                        navigator = navigator,
-//                    )
-//                }
+                        )
+                    }) {
+                        DeckHost(
+                            slides = slides,
+                            navigator = navigator,
+                        )
+                    }
+                } else {
+                    DeckHost(
+                        slides = slides,
+                        navigator = navigator,
+                    )
+                }
             }
         }
     }

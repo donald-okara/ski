@@ -23,7 +23,6 @@ class DeckBuilder(
         label: String,
         notes: List<AnnotatedString>? = null,
         transition: ScreenTransition = ScreenTransition.Horizontal,
-        showHeader: Boolean = true,
         frame: (@Composable () -> SkiFrame)? = {
             defaultSkiFrames()
                 .snake
@@ -50,7 +49,6 @@ class DeckBuilder(
             label = label,
             notes = notes,
             transition = transition,
-            showHeader = showHeader,
             timer = timerController,
             frame = frame,
             footer = footer,
