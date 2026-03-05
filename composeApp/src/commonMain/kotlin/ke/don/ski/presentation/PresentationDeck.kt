@@ -48,7 +48,8 @@ fun PresentationDeck(
     navigator: DeckNavigator,
     background: (@Composable () -> Unit)? = null,
     shareFrame: Boolean = false,
-    guidesFrame: SkiFrame
+    guidesFrame: SkiFrame,
+    mainFrame: SkiFrame
 ) {
     val deckMode = LocalDeckMode.current
 
@@ -72,10 +73,9 @@ fun PresentationDeck(
                     if (shareFrame) {
                         val timerController = rememberTimerController(SESSION_DURATION)
 
-                        val frame = defaultSkiFrames().snake.create(Values.cornerRadius, FRAME_OPACITY)
                         val timerState by timerController.state.collectAsState()
 
-                        frame.Render(header = { MainHeader(deckMode) }, footer = {
+                        mainFrame.Render(header = { MainHeader(deckMode) }, footer = {
                             MainFooter(
                                 showTimer = deckMode == DeckMode.Local,
                                 label = navigator.currentSlide.label,

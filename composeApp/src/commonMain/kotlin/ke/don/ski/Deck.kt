@@ -33,11 +33,13 @@ fun Deck(
     val animatedFloat by animateFloatAsState(FRAME_OPACITY)
 
     val guidesFrame = defaultSkiFrames().basic.create(Values.cornerRadius, animatedFloat)
+    val mainFrame = defaultSkiFrames().snake.create(Values.cornerRadius, FRAME_OPACITY)
 
     CompositionLocalProvider(
         LocalDeckMode provides mode
     ) {
         PresentationDeck(
+            mainFrame = mainFrame,
             guidesFrame = guidesFrame,
             background = { BackgroundHolder { LeftThirdCircleGrid() } },
             navigator = navigator,
