@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +19,7 @@ import ke.don.design.theme.dimens
 import ke.don.ski.SlidesConstants.SESSION_DURATION
 import ke.don.ski.domain.DeckMode
 import ke.don.ski.domain.LocalDeckMode
+import ke.don.ski.domain.LocalSharesFrameFlag
 import ke.don.ski.domain.SlideConfig
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.presentation.ui.MainFooter
@@ -34,7 +36,7 @@ import ke.don.ski.presentation.ui.rememberTimerController
  * @param slides The list of [SlideConfig] objects defining the content of the presentation.
  * @param shareFrame Flag for whether or not all the slides will be rendered on the same frame
  * * If set to true, all slides will be rendered on the same frame, otherwise each slide will have its own frame.
- * * Please set frame, header and footer parameters to null in [ke.don.ski.domain.DeckBuilder.slide] if you intend on using shared frames
+ * * Please set frame, header, and footer parameters to null in [ke.don.ski.domain.DeckBuilder.slide] if you intend on using shared frames
  * @param navigator The [DeckNavigator] used to manage the current slide state and transitions.
  * @param background An optional composable function to render a custom background behind the deck.
  * @param guidesFrame The [SkiFrame] used to provide structural layout and visual framing for the deck.
@@ -48,48 +50,51 @@ fun PresentationDeck(
     guidesFrame: SkiFrame
 ) {
     val deckMode = LocalDeckMode.current
-    var darkMode by rememberSaveable(deckMode) { mutableStateOf(deckMode == DeckMode.Local) }
 
-    AppTheme(
-        darkTheme = darkMode,
-    ) {
-        Surface {
-            background?.invoke()
+    var isDarkTheme by rememberSaveable(deckMode) { mutableStateOf(deckMode == DeckMode.Local) }
 
-            DeckScaffolding(
-                modifier = Modifier.padding(MaterialTheme.dimens.mediumPadding),
-                switchTheme = { darkMode = !darkMode },
-                darkTheme = darkMode,
-                frame = guidesFrame,
-                slides = slides,
-                navigator = navigator
-            ) {
-                if (shareFrame) {
-                    val timerController = rememberTimerController(SESSION_DURATION)
+    CompositionLocalProvider(LocalSharesFrameFlag provides shareFrame) {
+        AppTheme(
+            darkTheme = isDarkTheme,
+        ) {
+            Surface {
+                background?.invoke()
 
-                    val frame = defaultSkiFrames().snake.create(Values.cornerRadius, 0.5f)
-                    val timerState by timerController.state.collectAsState()
+                DeckScaffolding(
+                    modifier = Modifier.padding(MaterialTheme.dimens.mediumPadding),
+                    switchTheme = { isDarkTheme = !isDarkTheme },
+                    darkTheme = isDarkTheme,
+                    frame = guidesFrame,
+                    slides = slides,
+                    navigator = navigator
+                ) {
+                    if (shareFrame) {
+                        val timerController = rememberTimerController(SESSION_DURATION)
 
-                    frame.Render(header = { MainHeader(deckMode) }, footer = {
-                        MainFooter(
-                            showTimer = deckMode == DeckMode.Local,
-                            label = navigator.currentSlide.label,
-                            timerState = timerState,
-                            onIntent = timerController::handleIntent,
-                            transitionSpec = navigator.contentTransform()
+                        val frame = defaultSkiFrames().snake.create(Values.cornerRadius, 0.5f)
+                        val timerState by timerController.state.collectAsState()
 
-                        )
-                    }) {
+                        frame.Render(header = { MainHeader(deckMode) }, footer = {
+                            MainFooter(
+                                showTimer = deckMode == DeckMode.Local,
+                                label = navigator.currentSlide.label,
+                                timerState = timerState,
+                                onIntent = timerController::handleIntent,
+                                transitionSpec = navigator.contentTransform()
+
+                            )
+                        }) {
+                            DeckHost(
+                                slides = slides,
+                                navigator = navigator,
+                            )
+                        }
+                    } else {
                         DeckHost(
                             slides = slides,
                             navigator = navigator,
                         )
                     }
-                } else {
-                    DeckHost(
-                        slides = slides,
-                        navigator = navigator,
-                    )
                 }
             }
         }

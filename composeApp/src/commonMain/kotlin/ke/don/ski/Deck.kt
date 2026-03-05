@@ -13,7 +13,6 @@ import ke.don.ski.domain.LocalDeckMode
 import ke.don.ski.domain.SlideConfig
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.presentation.PresentationDeck
-import ke.don.ski.presentation.ui.background.AnimatedDiagonalWavyBackground
 import ke.don.ski.presentation.ui.background.BackgroundHolder
 import ke.don.ski.presentation.ui.background.LeftThirdCircleGrid
 import ke.don.ski.presentation.ui.skiPresentationSlides
@@ -42,7 +41,8 @@ fun Deck(
             guidesFrame = guidesFrame,
             background = { BackgroundHolder { LeftThirdCircleGrid() } },
             navigator = navigator,
-            slides = slides
+            slides = slides,
+            shareFrame = true
         )
     }
 }

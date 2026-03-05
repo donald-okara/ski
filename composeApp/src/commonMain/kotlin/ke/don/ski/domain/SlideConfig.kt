@@ -16,7 +16,7 @@ data class SlideConfig(
     val notes: List<AnnotatedString>? = null,
     val transition: ScreenTransition = ScreenTransition.Horizontal,
     val timer: TimerController,
-    val frame: (@Composable () -> SkiFrame)?,
+    val frame: (@Composable () -> SkiFrame?)?,
     val header: (@Composable () -> Unit)? = null,
     val footer: (@Composable () -> Unit)? = null,
     val content: @Composable () -> Unit,

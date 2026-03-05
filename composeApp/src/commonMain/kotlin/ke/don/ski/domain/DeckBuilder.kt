@@ -23,25 +23,36 @@ class DeckBuilder(
         label: String,
         notes: List<AnnotatedString>? = null,
         transition: ScreenTransition = ScreenTransition.Horizontal,
-        frame: (@Composable () -> SkiFrame)? = {
-            defaultSkiFrames()
-                .snake
-                .create(Values.cornerRadius, FRAME_OPACITY)
+        frame: (@Composable () -> SkiFrame?)? = {
+            val isSharedFrame = LocalSharesFrameFlag.current
+            if (isSharedFrame) {
+                null
+            } else {
+                defaultSkiFrames()
+                    .snake
+                    .create(Values.cornerRadius, FRAME_OPACITY)
+            }
         },
         header: (@Composable () -> Unit)? = {
-            val deckMode = LocalDeckMode.current
-            MainHeader(mode = deckMode)
+            val isSharedFrame = LocalSharesFrameFlag.current
+            if (!isSharedFrame) {
+                val deckMode = LocalDeckMode.current
+                MainHeader(mode = deckMode)
+            }
         },
         footer: (@Composable () -> Unit)? = {
-            val timerState by timerController.state.collectAsState()
-            val deckMode = LocalDeckMode.current
+            val isSharedFrame = LocalSharesFrameFlag.current
+            if (!isSharedFrame) {
+                val timerState by timerController.state.collectAsState()
+                val deckMode = LocalDeckMode.current
 
-            MainFooter(
-                showTimer = deckMode == DeckMode.Local,
-                label = label,
-                timerState = timerState,
-                onIntent = timerController::handleIntent
-            )
+                MainFooter(
+                    showTimer = deckMode == DeckMode.Local,
+                    label = label,
+                    timerState = timerState,
+                    onIntent = timerController::handleIntent
+                )
+            }
         },
         content: @Composable () -> Unit
     ) {
