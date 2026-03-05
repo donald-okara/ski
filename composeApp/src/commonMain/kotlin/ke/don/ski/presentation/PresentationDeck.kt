@@ -34,9 +34,9 @@ import ke.don.ski.presentation.ui.rememberTimerController
  * and handles the navigation between slides.
  *
  * @param slides The list of [SlideConfig] objects defining the content of the presentation.
- * @param shareFrame Flag for whether or not all the slides will be rendered on the same frame
+ * @param shareFrame Flag for whether all the slides will be rendered on the same frame
  * * If set to true, all slides will be rendered on the same frame, otherwise each slide will have its own frame.
- * * Please set frame, header, and footer parameters to null in [ke.don.ski.domain.DeckBuilder.slide] if you intend on using shared frames
+ *
  * @param navigator The [DeckNavigator] used to manage the current slide state and transitions.
  * @param background An optional composable function to render a custom background behind the deck.
  * @param guidesFrame The [SkiFrame] used to provide structural layout and visual framing for the deck.
