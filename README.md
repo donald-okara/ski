@@ -121,6 +121,8 @@ val guidesFrame = defaultSkiFrames()
 
 Frames are composable-driven and can be extended or replaced.
 
+> Hint: To use a shared frame instead of having each slide define its own, see [PresentationDeck.kt](composeApp/src/commonMain/kotlin/ke/don/ski/presentation/PresentationDeck.kt)
+
 ---
 
 ## Using Shared Components

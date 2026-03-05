@@ -13,7 +13,7 @@ import ke.don.ski.domain.LocalDeckMode
 import ke.don.ski.domain.SlideConfig
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.presentation.PresentationDeck
-import ke.don.ski.presentation.ui.background.AnimatedDiagonalWavyBackground
+import ke.don.ski.presentation.ui.background.BackgroundHolder
 import ke.don.ski.presentation.ui.background.LeftThirdCircleGrid
 import ke.don.ski.presentation.ui.skiPresentationSlides
 import kotlin.time.Duration.Companion.seconds
@@ -33,20 +33,23 @@ fun Deck(
     val animatedFloat by animateFloatAsState(FRAME_OPACITY)
 
     val guidesFrame = defaultSkiFrames().basic.create(Values.cornerRadius, animatedFloat)
+    val mainFrame = defaultSkiFrames().snake.create(Values.cornerRadius, FRAME_OPACITY)
 
     CompositionLocalProvider(
         LocalDeckMode provides mode
     ) {
         PresentationDeck(
+            mainFrame = mainFrame,
             guidesFrame = guidesFrame,
-            background = { LeftThirdCircleGrid() },
+            background = { BackgroundHolder { LeftThirdCircleGrid() } },
             navigator = navigator,
-            slides = slides
+            slides = slides,
+            shareFrame = true
         )
     }
 }
 
 object SlidesConstants {
     val SESSION_DURATION = 10.seconds
-    const val FRAME_OPACITY = 0.7f
+    const val FRAME_OPACITY = Values.FRAME_OPACITY
 }

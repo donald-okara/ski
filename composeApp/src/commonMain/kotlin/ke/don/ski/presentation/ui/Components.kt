@@ -1,18 +1,16 @@
 package ke.don.ski.presentation.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,40 +39,47 @@ fun MainFooter(
     showTimer: Boolean,
     label: String,
     timerState: TimerState,
-    onIntent: (TimerIntentHandler) -> Unit
-){
+    onIntent: (TimerIntentHandler) -> Unit,
+    transitionSpec: ContentTransform? = null
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier
-            .animateContentSize()
+        modifier = modifier.animateContentSize()
     ) {
         if (showTimer) {
             TimerComponent(
-                timerState = timerState,
-                onIntent = onIntent
+                timerState = timerState, onIntent = onIntent
             )
         }
 
         Row(
-            modifier = Modifier
-                .animateContentSize()
-                .background(
+            modifier = Modifier.animateContentSize().background(
                     MaterialTheme.colorScheme.surfaceVariant,
                     RoundedCornerShape(Values.cornerRadius)
-                )
-                .padding(horizontal = 14.dp, vertical = 10.dp),
+                ).padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             DotBullet()
 
             Spacer(Modifier.width(10.dp))
 
-            Text(
-                label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            val labelText: @Composable (String) -> Unit = { text ->
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            transitionSpec?.let {
+                AnimatedContent(
+                    targetState = label, transitionSpec = {
+                        transitionSpec
+                    }) { text ->
+                    labelText(text)
+                }
+            } ?: labelText(label)
         }
     }
 }
@@ -90,22 +95,17 @@ fun MainFooter(
  */
 @Composable
 fun MainHeader(
+    mode: DeckMode,
     modifier: Modifier = Modifier,
-    mode: DeckMode
-){
+) {
     Row(
-        modifier = modifier
-            .animateContentSize()
-            .background(
-                MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(Values.cornerRadius)
-            )
-            .border(
+        modifier = modifier.animateContentSize().background(
+                MaterialTheme.colorScheme.surface, RoundedCornerShape(Values.cornerRadius)
+            ).border(
                 Values.lineThickness,
                 MaterialTheme.colorScheme.onSurface,
                 RoundedCornerShape(Values.cornerRadius)
-            )
-            .padding(horizontal = 20.dp, vertical = 16.dp),
+            ).padding(horizontal = 20.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Accent rail
@@ -115,9 +115,7 @@ fun MainHeader(
 
         Column {
             Text(
-                "Ski",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold
+                "Ski", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold
             )
             Text(
                 if (mode == DeckMode.Presenter) "Presentation Demo" else "Presenter's panel (Do not present)",

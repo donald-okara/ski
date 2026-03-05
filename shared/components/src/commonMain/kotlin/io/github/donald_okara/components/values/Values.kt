@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.dp
 object Values {
     val cornerRadius = 32.dp
     val lineThickness = 4.dp
+    const val FRAME_OPACITY = 0.5f
 
     object Dimens {
         val tinyPadding = 4.dp
