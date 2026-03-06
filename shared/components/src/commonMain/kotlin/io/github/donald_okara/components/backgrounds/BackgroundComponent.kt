@@ -28,8 +28,8 @@ class BackgroundComponent(
             modifier = Modifier.fillMaxSize(),
         ) {
             when(pattern){
-                is Pattern.AnimatedDiagonalWavyBackground -> AnimatedDiagonalWavyCanvas(pattern)
-                else -> PatternComponent(pattern = pattern)
+                is Pattern.AnimatedDiagonalWavyBackground -> AnimatedDiagonalWavyCanvas(pattern, modifier = Modifier.fillMaxSize())
+                else -> PatternComponent(pattern = pattern, modifier = Modifier.fillMaxSize())
             }
 
             decoratorImage?.let {

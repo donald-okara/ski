@@ -14,14 +14,14 @@ import io.github.donald_okara.components.values.Values
  *
  * Example usage:
  * ```kotlin
- * val frame = FrameBuilder
+ * val frame = FrameBuilder()
  *     .setCurve(Values.Curve.Medium)
  *     .setOpacity(Values.Opacity.High)
  *     .setFrame(SkiFrameFactory.Snake)
  *     .build()
  * ```
  */
-object FrameBuilder {
+class FrameBuilder {
     private var curve: Dp? = null
     private var opacity: Float? = null
 

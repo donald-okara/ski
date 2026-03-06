@@ -39,15 +39,15 @@ fun Deck(
 ) {
     val animatedFloat by animateFloatAsState(FRAME_OPACITY)
 
-    val guidesFrame = FrameBuilder
+    val guidesFrame = FrameBuilder()
         .setOpacity(animatedFloat)
         .build()
 
-    val mainFrame = FrameBuilder
+    val mainFrame = FrameBuilder()
         .setOpacity(animatedFloat)
         .build()
 
-    val background = BackgroundBuilder
+    val background = BackgroundBuilder()
         .setDecoratorImage(DecoratorImage(Resources.Images.ANDROID_ROBOT))
         .setPattern(pattern = Pattern.AnimatedDiagonalWavyBackground(colors = PatternDefaults.colors))
         .build()

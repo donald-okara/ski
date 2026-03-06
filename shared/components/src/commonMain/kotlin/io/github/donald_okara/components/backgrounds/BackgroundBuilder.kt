@@ -7,21 +7,21 @@ import io.github.donald_okara.components.backgrounds.pattern.Pattern
 import io.github.donald_okara.components.backgrounds.pattern.PatternDefaults
 
 /**
- * A builder object for creating and configuring [Background] instances.
+ * A builder class for creating and configuring [Background] instances.
  *
  * This builder follows a fluent API pattern, allowing for the customization of the
  * background's pattern, decorative image, and the alignment of that image.
  *
  * Example usage:
  * ```kotlin
- * val background = BackgroundBuilder
+ * val background = BackgroundBuilder()
  *     .setPattern(Pattern.Dots())
  *     .setDecoratorImage(DecoratorImage.Vector(Icons.Default.Star))
  *     .setAlignment(Alignment.Center)
  *     .build()
  * ```
  */
-object BackgroundBuilder {
+class BackgroundBuilder {
     private var pattern: Pattern? = null
     private var decoratorImage: DecoratorImage? = null
     private var alignment: Alignment = Alignment.BottomEnd
@@ -65,7 +65,9 @@ object BackgroundBuilder {
         val finalPattern = pattern ?: Pattern.DiagonalWavy(colors = colors)
         val finalDecoratorImage = decoratorImage
 
-        return rememberBackground {
+        return rememberBackground(
+            finalPattern, finalDecoratorImage, alignment
+        ) {
             BackgroundComponent(
                 pattern = finalPattern,
                 decoratorImage = finalDecoratorImage,

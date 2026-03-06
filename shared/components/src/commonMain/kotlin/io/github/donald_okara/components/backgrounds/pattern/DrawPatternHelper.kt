@@ -31,7 +31,7 @@ fun PatternComponent(
 fun AnimatedDiagonalWavyCanvas(pattern: Pattern.AnimatedDiagonalWavyBackground, modifier: Modifier = Modifier) {
     val offsets = pattern.offsets().map { it.value }
 
-    Canvas(modifier = modifier.fillMaxSize()) {
+    Canvas(modifier = modifier) {
         drawAnimatedDiagonalWavy(pattern, offsets)
     }
 }
