@@ -16,7 +16,7 @@ import io.github.donald_okara.components.backgrounds.pattern.PatternDefaults
  * ```kotlin
  * val background = BackgroundBuilder()
  *     .setPattern(Pattern.Wavy)
- *     .setDecoratorImage(DecoratorImage(image: Resources.ANDROID))
+ *     .setDecoratorImage(DecoratorImage(image: Res.drawable.android))
  *     .setAlignment(Alignment.Center)
  *     .build()
  * ```
