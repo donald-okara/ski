@@ -15,8 +15,8 @@ import io.github.donald_okara.components.backgrounds.pattern.PatternDefaults
  * Example usage:
  * ```kotlin
  * val background = BackgroundBuilder()
- *     .setPattern(Pattern.Dots())
- *     .setDecoratorImage(DecoratorImage.Vector(Icons.Default.Star))
+ *     .setPattern(Pattern.Wavy)
+ *     .setDecoratorImage(DecoratorImage(image: Resources.ANDROID))
  *     .setAlignment(Alignment.Center)
  *     .build()
  * ```

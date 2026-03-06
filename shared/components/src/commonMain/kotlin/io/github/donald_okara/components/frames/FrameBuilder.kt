@@ -15,8 +15,8 @@ import io.github.donald_okara.components.values.Values
  * Example usage:
  * ```kotlin
  * val frame = FrameBuilder()
- *     .setCurve(Values.Curve.Medium)
- *     .setOpacity(Values.Opacity.High)
+ *     .setCurve(Values.cornerRadius)
+ *     .setOpacity(Values.FRAME_OPACITY)
  *     .setFrame { snake }
  *     .build()
  * ```
