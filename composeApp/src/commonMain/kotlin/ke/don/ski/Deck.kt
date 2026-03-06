@@ -1,9 +1,7 @@
 package ke.don.ski
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import io.github.donald_okara.components.backgrounds.BackgroundBuilder
 import io.github.donald_okara.components.backgrounds.decorator_image.DecoratorImage
@@ -19,8 +17,6 @@ import ke.don.ski.domain.LocalDeckMode
 import ke.don.ski.domain.SlideConfig
 import ke.don.ski.navigation.DeckNavigator
 import ke.don.ski.presentation.PresentationDeck
-import ke.don.ski.presentation.ui.background.BackgroundHolder
-import ke.don.ski.presentation.ui.background.LeftThirdCircleGrid
 import ke.don.ski.presentation.ui.skiPresentationSlides
 import kotlin.time.Duration.Companion.seconds
 
@@ -37,14 +33,14 @@ fun Deck(
     slides: List<SlideConfig> = skiPresentationSlides(),
     navigator: DeckNavigator = remember { DeckNavigator(slides) },
 ) {
-    val animatedFloat by animateFloatAsState(FRAME_OPACITY)
 
     val guidesFrame = FrameBuilder()
-        .setOpacity(animatedFloat)
+        .setFrame { basic }
+        .setOpacity(FRAME_OPACITY)
         .build()
 
     val mainFrame = FrameBuilder()
-        .setOpacity(animatedFloat)
+        .setOpacity(FRAME_OPACITY)
         .build()
 
     val background = BackgroundBuilder()

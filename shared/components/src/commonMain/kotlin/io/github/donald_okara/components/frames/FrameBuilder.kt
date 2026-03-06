@@ -47,10 +47,14 @@ class FrameBuilder {
     /**
      * Sets the frame factory implementation to be used when building the frame.
      *
-     * @param frame The [SkiFrameFactory] instance responsible for creating the frame.
+     * @param selector The lambda to select a frame factory from the [defaultSkiFrames].
      * @return The [FrameBuilder] instance for chaining.
      */
-    fun setFrame(frame: SkiFrameFactory) = apply { this.frame = frame }
+    fun setFrame(selector: @Composable SkiFrames.() -> SkiFrameFactory) = apply {
+        this.frame = SkiFrameFactory { dp, f ->
+            selector(defaultSkiFrames()).create(dp, f)
+        }
+    }
 
     /**
      * Constructs and returns a [SkiFrame] based on the current configuration.
