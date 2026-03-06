@@ -40,6 +40,7 @@ fun Deck(
         .build()
 
     val mainFrame = FrameBuilder()
+        .setFrame { snake }
         .setOpacity(FRAME_OPACITY)
         .build()
 

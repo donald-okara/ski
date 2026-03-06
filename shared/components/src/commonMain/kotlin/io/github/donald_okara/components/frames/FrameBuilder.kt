@@ -17,7 +17,7 @@ import io.github.donald_okara.components.values.Values
  * val frame = FrameBuilder()
  *     .setCurve(Values.Curve.Medium)
  *     .setOpacity(Values.Opacity.High)
- *     .setFrame(SkiFrameFactory.Snake)
+ *     .setFrame { snake }
  *     .build()
  * ```
  */
