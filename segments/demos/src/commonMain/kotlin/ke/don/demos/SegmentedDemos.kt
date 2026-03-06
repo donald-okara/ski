@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import io.github.donald_okara.components.frames.FrameBuilder
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.layout.HorizontallySegmentedScreen
 import io.github.donald_okara.components.layout.VerticallySegmentedScreen
@@ -45,7 +46,9 @@ fun SegmentItem(
     modifier: Modifier = Modifier,
     index: Int
 ) {
-    val frame = defaultSkiFrames().basic.create(Values.cornerRadius, opacity = FRAME_OPACITY)
+    val frame = FrameBuilder()
+        .setFrame { basic }
+        .build()
 
     frame.Render(
         modifier = modifier
