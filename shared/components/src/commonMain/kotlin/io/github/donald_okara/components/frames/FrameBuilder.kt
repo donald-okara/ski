@@ -11,6 +11,15 @@ import io.github.donald_okara.components.values.Values
  * This builder follows a fluent API pattern, allowing for the customization of
  * visual properties such as corner radius (curve) and opacity, as well as the
  * selection of specific frame factory implementations.
+ *
+ * Example usage:
+ * ```kotlin
+ * val frame = FrameBuilder
+ *     .setCurve(Values.Curve.Medium)
+ *     .setOpacity(Values.Opacity.High)
+ *     .setFrame(SkiFrameFactory.Snake)
+ *     .build()
+ * ```
  */
 object FrameBuilder {
     private var curve: Dp? = null
