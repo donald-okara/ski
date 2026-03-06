@@ -91,32 +91,39 @@ Trigger state changes. Show layout behavior. Animate transitions. Walk through U
 `PresentationDeck` is the runtime engine that manages slide lifecycle, navigation, theming, and background rendering.
 
 ```kotlin
-@Composable
-fun PresentationDeck(
-    slides: List<SlideConfig>,
-    navigator: DeckNavigator,
-    background: (@Composable () -> Unit)? = null,
-    guidesFrame: SkiFrame
+PresentationDeck(
+    mainFrame = mainFrame,
+    guidesFrame = guidesFrame,
+    background = background,
+    navigator = navigator,
+    slides = slides,
+    shareFrame = true
 )
 ```
 
-* **slides** — Ordered `SlideConfig` definitions
-* **navigator** — Controls slide navigation and index state
-* **background** — Optional composable rendered behind slide content
-* **guidesFrame** — A `SkiFrame` overlay applied consistently across slides
+* **slides** - Ordered `SlideConfig` definitions
+* **navigator** - Controls slide navigation and index state
+* **background** - Optional composable rendered behind slide content
+* **guidesFrame** - A `SkiFrame` overlay applied consistently across slides
+* **mainFrame** - A `SkiFrame` overlay applied to each slide
+* **shareFrame** - A flag to determine whether the whole presentation is rendered on a singular frame
 
+---
+
+### SlideConfig 
 ---
 
 ### Frames
 
 Frames provide decorative overlays or structural borders around slide content.
 
-Built-in frames are available via `defaultSkiFrames()`.
+Built-in frames are available via `FrameBuilder()`.
 
 ```kotlin
-val guidesFrame = defaultSkiFrames()
-    .basic
-    .create(cornerRadius, opacity)
+val mainFrame = FrameBuilder()
+    .setFrame { snake }
+    .setOpacity(FRAME_OPACITY)
+    .build()
 ```
 
 Frames are composable-driven and can be extended or replaced.
