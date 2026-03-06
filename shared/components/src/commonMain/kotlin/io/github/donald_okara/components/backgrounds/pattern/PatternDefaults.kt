@@ -39,3 +39,22 @@ fun Pattern.AnimatedDiagonalWavyBackground.offsets(): List<State<Float>>{
         )
     }
 }
+
+@Composable
+fun Pattern.AnimatedDiagonalWavyBackground.offset(): State<Float> {
+    val infiniteTransition = rememberInfiniteTransition()
+    val density = LocalDensity.current
+    val waveLengthPx = with(density) { waveLength.toPx() }
+
+    return infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = waveLengthPx,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = animationDuration,
+                easing = LinearEasing
+            ),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+}

@@ -29,9 +29,9 @@ fun PatternComponent(
 
 @Composable
 fun AnimatedDiagonalWavyCanvas(pattern: Pattern.AnimatedDiagonalWavyBackground, modifier: Modifier = Modifier) {
-    val offsets = pattern.offsets().map { it.value }
+    val offset = pattern.offset()
 
     Canvas(modifier = modifier) {
-        drawAnimatedDiagonalWavy(pattern, offsets)
+        drawAnimatedDiagonalWavy(pattern, offset.value)
     }
 }
