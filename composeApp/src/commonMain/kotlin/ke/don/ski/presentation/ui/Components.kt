@@ -39,6 +39,7 @@ fun MainFooter(
     showTimer: Boolean,
     label: String,
     timerState: TimerState,
+    opacity: Float = Values.FRAME_OPACITY,
     onIntent: (TimerIntentHandler) -> Unit,
     transitionSpec: ContentTransform? = null
 ) {
@@ -54,8 +55,12 @@ fun MainFooter(
         }
 
         Row(
-            modifier = Modifier.animateContentSize().background(
-                    MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier
+                .animateContentSize()
+                .background(
+                    MaterialTheme.colorScheme.surfaceVariant.copy(
+                        alpha = opacity
+                    ),
                     RoundedCornerShape(Values.cornerRadius)
                 ).padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -97,10 +102,13 @@ fun MainFooter(
 fun MainHeader(
     mode: DeckMode,
     modifier: Modifier = Modifier,
+    opacity: Float = Values.FRAME_OPACITY,
 ) {
     Row(
-        modifier = modifier.animateContentSize().background(
-                MaterialTheme.colorScheme.surface, RoundedCornerShape(Values.cornerRadius)
+        modifier = modifier
+            .animateContentSize()
+            .background(
+                MaterialTheme.colorScheme.surface.copy(alpha = opacity), RoundedCornerShape(Values.cornerRadius)
             ).border(
                 Values.lineThickness,
                 MaterialTheme.colorScheme.onSurface,

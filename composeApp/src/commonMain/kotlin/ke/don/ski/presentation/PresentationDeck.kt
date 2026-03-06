@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import io.github.donald_okara.components.backgrounds.Background
 import io.github.donald_okara.components.frames.SkiFrame
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.values.Values
@@ -46,7 +47,7 @@ import ke.don.ski.presentation.ui.rememberTimerController
 fun PresentationDeck(
     slides: List<SlideConfig>,
     navigator: DeckNavigator,
-    background: (@Composable () -> Unit)? = null,
+    background: Background? = null,
     shareFrame: Boolean = false,
     guidesFrame: SkiFrame,
     mainFrame: SkiFrame
@@ -60,7 +61,7 @@ fun PresentationDeck(
             darkTheme = isDarkTheme,
         ) {
             Surface {
-                background?.invoke()
+                background?.Render()
 
                 DeckScaffolding(
                     modifier = Modifier.padding(MaterialTheme.dimens.mediumPadding),

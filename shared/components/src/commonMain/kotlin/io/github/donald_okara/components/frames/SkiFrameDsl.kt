@@ -35,5 +35,6 @@ fun interface SkiFrameFactory {
 class SkiFrames(
     val snake: SkiFrameFactory,
     val basic: SkiFrameFactory,
+
     // future frames go here
 )

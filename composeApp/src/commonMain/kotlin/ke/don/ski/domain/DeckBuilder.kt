@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.AnnotatedString
+import io.github.donald_okara.components.frames.FrameBuilder
 import io.github.donald_okara.components.frames.SkiFrame
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.timer.TimerController
@@ -28,9 +29,9 @@ class DeckBuilder(
             if (isSharedFrame) {
                 null
             } else {
-                defaultSkiFrames()
-                    .snake
-                    .create(Values.cornerRadius, FRAME_OPACITY)
+                FrameBuilder()
+                    .setFrame { snake }
+                    .build()
             }
         },
         header: (@Composable () -> Unit)? = {
