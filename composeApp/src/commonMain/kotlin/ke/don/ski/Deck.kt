@@ -5,8 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import io.github.donald_okara.components.backgrounds.BackgroundBuilder
+import io.github.donald_okara.components.backgrounds.decorator_image.DecoratorImage
+import io.github.donald_okara.components.backgrounds.pattern.Pattern
+import io.github.donald_okara.components.backgrounds.pattern.PatternDefaults
+import io.github.donald_okara.components.frames.FrameBuilder
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.values.Values
+import ke.don.resources.Resources
 import ke.don.ski.SlidesConstants.FRAME_OPACITY
 import ke.don.ski.domain.DeckMode
 import ke.don.ski.domain.LocalDeckMode
@@ -23,6 +29,7 @@ import kotlin.time.Duration.Companion.seconds
  *
  * @param navigator Navigator responsible for slide/screen navigation within the deck.
  * @param mode Mode to use for the deck (for example local or remote presentation behavior).
+ * @param slides List of slide configurations to display in the deck.
  */
 @Composable
 fun Deck(
@@ -32,8 +39,19 @@ fun Deck(
 ) {
     val animatedFloat by animateFloatAsState(FRAME_OPACITY)
 
-    val guidesFrame = defaultSkiFrames().basic.create(Values.cornerRadius, animatedFloat)
-    val mainFrame = defaultSkiFrames().snake.create(Values.cornerRadius, FRAME_OPACITY)
+    val guidesFrame = FrameBuilder
+        .setOpacity(animatedFloat)
+        .build()
+
+    val mainFrame = FrameBuilder
+        .setOpacity(animatedFloat)
+        .build()
+
+    val background = BackgroundBuilder
+        .setDecoratorImage(DecoratorImage(Resources.Images.ANDROID_ROBOT))
+        .setPattern(pattern = Pattern.AnimatedDiagonalWavyBackground(colors = PatternDefaults.colors))
+        .build()
+
 
     CompositionLocalProvider(
         LocalDeckMode provides mode
@@ -41,7 +59,7 @@ fun Deck(
         PresentationDeck(
             mainFrame = mainFrame,
             guidesFrame = guidesFrame,
-            background = { BackgroundHolder { LeftThirdCircleGrid() } },
+            background = background,
             navigator = navigator,
             slides = slides,
             shareFrame = true
