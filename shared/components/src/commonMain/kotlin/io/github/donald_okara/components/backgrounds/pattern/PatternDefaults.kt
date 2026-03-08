@@ -15,16 +15,19 @@ import androidx.compose.ui.platform.LocalDensity
 object PatternDefaults {
 
     val colors: List<Color>
-        @Composable get() = listOf(
-            MaterialTheme.colorScheme.primary,
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-        )
+        @Composable get() = MaterialTheme.colorScheme.primary.getColors()
 }
 
+fun Color.getColors(): List<Color> = listOf(
+    this,
+    this.copy(alpha = 0.5f),
+    this.copy(alpha = 0.2f),
+    this.copy(alpha = 0.1f),
+)
+
+
 @Composable
-fun Pattern.AnimatedDiagonalWavyBackground.offsets(): List<State<Float>>{
+fun Pattern.AnimatedDiagonalWavyBackground.offsets(): List<State<Float>> {
     val infiniteTransition = rememberInfiniteTransition()
     val density = LocalDensity.current
 
@@ -38,4 +41,23 @@ fun Pattern.AnimatedDiagonalWavyBackground.offsets(): List<State<Float>>{
             )
         )
     }
+}
+
+@Composable
+fun Pattern.AnimatedDiagonalWavyBackground.offset(): State<Float> {
+    val infiniteTransition = rememberInfiniteTransition()
+    val density = LocalDensity.current
+    val waveLengthPx = with(density) { waveLength.toPx() }
+
+    return infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = waveLengthPx,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = animationDuration,
+                easing = LinearEasing
+            ),
+            repeatMode = RepeatMode.Restart
+        )
+    )
 }
