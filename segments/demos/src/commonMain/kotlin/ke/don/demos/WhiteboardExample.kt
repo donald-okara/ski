@@ -11,8 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.github.donald_okara.components.guides.code_viewer.FocusKotlinViewer
-import io.github.donald_okara.components.guides.code_viewer.KotlinCodeViewerCard
 import io.github.donald_okara.components.guides.whiteboard.FocusWhiteboard
 import io.github.donald_okara.components.guides.whiteboard.WhiteboardCard
 
