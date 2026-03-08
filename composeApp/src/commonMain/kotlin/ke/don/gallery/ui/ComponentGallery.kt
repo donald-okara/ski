@@ -1,7 +1,6 @@
 package ke.don.gallery.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,7 +27,6 @@ import ke.don.ski.presentation.ui.ToolBar
 fun ComponentGallery(components: List<ComponentExample>) {
     var selectedComponent by remember { mutableStateOf<ComponentExample?>(null) }
     var darkTheme by remember { mutableStateOf(false) }
-    var showToolbar by remember { mutableStateOf(true) }
 
     AppTheme(
         darkTheme = darkTheme,
@@ -39,9 +37,6 @@ fun ComponentGallery(components: List<ComponentExample>) {
                 .onKeyEvent { event ->
                     if (event.type == KeyEventType.KeyDown && event.key == Key.D) {
                         darkTheme = !darkTheme
-                        true
-                    } else if (event.type == KeyEventType.KeyUp && event.key == Key.T) {
-                        showToolbar = !showToolbar
                         true
                     } else {
                         false
@@ -55,17 +50,13 @@ fun ComponentGallery(components: List<ComponentExample>) {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AnimatedVisibility(
-                    visible = showToolbar
-                ){
-                    ToolBar(
-                        darkTheme = darkTheme,
-                        title = { Text("Ski Gallery") },
-                        onThemeClick = {
-                            darkTheme = !darkTheme
-                        }
-                    )
-                }
+                ToolBar(
+                    darkTheme = darkTheme,
+                    title = { Text("Ski Gallery") },
+                    onThemeClick = {
+                        darkTheme = !darkTheme
+                    }
+                )
                 AnimatedContent(targetState = selectedComponent) { component ->
                     when {
                         component == null -> ComponentList(components) {
