@@ -1,4 +1,4 @@
-package io.github.donald_okara.components.guides.code_viewer
+package io.github.donald_okara.components.guides.whiteboard
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
@@ -7,15 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.LightMode
-import androidx.compose.material.icons.outlined.UnfoldLess
-import androidx.compose.material.icons.outlined.UnfoldMore
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,22 +29,23 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import io.github.donald_okara.components.guides.code_viewer.scaled
 import io.github.donald_okara.components.icon.IconButtonToken
 import io.github.donald_okara.components.values.Values
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FocusKotlinViewer(
-    modifier: Modifier = Modifier,
-    title: String = "Preview",
+fun FocusWhiteboard(
+    value: String,
+    onValueChange: (String) -> Unit,
     onDismiss: () -> Unit,
     darkTheme: Boolean,
     toggleTheme: () -> Unit,
-    code: () -> String
+    modifier: Modifier = Modifier,
+    title: String = "Whiteboard"
 ) {
     /* ---------- scale ---------- */
 
@@ -61,14 +58,10 @@ fun FocusKotlinViewer(
         label = "text-scale"
     )
 
-    /* ---------- folding ---------- */
-
-    var foldLambdas by rememberSaveable { mutableStateOf(false) }
-
     /* ---------- theme ---------- */
 
-    val targetTheme = if (darkTheme) CodeThemes.Dark else CodeThemes.Light
-    val colorScheme = animateCodeTheme(targetTheme)
+    val targetTheme = if (darkTheme) WhiteboardThemes.Dark else WhiteboardThemes.Light
+    val colorScheme = animateWhiteboardTheme(targetTheme)
 
     /* ---------- dialog ---------- */
 
@@ -109,18 +102,6 @@ fun FocusKotlinViewer(
                         }
                     },
                     actions = {
-
-                        IconButtonToken(
-                            icon = if (foldLambdas)
-                                Icons.Outlined.UnfoldMore
-                            else
-                                Icons.Outlined.UnfoldLess,
-                            contentDescription = "Fold Lambdas",
-                            accentColor = colorScheme.normal,
-                            sizeInt = 36,
-                            onClick = { foldLambdas = !foldLambdas }
-                        )
-
                         IconButtonToken(
                             icon = if (darkTheme)
                                 Icons.Outlined.LightMode
@@ -169,30 +150,16 @@ fun FocusKotlinViewer(
                 Box(
                     modifier = modifier
                         .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
                         .padding(16.dp)
                 ) {
-                    KotlinCodeViewer(
-                        code = code(),
-                        codeTheme = colorScheme,
-                        textScale = animatedScale,
-                        shouldFoldLambdas = foldLambdas,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(Values.Dimens.mediumPadding)
+                    WhiteboardComponent(
+                        value = value,
+                        onValueChange = onValueChange,
+                        whiteboardTheme = colorScheme,
+                        textScale = animatedScale
                     )
                 }
             }
         }
     }
 }
-
-
-
-fun TextStyle.scaled(scale: Float): TextStyle {
-    return copy(
-        fontSize = fontSize * scale,
-        lineHeight = lineHeight * scale
-    )
-}
-

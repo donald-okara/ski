@@ -8,6 +8,7 @@ import ke.don.demos.ExampleSlide
 import ke.don.demos.HorizontalSegmentsDemo
 import ke.don.demos.KodeViewerSlide
 import ke.don.demos.VerticalSegmentsDemo
+import ke.don.demos.WhiteboardSlide
 import ke.don.domain.ScreenTransition
 import ke.don.introduction.IntroductionScreen
 import ke.don.ski.SlidesConstants.SESSION_DURATION
@@ -36,6 +37,9 @@ fun skiPresentationSlides(sessionDuration: Duration = SESSION_DURATION): List<Sl
                 }
                 slide("Kode Viewer") {
                     KodeViewerSlide()
+                }
+                slide("Whiteboard Screen"){
+                    WhiteboardSlide()
                 }
                 slide("Vertical Segments Demo") {
                     VerticalSegmentsDemo()
