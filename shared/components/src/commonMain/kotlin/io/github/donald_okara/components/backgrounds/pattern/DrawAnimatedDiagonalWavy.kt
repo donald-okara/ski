@@ -31,27 +31,25 @@ fun DrawScope.drawAnimatedDiagonalWavy(
 
         val color = pattern.colors[i % pattern.colors.size]
         val yOffsetBase =
-            centerY + (i - pattern.waveCount / 2f) * waveHeightPx * 1.5f
+            centerY + (i - (pattern.waveCount - 1) / 2f) * waveHeightPx * 1.5f
 
         var x = -waveLengthPx - normalizedOffset
-        path.moveTo(x, yOffsetBase)
+        path.moveTo(x, yOffsetBase + x * pattern.diagonalSlope)
 
         while (x < size.width + waveLengthPx) {
 
-            val yOffset = yOffsetBase + x * pattern.diagonalSlope
-
             path.quadraticTo(
                 x + waveLengthPx / 4,
-                yOffset - waveHeightPx,
+                yOffsetBase + (x + waveLengthPx / 4) * pattern.diagonalSlope - waveHeightPx,
                 x + waveLengthPx / 2,
-                yOffset
+                yOffsetBase + (x + waveLengthPx / 2) * pattern.diagonalSlope
             )
 
             path.quadraticTo(
                 x + 3 * waveLengthPx / 4,
-                yOffset + waveHeightPx,
+                yOffsetBase + (x + 3 * waveLengthPx / 4) * pattern.diagonalSlope + waveHeightPx,
                 x + waveLengthPx,
-                yOffset
+                yOffsetBase + (x + waveLengthPx) * pattern.diagonalSlope
             )
 
             x += waveLengthPx

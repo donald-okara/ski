@@ -6,6 +6,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.DrawScope
 
+@Composable
+fun PatternComponent(
+    pattern: Pattern,
+    modifier: Modifier = Modifier
+) {
+    when (pattern) {
+        is Pattern.AnimatedDiagonalWavyBackground ->
+            AnimatedDiagonalWavyCanvas(pattern = pattern, modifier = modifier)
+
+        else ->
+            Canvas(modifier = modifier) {
+                drawPattern(pattern)
+            }
+    }
+}
+
 fun DrawScope.drawPattern(pattern: Pattern) {
     when (pattern) {
 
@@ -18,17 +34,10 @@ fun DrawScope.drawPattern(pattern: Pattern) {
 }
 
 @Composable
-fun PatternComponent(
-    pattern: Pattern,
+fun AnimatedDiagonalWavyCanvas(
+    pattern: Pattern.AnimatedDiagonalWavyBackground,
     modifier: Modifier = Modifier
 ) {
-    Canvas(modifier = modifier) {
-        drawPattern(pattern)
-    }
-}
-
-@Composable
-fun AnimatedDiagonalWavyCanvas(pattern: Pattern.AnimatedDiagonalWavyBackground, modifier: Modifier = Modifier) {
     val offset = pattern.offset()
 
     Canvas(modifier = modifier) {
