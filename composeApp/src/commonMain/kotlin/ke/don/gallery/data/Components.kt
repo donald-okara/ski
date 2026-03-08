@@ -3,12 +3,15 @@ package ke.don.gallery.data
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import ke.don.gallery.domain.ComponentType
 import ke.don.gallery.domain.componentGallery
+import kotlin.reflect.typeOf
 
 val gallery = componentGallery {
     component(
         label = "Primary Button",
         rendered = { Button(onClick = {}){Text("Click me")} },
+        type = ComponentType.Layout,
         description = "Used for primary actions in a screen",
         dos = listOf("Use for main actions", "Keep text short"),
         donts = listOf("Don't use for secondary actions")

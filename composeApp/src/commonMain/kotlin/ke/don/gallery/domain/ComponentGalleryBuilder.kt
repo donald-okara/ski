@@ -11,6 +11,7 @@ class ComponentGalleryBuilder {
     fun component(
         label: String,
         rendered: @Composable () -> Unit,
+        type: ComponentType? = null,
         focusable: (@Composable (() -> Unit))? = null,
         description: String = "",
         dos: List<String> = emptyList(),
@@ -19,6 +20,7 @@ class ComponentGalleryBuilder {
         _components += ComponentExample(
             label = label,
             rendered = rendered,
+            type = type,
             focusable = focusable,
             description = description,
             dos = dos,
