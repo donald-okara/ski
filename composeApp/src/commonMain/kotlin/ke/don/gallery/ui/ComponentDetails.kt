@@ -8,12 +8,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -46,7 +49,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import ke.don.gallery.domain.ComponentExample
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalLayoutApi::class
+)
 @Composable
 fun ComponentDetail(
     component: ComponentExample,
@@ -79,49 +86,84 @@ fun ComponentDetail(
             },
         ) { padding ->
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
-                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-                    .padding(padding).padding(16.dp)
+                verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.Top),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize().
+                verticalScroll(rememberScrollState())
+                    .padding(padding)
+                    .padding(16.dp)
             ) {
                 ShowcaseContainer {
                     component.rendered()
                 }
 
-                Spacer(Modifier.padding(8.dp))
-
                 DescriptionSegment(component)
 
-
-                if (component.dos.isNotEmpty()) {
-                    DosComponent(component, isDos = true)
-                }
-                Spacer(Modifier.height(8.dp))
-                if (component.donts.isNotEmpty()) {
-                    DosComponent(component, isDos = false)
-                }
-                if (component.focusable != null) {
-                    Spacer(Modifier.height(12.dp))
-                    Text("Focusable Example", style = MaterialTheme.typography.titleMedium)
-                    Box(
-                        contentAlignment = Alignment.Center,
+                if (component.dos.isNotEmpty() || component.donts.isNotEmpty()) {
+                    FlowRow(
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .fillMaxWidth(widthFraction),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        ShowcaseContainer(blur = true) {
-                            component.rendered()
+                        if (component.dos.isNotEmpty()) {
+                            DosComponent(
+                                component = component,
+                                isDos = true,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .widthIn(min = 300.dp)
+                            )
                         }
 
-                        Button(
-                            onClick = { showFocusable = true },
-                        ) {
-                            Text("Show Focusable")
+                        if (component.donts.isNotEmpty()) {
+                            DosComponent(
+                                component = component,
+                                isDos = false,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .widthIn(min = 300.dp)
+                            )
                         }
                     }
-                    PathComponent(
-                        path = component.focusable.path,
-                    )
                 }
 
-            }
+                if (component.focusable != null) {
+                    Section(
+                        title = "Focus Mode"
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center
+                            ) {
 
+                                ShowcaseContainer(blur = true) {
+                                    component.rendered()
+                                }
+
+                                Surface(
+                                    shape = RoundedCornerShape(50),
+                                    tonalElevation = 6.dp
+                                ) {
+                                    Button(
+                                        onClick = { showFocusable = true }
+                                    ) {
+                                        Text("Open Focus Mode")
+                                    }
+                                }
+                            }
+
+                            PathComponent(
+                                path = component.focusable.path,
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -133,12 +175,8 @@ fun ComponentDetail(
 
 @Composable
 private fun DescriptionSegment(component: ComponentExample) {
-    Column(
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-    ) {
-        Text("Description", style = MaterialTheme.typography.headlineMedium)
-        Text(component.description, modifier = Modifier.padding(vertical = 8.dp))
+    Section("Description") {
+        Text(component.description)
     }
 }
 
@@ -149,8 +187,10 @@ private fun DosComponent(
     hueColor: Color = if (isDos) Color.Green else MaterialTheme.colorScheme.error,
     modifier: Modifier = Modifier
 ) {
+    val items = if (isDos) component.dos else component.donts
+
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         shape = RoundedCornerShape(16.dp),
         color = hueColor.copy(alpha = 0.1f).compositeOver(
             MaterialTheme.colorScheme.surfaceVariant
@@ -183,13 +223,13 @@ private fun DosComponent(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            if (isDos) {
-                component.dos.forEach { doItem ->
-                    Text("• $doItem", modifier = Modifier.padding(start = 8.dp, top = 4.dp))
-                }
-            } else {
-                component.donts.forEach { dontItem ->
-                    Text("• $dontItem", modifier = Modifier.padding(start = 8.dp, top = 4.dp))
+            items.forEach { item ->
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text("•")
+                    Text(item)
                 }
             }
         }
@@ -202,23 +242,67 @@ private fun ShowcaseContainer(
     blur: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val blurModifier = if (blur) {
-        Modifier.blur(8.dp)
-    } else {
-        Modifier
-    }
+    val blurModifier = if (blur) Modifier.blur(8.dp) else Modifier
 
     Box(
-        modifier = modifier.fillMaxWidth().height(240.dp).background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxWidth()
+    ){
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(widthFraction)
+                .height(240.dp),
+            shape = RoundedCornerShape(20.dp),
+            tonalElevation = 2.dp,
+            border = BorderStroke(
+                1.dp,
+                MaterialTheme.colorScheme.outlineVariant
+            ),
+            color = MaterialTheme.colorScheme.surfaceVariant
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.18f),
+                                Color.Transparent
+                            )
+                        )
                     )
-                ), shape = RoundedCornerShape(16.dp)
-            ).then(blurModifier), contentAlignment = Alignment.Center
+                    .then(blurModifier),
+                contentAlignment = Alignment.Center
+            ) {
+                content()
+            }
+        }
+    }
+}
+
+@Composable
+private fun Section(
+    title: String,
+    content: @Composable () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        content()
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp), // indentation
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            content()
+        }
     }
 }
 
@@ -246,3 +330,5 @@ fun PathComponent(
         text = text, modifier = modifier, style = MaterialTheme.typography.bodyMedium
     )
 }
+
+const val widthFraction = 0.7f
