@@ -1,5 +1,8 @@
 package ke.don.gallery.ui
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +20,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,68 +46,86 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import ke.don.gallery.domain.ComponentExample
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun ComponentDetail(component: ComponentExample, onBack: () -> Unit) {
+fun ComponentDetail(
+    component: ComponentExample,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    onBack: () -> Unit
+) {
     var showFocusable by remember {
         mutableStateOf(false)
     }
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text(component.label) }, navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                }
-            })
-        },
-    ) { padding ->
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
-            modifier = Modifier.fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(padding)
-                .padding(16.dp)
-        ) {
-            ShowcaseContainer {
-                component.rendered()
-            }
-
-            Spacer(Modifier.padding(8.dp))
-
-            DescriptionSegment(component)
-
-
-            DosComponent(component, isDos = true)
-
-            Spacer(Modifier.height(8.dp))
-            DosComponent(component, isDos = false)
-
-            if(component.focusable != null) {
-                Spacer(Modifier.height(12.dp))
-                Text("Focusable Example", style = MaterialTheme.typography.titleMedium)
-                Box(
-                    contentAlignment = Alignment.Center,
-                ){
-                    ShowcaseContainer(blur = true) {
-                        component.rendered()
+    with(sharedTransitionScope) {
+        Scaffold(
+            modifier = Modifier.sharedBounds(
+                sharedContentState = rememberSharedContentState(key = "container-${component.label}"),
+                animatedVisibilityScope = animatedContentScope
+            ),
+            topBar = {
+                TopAppBar(title = {
+                    Text(
+                        text = component.label, modifier = Modifier.sharedBounds(
+                            sharedContentState = rememberSharedContentState(key = "text-${component.label}"),
+                            animatedVisibilityScope = animatedContentScope
+                        )
+                    )
+                }, navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-
-                    Button(
-                        onClick = { showFocusable = true },
-                    ){
-                        Text("Show Focusable")
-                    }
+                })
+            },
+        ) { padding ->
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                    .padding(padding).padding(16.dp)
+            ) {
+                ShowcaseContainer {
+                    component.rendered()
                 }
-                PathComponent(
-                    path = component.focusable.path,
-                )
+
+                Spacer(Modifier.padding(8.dp))
+
+                DescriptionSegment(component)
+
+
+                if (component.dos.isNotEmpty()) {
+                    DosComponent(component, isDos = true)
+                }
+                Spacer(Modifier.height(8.dp))
+                if (component.donts.isNotEmpty()) {
+                    DosComponent(component, isDos = false)
+                }
+                if (component.focusable != null) {
+                    Spacer(Modifier.height(12.dp))
+                    Text("Focusable Example", style = MaterialTheme.typography.titleMedium)
+                    Box(
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        ShowcaseContainer(blur = true) {
+                            component.rendered()
+                        }
+
+                        Button(
+                            onClick = { showFocusable = true },
+                        ) {
+                            Text("Show Focusable")
+                        }
+                    }
+                    PathComponent(
+                        path = component.focusable.path,
+                    )
+                }
+
             }
 
         }
-
     }
 
-    if (showFocusable && component.focusable != null){
+    if (showFocusable && component.focusable != null) {
         component.focusable.rendered { showFocusable = false }
     }
 
@@ -144,9 +164,7 @@ private fun DosComponent(
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier = Modifier.fillMaxWidth().padding(16.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
@@ -191,20 +209,14 @@ private fun ShowcaseContainer(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(240.dp)
-            .background(
-            brush = Brush.verticalGradient(
-                colors = listOf(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
-                )
-            ),
-            shape = RoundedCornerShape(16.dp)
-        )
-            .then(blurModifier),
-        contentAlignment = Alignment.Center
+        modifier = modifier.fillMaxWidth().height(240.dp).background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
+                    )
+                ), shape = RoundedCornerShape(16.dp)
+            ).then(blurModifier), contentAlignment = Alignment.Center
     ) {
         content()
     }
@@ -212,8 +224,8 @@ private fun ShowcaseContainer(
 
 @Composable
 fun PathComponent(
-    modifier: Modifier = Modifier,
-    path: String) {
+    modifier: Modifier = Modifier, path: String
+) {
     val text = buildAnnotatedString {
         append("Path: ")
 
@@ -231,8 +243,6 @@ fun PathComponent(
 
     // Example of displaying it
     Text(
-        text = text,
-        modifier = modifier,
-        style = MaterialTheme.typography.bodyMedium
+        text = text, modifier = modifier, style = MaterialTheme.typography.bodyMedium
     )
 }

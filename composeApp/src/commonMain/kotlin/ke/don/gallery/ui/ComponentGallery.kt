@@ -1,6 +1,8 @@
 package ke.don.gallery.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +25,7 @@ import ke.don.design.theme.AppTheme
 import ke.don.gallery.domain.ComponentExample
 import ke.don.ski.presentation.ui.ToolBar
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun ComponentGallery(components: List<ComponentExample>) {
     var selectedComponent by remember { mutableStateOf<ComponentExample?>(null) }
@@ -57,14 +60,24 @@ fun ComponentGallery(components: List<ComponentExample>) {
                         darkTheme = !darkTheme
                     }
                 )
-                AnimatedContent(targetState = selectedComponent) { component ->
-                    when {
-                        component == null -> ComponentList(components) {
-                            selectedComponent = it
-                        }
+                SharedTransitionLayout{
+                    AnimatedContent(targetState = selectedComponent) { component ->
+                        when {
+                            component == null -> ComponentList(
+                                components = components,
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this@AnimatedContent
+                            ) {
+                                selectedComponent = it
+                            }
 
-                        else -> ComponentDetail(component) {
-                            selectedComponent = null
+                            else -> ComponentDetail(
+                                component = component,
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this@AnimatedContent
+                            ) {
+                                selectedComponent = null
+                            }
                         }
                     }
                 }

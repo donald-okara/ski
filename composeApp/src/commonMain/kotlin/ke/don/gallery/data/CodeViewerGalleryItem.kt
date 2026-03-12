@@ -16,9 +16,19 @@ import ke.don.gallery.domain.Focusable
 fun ComponentGalleryBuilder.codeViewer() {
     component(
         label = "Code Viewer",
+        description = "The Code Viewer allows you to present Kotlin code directly in your UI without relying on screenshots." +
+                "\n\n" +
+                "It is designed for documentation, tutorials, and developer guides where readable code examples are required." +
+                "\n\n" +
+                "Features:" +
+                "\n- Built-in light and dark theme switching" +
+                "\n- Expandable focus mode for better readability" +
+                "\n- Adjustable text size in focus mode" +
+                "\n- Collapsible code blocks for long snippets",
         type = ComponentType.Guide,
         rendered = rendered(),
-
+        dos = dos,
+        donts = donts,
         focusable = Focusable(
             path = "components.guides.code_viewer.FocusKotlinViewer",
             rendered = focusableRendered()
@@ -66,3 +76,15 @@ private fun focusableRendered(
         code
     }
 }
+
+val dos = listOf(
+    "Use the Code Viewer to present code examples in documentation and guides",
+    "Keep snippets short and focused on the concept being demonstrated",
+    "Include comments in the snippet to explain important sections",
+    "Verify code before publishing, as the viewer does not provide editing or compilation feedback",
+    "Split large examples across multiple viewers to maintain readability"
+)
+
+val donts = listOf(
+    "Avoid placing large or full-file implementations in a single viewer"
+)

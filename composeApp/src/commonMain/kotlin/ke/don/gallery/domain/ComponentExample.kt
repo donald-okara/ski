@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 
 data class ComponentExample(
     val label: String,
+    val description: String,
     val rendered: @Composable () -> Unit,
     val type: ComponentType? = null,
     val focusable: Focusable? = null,
-    val description: String = "",
     val dos: List<String> = emptyList(),
     val donts: List<String> = emptyList()
 )

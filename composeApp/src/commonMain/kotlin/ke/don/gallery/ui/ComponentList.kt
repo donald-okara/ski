@@ -1,7 +1,9 @@
 package ke.don.gallery.ui
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,14 +14,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -29,17 +29,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.github.donald_okara.components.values.Values
 import ke.don.gallery.domain.ComponentExample
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun ComponentList(
     components: List<ComponentExample>,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onComponentClick: (ComponentExample) -> Unit = {}
 ) {
+    val sortedComponents = components.sortedBy { it.label }
+
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
         modifier = Modifier
@@ -47,43 +50,51 @@ fun ComponentList(
             .padding(8.dp),
         contentPadding = PaddingValues(8.dp)
     ) {
-        items(components) { component ->
+        items(sortedComponents) { component ->
             ComponentItem(
                 component = component,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
                 onComponentClick = onComponentClick
             )
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun ComponentItem(
     component: ComponentExample,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onComponentClick: (ComponentExample) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    OutlinedCard(
-        modifier = modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        onClick = { onComponentClick(component) },
-        shape = RoundedCornerShape(16.dp),
-    ) {
-        Column {
+    with(sharedTransitionScope) {
+        OutlinedCard(
+            modifier = modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(key = "container-${component.label}"),
+                    animatedVisibilityScope = animatedContentScope
+                ),
+            onClick = { onComponentClick(component) },
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column {
+                // Preview area
+                MintBox(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp)
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    component.rendered()
+                }
 
-            // Preview area
-            MintBox(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                component.rendered()
-            }
-
-            // Shaded metadata section
-            Box{
+                // Shaded metadata section
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceVariant
                 ) {
@@ -102,9 +113,34 @@ private fun ComponentItem(
                             Text(
                                 text = component.label,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.primary
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.sharedBounds(
+                                    sharedContentState = rememberSharedContentState(key = "text-${component.label}"),
+                                    animatedVisibilityScope = animatedContentScope
+                                )
                             )
 
+                            Box(
+                                modifier = Modifier.height(50.dp)
+                            ){
+                                if (component.type != null) {
+                                    AssistChip(
+                                        modifier = modifier,
+                                        onClick = {},
+                                        border = BorderStroke(
+                                            width = 1.dp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        ),
+                                        label = {
+                                            Text(
+                                                text = component.type.name,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    )
+                                }
+                            }
                         }
 
                         if (component.description.isNotEmpty()) {
@@ -118,28 +154,6 @@ private fun ComponentItem(
                         }
                     }
                 }
-
-                if (component.type != null) {
-                    AssistChip(
-                        modifier = modifier
-                            .padding(8.dp)
-                            .align(Alignment.TopEnd),
-                        onClick = {},
-                        border = BorderStroke(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        ),
-                        label = {
-                            Text(
-                                text = component.type.name,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                            )
-                        }
-                    )
-                }
-
             }
         }
     }
