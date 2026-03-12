@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -85,7 +89,7 @@ private fun DescriptionSegment(component: ComponentExample) {
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
     ){
-        Text("Description", style = MaterialTheme.typography.titleMedium)
+        Text("Description", style = MaterialTheme.typography.headlineMedium)
         Text(component.description, modifier = Modifier.padding(vertical = 8.dp))
     }
 }
@@ -116,11 +120,22 @@ private fun DosComponent(
                 .fillMaxWidth()
                 .padding(16.dp)
             ) {
-            Text(
-                text = if (isDos) "Dos" else "Don'ts", style = MaterialTheme.typography.titleMedium
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Icon(
+                    imageVector = if (isDos) Icons.Default.Check else Icons.Rounded.Close,
+                    contentDescription =if (isDos)"Dos" else "Don'ts",
+                    tint = hueColor
+                )
+                Text(
+                    text = if (isDos) "Dos" else "Don'ts",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
 
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             if (isDos) {
                 component.dos.forEach { doItem ->
