@@ -6,10 +6,15 @@ data class ComponentExample(
     val label: String,
     val rendered: @Composable () -> Unit,
     val type: ComponentType? = null,
-    val focusable: (@Composable (() -> Unit))? = null,
+    val focusable: Focusable? = null,
     val description: String = "",
     val dos: List<String> = emptyList(),
     val donts: List<String> = emptyList()
+)
+
+data class Focusable(
+    val path: String,
+    val rendered: @Composable (onDismiss: () -> Unit) -> Unit
 )
 
 enum class ComponentType{

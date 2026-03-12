@@ -12,7 +12,7 @@ class ComponentGalleryBuilder {
         label: String,
         rendered: @Composable () -> Unit,
         type: ComponentType? = null,
-        focusable: (@Composable (() -> Unit))? = null,
+        focusable: Focusable? = null,
         description: String = "",
         dos: List<String> = emptyList(),
         donts: List<String> = emptyList()

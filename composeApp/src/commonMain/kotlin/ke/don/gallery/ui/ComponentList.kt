@@ -75,7 +75,7 @@ private fun ComponentItem(
             MintBox(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(110.dp)
+                    .height(160.dp)
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {

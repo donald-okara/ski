@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,17 +29,27 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import ke.don.gallery.domain.ComponentExample
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComponentDetail(component: ComponentExample, onBack: () -> Unit) {
+    var showFocusable by remember {
+        mutableStateOf(false)
+    }
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(component.label) }, navigationIcon = {
@@ -55,7 +66,9 @@ fun ComponentDetail(component: ComponentExample, onBack: () -> Unit) {
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            ShowcaseContainer(component)
+            ShowcaseContainer {
+                component.rendered()
+            }
 
             Spacer(Modifier.padding(8.dp))
 
@@ -67,20 +80,35 @@ fun ComponentDetail(component: ComponentExample, onBack: () -> Unit) {
             Spacer(Modifier.height(8.dp))
             DosComponent(component, isDos = false)
 
-            component.focusable?.let {
+            if(component.focusable != null) {
                 Spacer(Modifier.height(12.dp))
                 Text("Focusable Example", style = MaterialTheme.typography.titleMedium)
                 Box(
-                    modifier = Modifier.fillMaxWidth().height(80.dp)
-                        .background(Color.LightGray.copy(alpha = 0.1f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    it()
+                    contentAlignment = Alignment.Center,
+                ){
+                    ShowcaseContainer(blur = true) {
+                        component.rendered()
+                    }
+
+                    Button(
+                        onClick = { showFocusable = true },
+                    ){
+                        Text("Show Focusable")
+                    }
                 }
+                PathComponent(
+                    path = component.focusable.path,
+                )
             }
 
         }
+
     }
+
+    if (showFocusable && component.focusable != null){
+        component.focusable.rendered { showFocusable = false }
+    }
+
 }
 
 @Composable
@@ -88,7 +116,7 @@ private fun DescriptionSegment(component: ComponentExample) {
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-    ){
+    ) {
         Text("Description", style = MaterialTheme.typography.headlineMedium)
         Text(component.description, modifier = Modifier.padding(vertical = 8.dp))
     }
@@ -115,18 +143,18 @@ private fun DosComponent(
     ) {
         Column(
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy( 8.dp, Alignment.Top ),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-            ) {
+        ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Icon(
                     imageVector = if (isDos) Icons.Default.Check else Icons.Rounded.Close,
-                    contentDescription =if (isDos)"Dos" else "Don'ts",
+                    contentDescription = if (isDos) "Dos" else "Don'ts",
                     tint = hueColor
                 )
                 Text(
@@ -152,18 +180,59 @@ private fun DosComponent(
 
 @Composable
 private fun ShowcaseContainer(
-    component: ComponentExample, modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    blur: Boolean = false,
+    content: @Composable () -> Unit,
 ) {
-    Box(
-        modifier = modifier.fillMaxWidth().height(120.dp).background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
-                    )
-                ), shape = RoundedCornerShape(16.dp)
-            ), contentAlignment = Alignment.Center
-    ) {
-        component.rendered()
+    val blurModifier = if (blur) {
+        Modifier.blur(8.dp)
+    } else {
+        Modifier
     }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(240.dp)
+            .background(
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
+                )
+            ),
+            shape = RoundedCornerShape(16.dp)
+        )
+            .then(blurModifier),
+        contentAlignment = Alignment.Center
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun PathComponent(
+    modifier: Modifier = Modifier,
+    path: String) {
+    val text = buildAnnotatedString {
+        append("Path: ")
+
+        // Push styles for the path portion
+        pushStyle(
+            SpanStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                color = MaterialTheme.colorScheme.primary, // Highlight color
+                background = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f) // Background highlight
+            )
+        )
+        append(path)
+        pop() // Remove the styles
+    }
+
+    // Example of displaying it
+    Text(
+        text = text,
+        modifier = modifier,
+        style = MaterialTheme.typography.bodyMedium
+    )
 }
