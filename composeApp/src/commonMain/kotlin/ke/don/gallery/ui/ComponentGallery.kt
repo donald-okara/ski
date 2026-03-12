@@ -26,7 +26,7 @@ import ke.don.ski.presentation.ui.ToolBar
 @Composable
 fun ComponentGallery(components: List<ComponentExample>) {
     var selectedComponent by remember { mutableStateOf<ComponentExample?>(null) }
-    var darkTheme by remember { mutableStateOf(false) }
+    var darkTheme by remember { mutableStateOf(true) }
 
     AppTheme(
         darkTheme = darkTheme,
