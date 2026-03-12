@@ -77,9 +77,7 @@ val dos = listOf(
     "Split large examples across multiple viewers to maintain readability"
 )
 
-val description = "The Code Viewer allows you to present Kotlin code directly in your UI without relying on screenshots." +
-        "\n\n" +
-        "It is designed for documentation, tutorials, and developer guides where readable code examples are required." +
+val description = "The Code Viewer allows you to present Kotlin code directly in your UI without relying on screenshots. It is designed for documentation, tutorials, and developer guides where readable code examples are required." +
         "\n\n" +
         "Features:" +
         "\n- Built-in light and dark theme switching" +
