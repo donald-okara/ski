@@ -16,15 +16,7 @@ import ke.don.gallery.domain.Focusable
 fun ComponentGalleryBuilder.codeViewer() {
     component(
         label = "Code Viewer",
-        description = "The Code Viewer allows you to present Kotlin code directly in your UI without relying on screenshots." +
-                "\n\n" +
-                "It is designed for documentation, tutorials, and developer guides where readable code examples are required." +
-                "\n\n" +
-                "Features:" +
-                "\n- Built-in light and dark theme switching" +
-                "\n- Expandable focus mode for better readability" +
-                "\n- Adjustable text size in focus mode" +
-                "\n- Collapsible code blocks for long snippets",
+        description = description,
         type = ComponentType.Guide,
         rendered = rendered(),
         dos = dos,
@@ -35,19 +27,6 @@ fun ComponentGalleryBuilder.codeViewer() {
         )
     )
 }
-
-const val code =  "@Composable\n" +
-        "fun KodeViewerSlide(\n" +
-        "    modifier: Modifier = Modifier\n" +
-        ") {\n" +
-        "    Box(\n" +
-        "        modifier = modifier\n" +
-        "            .fillMaxSize(),\n" +
-        "        contentAlignment = Alignment.CenterStart\n" +
-        "    ) {\n" +
-        "        KotlinCodeViewer()\n" +
-        "    }\n" +
-        "}"
 
 private fun rendered(
     modifier: Modifier = Modifier
@@ -77,6 +56,19 @@ private fun focusableRendered(
     }
 }
 
+const val code =  "@Composable\n" +
+        "fun KodeViewerSlide(\n" +
+        "    modifier: Modifier = Modifier\n" +
+        ") {\n" +
+        "    Box(\n" +
+        "        modifier = modifier\n" +
+        "            .fillMaxSize(),\n" +
+        "        contentAlignment = Alignment.CenterStart\n" +
+        "    ) {\n" +
+        "        KotlinCodeViewer()\n" +
+        "    }\n" +
+        "}"
+
 val dos = listOf(
     "Use the Code Viewer to present code examples in documentation and guides",
     "Keep snippets short and focused on the concept being demonstrated",
@@ -84,6 +76,16 @@ val dos = listOf(
     "Verify code before publishing, as the viewer does not provide editing or compilation feedback",
     "Split large examples across multiple viewers to maintain readability"
 )
+
+val description = "The Code Viewer allows you to present Kotlin code directly in your UI without relying on screenshots." +
+        "\n\n" +
+        "It is designed for documentation, tutorials, and developer guides where readable code examples are required." +
+        "\n\n" +
+        "Features:" +
+        "\n- Built-in light and dark theme switching" +
+        "\n- Expandable focus mode for better readability" +
+        "\n- Adjustable text size in focus mode" +
+        "\n- Collapsible code blocks for long snippets"
 
 val donts = listOf(
     "Avoid placing large or full-file implementations in a single viewer"
