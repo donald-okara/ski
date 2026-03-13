@@ -257,8 +257,8 @@ val unspecified_scheme = ColorFamily(
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    isGallery: Boolean = false,
     enableExpressive: Boolean = true,
+    isGallery: Boolean = false,
     content: @Composable() () -> Unit,
 ) {
     val colorScheme = when {

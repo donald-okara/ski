@@ -38,6 +38,8 @@ tasks.register<JavaExec>("runGallery") {
     description = "Run the component gallery"
 
     mainClass.set("ke.don.gallery.GalleryMainKt")
-    val jvmTarget = kotlin.targets.getByName("jvm") as KotlinJvmTarget
-    classpath(jvmTarget.compilations.getByName("main").runtimeDependencyFiles)
+    val jvmTarget = kotlin.targets.withType<KotlinJvmTarget>().single()
+    val mainCompilation = jvmTarget.compilations.getByName("main")
+    classpath(mainCompilation.output.allOutputs, mainCompilation.runtimeDependencyFiles)
+
 }

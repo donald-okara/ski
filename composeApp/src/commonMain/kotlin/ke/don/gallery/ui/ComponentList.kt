@@ -102,7 +102,7 @@ fun ComponentList(
                         .weight(1f),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items(filteredComponents) { component ->
+                    items(components) { component ->
                         ComponentItem(
                             component = component,
                             sharedTransitionScope = sharedTransitionScope,
