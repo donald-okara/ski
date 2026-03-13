@@ -4,10 +4,12 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateBounds
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -95,20 +98,23 @@ fun ComponentList(
                     }
                 )
             } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(300.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(components) { component ->
-                        ComponentItem(
-                            component = component,
-                            sharedTransitionScope = sharedTransitionScope,
-                            animatedContentScope = animatedContentScope,
-                            onComponentClick = onComponentClick
-                        )
+                LookaheadScope{
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(300.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        items(components) { component ->
+                            ComponentItem(
+                                modifier = Modifier.animateBounds(this@LookaheadScope),
+                                component = component,
+                                sharedTransitionScope = sharedTransitionScope,
+                                animatedContentScope = animatedContentScope,
+                                onComponentClick = onComponentClick
+                            )
+                        }
                     }
                 }
             }
@@ -273,9 +279,9 @@ private fun ComponentItem(
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Row(
+                        FlowRow(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
+                            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
