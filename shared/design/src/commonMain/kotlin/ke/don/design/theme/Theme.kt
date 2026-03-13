@@ -258,6 +258,7 @@ val unspecified_scheme = ColorFamily(
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     enableExpressive: Boolean = true,
+    isGallery: Boolean = false,
     content: @Composable() () -> Unit,
 ) {
     val colorScheme = when {
@@ -270,7 +271,7 @@ fun AppTheme(
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
         motionScheme = motionScheme,
-        typography = AppTypography,
+        typography = if (isGallery) GalleryTypography else AppTypography,
         content = content
     )
 }
