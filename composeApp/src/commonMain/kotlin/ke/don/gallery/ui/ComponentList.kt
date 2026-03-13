@@ -13,7 +13,9 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,14 +25,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
@@ -62,7 +63,7 @@ import androidx.compose.ui.unit.dp
 import ke.don.gallery.domain.ComponentExample
 import ke.don.gallery.domain.ComponentType
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ComponentList(
     components: List<ComponentExample>,
@@ -73,10 +74,7 @@ fun ComponentList(
     var searchQuery by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf<ComponentType?>(null) }
     
-    val gridState = rememberLazyGridState()
-    val showHeader by remember {
-        derivedStateOf { gridState.firstVisibleItemIndex == 0 }
-    }
+    val scrollState = rememberScrollState()
 
     val filteredComponents = components
         .filter { component ->
@@ -87,61 +85,74 @@ fun ComponentList(
         }
         .sortedBy { it.label }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        // Ski Overview Header - Hidden when scrolling down
-        AnimatedVisibility(
-            visible = showHeader,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val screenWidth = maxWidth
+        val spacing = 16.dp
+        val minWidth = 300.dp
+        
+        // Calculate the number of columns and the actual item width manually to avoid FlowRow weight intrinsics
+        val columns = ((screenWidth - spacing) / (minWidth + spacing)).toInt().coerceAtLeast(1)
+        val itemWidth = (screenWidth - spacing * (columns + 1)) / columns
+
+        Column(
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .fillMaxSize()
         ) {
+            // Ski Overview Header - Hidden when scrolling down
             SkiHeader(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp))
-        }
 
-        // Sticky Filter Header
-        FilterRow(
-            searchQuery = searchQuery,
-            selectedType = selectedType,
-            onQueryChange = { searchQuery = it },
-            onTypeChange = { selectedType = it }
-        )
-
-        AnimatedContent(
-            targetState = filteredComponents,
-            label = "component-list"
-        ){ components ->
-            if (components.isEmpty()) {
-                EmptyState(
-                    query = searchQuery,
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                // Sticky Filter Header
+                FilterRow(
+                    searchQuery = searchQuery,
                     selectedType = selectedType,
-                    onClearFilters = {
-                        searchQuery = ""
-                        selectedType = null
-                    }
+                    onQueryChange = { searchQuery = it },
+                    onTypeChange = { selectedType = it }
                 )
-            } else {
-                LookaheadScope{
-                    LazyVerticalGrid(
-                        state = gridState,
-                        columns = GridCells.Adaptive(300.dp),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .weight(1f),
-                        contentPadding = PaddingValues(16.dp)
-                    ) {
-                        items(components) { component ->
-                            ComponentItem(
-                                modifier = Modifier.animateBounds(this@LookaheadScope),
-                                component = component,
-                                sharedTransitionScope = sharedTransitionScope,
-                                animatedContentScope = animatedContentScope,
-                                onComponentClick = onComponentClick
-                            )
+
+                AnimatedContent(
+                    targetState = filteredComponents,
+                    label = "component-list"
+                ){ components ->
+                    if (components.isEmpty()) {
+                        EmptyState(
+                            query = searchQuery,
+                            selectedType = selectedType,
+                            onClearFilters = {
+                                searchQuery = ""
+                                selectedType = null
+                            }
+                        )
+                    } else {
+                        LookaheadScope{
+                            FlowRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(spacing),
+                                horizontalArrangement = Arrangement.spacedBy(spacing),
+                                verticalArrangement = Arrangement.spacedBy(spacing),
+                            ) {
+                                components.forEach { component ->
+                                    ComponentItem(
+                                        modifier = Modifier
+                                            .animateBounds(this@LookaheadScope)
+                                            .width(itemWidth),
+                                        component = component,
+                                        sharedTransitionScope = sharedTransitionScope,
+                                        animatedContentScope = animatedContentScope,
+                                        onComponentClick = onComponentClick
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-
     }
 }
 
@@ -186,7 +197,7 @@ private fun EmptyState(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxWidth().height(400.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -234,6 +245,7 @@ private fun EmptyState(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FilterRow(
     searchQuery: String,
@@ -284,7 +296,7 @@ private fun FilterRow(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
 private fun ComponentItem(
     component: ComponentExample,
@@ -297,7 +309,6 @@ private fun ComponentItem(
         OutlinedCard(
             modifier = modifier
                 .padding(8.dp)
-                .fillMaxWidth()
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "container-${component.label}"),
                     animatedVisibilityScope = animatedContentScope
