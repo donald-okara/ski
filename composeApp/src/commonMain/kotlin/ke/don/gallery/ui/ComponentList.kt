@@ -76,7 +76,10 @@ fun ComponentList(
         .sortedBy { it.label }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // Sticky Header
+        // Ski Overview Header
+        SkiHeader(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp))
+
+        // Sticky Filter Header
         FilterRow(
             searchQuery = searchQuery,
             selectedType = selectedType,
@@ -120,6 +123,39 @@ fun ComponentList(
             }
         }
 
+    }
+}
+
+@Composable
+private fun SkiHeader(modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = "Ski: A Compose Multiplatform Presentation Framework",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "Ski is a programmable presentation framework that allows Kotlin engineers to build slide decks the same way they build UI: with composables, state, and reusable components. By treating slides as declarative UI, Ski enables seamless integration of live demos, state-driven animations, and a structured layout system that aligns with modern development practices.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "If you can build it in Compose, you can present it.",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
     }
 }
 
