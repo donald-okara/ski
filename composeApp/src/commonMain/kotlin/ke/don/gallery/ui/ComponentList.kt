@@ -2,9 +2,14 @@ package ke.don.gallery.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateBounds
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +28,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -40,6 +46,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,6 +72,11 @@ fun ComponentList(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf<ComponentType?>(null) }
+    
+    val gridState = rememberLazyGridState()
+    val showHeader by remember {
+        derivedStateOf { gridState.firstVisibleItemIndex == 0 }
+    }
 
     val filteredComponents = components
         .filter { component ->
@@ -76,8 +88,14 @@ fun ComponentList(
         .sortedBy { it.label }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // Ski Overview Header
-        SkiHeader(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp))
+        // Ski Overview Header - Hidden when scrolling down
+        AnimatedVisibility(
+            visible = showHeader,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            SkiHeader(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp))
+        }
 
         // Sticky Filter Header
         FilterRow(
@@ -103,6 +121,7 @@ fun ComponentList(
             } else {
                 LookaheadScope{
                     LazyVerticalGrid(
+                        state = gridState,
                         columns = GridCells.Adaptive(300.dp),
                         modifier = Modifier
                             .fillMaxSize()
@@ -223,12 +242,12 @@ private fun FilterRow(
     onQueryChange: (String) -> Unit = {},
     onTypeChange: (ComponentType?) -> Unit = {}
 ){
-    Row(
+    FlowRow(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
-        verticalAlignment = Alignment.Bottom
+            .padding(16.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom)
     ) {
         // Search Bar - Top Left
         OutlinedTextField(
@@ -249,25 +268,18 @@ private fun FilterRow(
             shape = RoundedCornerShape(12.dp)
         )
 
-        // Filter Chips
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            item {
-                FilterChip(
-                    selected = selectedType == null,
-                    onClick = { onTypeChange(null) },
-                    label = { Text("All") }
-                )
-            }
-            items(ComponentType.entries) { type ->
-                FilterChip(
-                    selected = selectedType == type,
-                    onClick = { onTypeChange(type) },
-                    label = { Text(type.name) }
-                )
-            }
+        FilterChip(
+            selected = selectedType == null,
+            onClick = { onTypeChange(null) },
+            label = { Text("All") }
+        )
+
+        ComponentType.entries.forEach { type ->
+            FilterChip(
+                selected = selectedType == type,
+                onClick = { onTypeChange(type) },
+                label = { Text(type.name) }
+            )
         }
     }
 }
