@@ -28,6 +28,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -74,7 +79,7 @@ fun ComponentList(
     var searchQuery by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf<ComponentType?>(null) }
     
-    val scrollState = rememberScrollState()
+    val gridState = rememberLazyGridState()
 
     val filteredComponents = components
         .filter { component ->
@@ -86,68 +91,57 @@ fun ComponentList(
         .sortedBy { it.label }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val screenWidth = maxWidth
         val spacing = 16.dp
         val minWidth = 300.dp
         
-        // Calculate the number of columns and the actual item width manually to avoid FlowRow weight intrinsics
-        val columns = ((screenWidth - spacing) / (minWidth + spacing)).toInt().coerceAtLeast(1)
-        val itemWidth = (screenWidth - spacing * (columns + 1)) / columns
-
-        Column(
-            modifier = Modifier
-                .verticalScroll(scrollState)
-                .fillMaxSize()
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = minWidth),
+            state = gridState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(spacing),
+            horizontalArrangement = Arrangement.spacedBy(spacing),
+            verticalArrangement = Arrangement.spacedBy(spacing)
         ) {
-            SkiHeader(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp))
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                SkiHeader(modifier = Modifier.padding(bottom = spacing))
+            }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                // Sticky Filter Header
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 FilterRow(
+                    modifier = Modifier.padding(bottom = spacing),
                     searchQuery = searchQuery,
                     selectedType = selectedType,
                     onQueryChange = { searchQuery = it },
                     onTypeChange = { selectedType = it }
                 )
+            }
 
-                AnimatedContent(
-                    targetState = filteredComponents,
-                    label = "component-list"
-                ){ components ->
-                    if (components.isEmpty()) {
-                        EmptyState(
-                            query = searchQuery,
-                            selectedType = selectedType,
-                            onClearFilters = {
-                                searchQuery = ""
-                                selectedType = null
-                            }
-                        )
-                    } else {
-                        LookaheadScope{
-                            FlowRow(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(spacing),
-                                horizontalArrangement = Arrangement.spacedBy(spacing),
-                                verticalArrangement = Arrangement.spacedBy(spacing),
-                            ) {
-                                components.forEach { component ->
-                                    ComponentItem(
-                                        modifier = Modifier
-                                            .animateBounds(this@LookaheadScope)
-                                            .width(itemWidth),
-                                        component = component,
-                                        sharedTransitionScope = sharedTransitionScope,
-                                        animatedContentScope = animatedContentScope,
-                                        onComponentClick = onComponentClick
-                                    )
-                                }
-                            }
+            if (filteredComponents.isEmpty()) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    EmptyState(
+                        query = searchQuery,
+                        selectedType = selectedType,
+                        onClearFilters = {
+                            searchQuery = ""
+                            selectedType = null
                         }
+                    )
+                }
+            } else {
+                items(
+                    items = filteredComponents,
+                    key = { it.label }
+                ) { component ->
+                    LookaheadScope {
+                        ComponentItem(
+                            modifier = Modifier
+                                .animateItem()
+                                .animateBounds(this),
+                            component = component,
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedContentScope = animatedContentScope,
+                            onComponentClick = onComponentClick
+                        )
                     }
                 }
             }

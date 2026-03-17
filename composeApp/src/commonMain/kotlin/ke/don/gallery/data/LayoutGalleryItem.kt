@@ -43,10 +43,10 @@ fun ComponentGalleryBuilder.layouts() {
     )
 }
 
-val scatterDescription = "The Lazy Scatter Flow layout is a specialized container that arranges its children in a pseudo-random, scattered pattern while maintaining a flow-like structure. It is ideal for showcasing varied content like badges, tags, or small icons in an artistic and non-rigid way." +
+val scatterDescription = "The Lazy Scatter Flow layout arranges children in a flow-like structure with configurable row density. It is ideal for showcasing varied content like badges, tags, or small icons in a flexible, non-rigid layout." +
         "\n\n" +
         "Features:" +
-        "\n- Dynamic item scattering based on a grid-like flow" +
+        "\n- Deterministic flow-based placement with configurable spacing" +
         "\n- Configurable items per row to control density"
 
 val scatterDos = listOf(
