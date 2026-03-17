@@ -1,20 +1,15 @@
 package ke.don.gallery.data
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.timer.TimerComponent
-import io.github.donald_okara.components.timer.TimerIntentHandler
-import io.github.donald_okara.components.timer.TimerState
-import io.github.donald_okara.components.timer.TimerStatus
 import ke.don.gallery.domain.ComponentGalleryBuilder
 import ke.don.gallery.domain.ComponentType
-import kotlin.time.Duration.Companion.minutes
+import ke.don.ski.presentation.ui.rememberTimerController
+import kotlin.time.Duration.Companion.seconds
 
 fun ComponentGalleryBuilder.timer() {
     component(
@@ -22,11 +17,14 @@ fun ComponentGalleryBuilder.timer() {
         description = timerDescription,
         type = ComponentType.Timer,
         rendered = {
-            var state by remember { mutableStateOf(TimerState(timeLeft = 5.minutes, totalTime = 5.minutes, status = TimerStatus.Idle)) }
+            val timerController = rememberTimerController(10.seconds)
+
+            val state by timerController.state.collectAsState()
+
             TimerComponent(
                 modifier = Modifier.padding(16.dp),
                 timerState = state,
-                onIntent = { /* Preview only */ }
+                onIntent = timerController::handleIntent
             )
         },
         dos = timerDos,
@@ -39,7 +37,7 @@ val timerDescription = "A versatile timer component with wavy progress animation
         "Features:" +
         "\n- Dynamic wavy progress animation that reacts to time remaining" +
         "\n- Context-aware color states (Primary, Warning, Danger)" +
-        "\n- Support for multiple statuses: Idle, Running, Paused, and Finished" +
+        "\n- Support for multiple statuses: Idle, Resuming, Paused, and Stopped" +
         "\n- Highly customizable duration and appearance"
 
 val timerDos = listOf(

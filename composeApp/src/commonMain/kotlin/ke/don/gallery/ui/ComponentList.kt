@@ -99,7 +99,6 @@ fun ComponentList(
                 .verticalScroll(scrollState)
                 .fillMaxSize()
         ) {
-            // Ski Overview Header - Hidden when scrolling down
             SkiHeader(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp))
 
             Column(

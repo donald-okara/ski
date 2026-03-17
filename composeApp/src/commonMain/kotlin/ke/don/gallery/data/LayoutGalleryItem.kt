@@ -47,8 +47,7 @@ val scatterDescription = "The Lazy Scatter Flow layout is a specialized containe
         "\n\n" +
         "Features:" +
         "\n- Dynamic item scattering based on a grid-like flow" +
-        "\n- Configurable items per row to control density" +
-        "\n- Efficiently handles lists of items lazily"
+        "\n- Configurable items per row to control density"
 
 val scatterDos = listOf(
     "Use for collections of items that don't require strict alignment (e.g., skill tags, logo clouds)",
