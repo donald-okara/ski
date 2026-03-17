@@ -172,7 +172,10 @@ This flag can be toggled in `gradle.properties`.
 
 ```shell
 # macOS/Linux
-./gradlew :componentGallery:run
+./gradlew runGallery
+
+# Windows
+.\gradlew.bat runGallery
 ```
 
 ---
