@@ -168,6 +168,13 @@ This flag can be toggled in `gradle.properties`.
 .\gradlew.bat :composeApp:run
 ```
 
+### Run componentGallery
+
+```shell
+# macOS/Linux
+./gradlew :componentGallery:run
+```
+
 ---
 Please check the [suggested prompt](PROMPT.md) to use with your AI tool of choice.
 
