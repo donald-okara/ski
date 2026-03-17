@@ -2,12 +2,21 @@ package ke.don.gallery.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateBounds
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,13 +25,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
@@ -38,6 +52,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +60,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,7 +68,7 @@ import androidx.compose.ui.unit.dp
 import ke.don.gallery.domain.ComponentExample
 import ke.don.gallery.domain.ComponentType
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ComponentList(
     components: List<ComponentExample>,
@@ -62,6 +78,8 @@ fun ComponentList(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf<ComponentType?>(null) }
+    
+    val gridState = rememberLazyGridState()
 
     val filteredComponents = components
         .filter { component ->
@@ -72,38 +90,53 @@ fun ComponentList(
         }
         .sortedBy { it.label }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        // Sticky Header
-        FilterRow(
-            searchQuery = searchQuery,
-            selectedType = selectedType,
-            onQueryChange = { searchQuery = it },
-            onTypeChange = { selectedType = it }
-        )
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val spacing = 16.dp
+        val minWidth = 300.dp
+        
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = minWidth),
+            state = gridState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(spacing),
+            horizontalArrangement = Arrangement.spacedBy(spacing),
+            verticalArrangement = Arrangement.spacedBy(spacing)
+        ) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                SkiHeader(modifier = Modifier.padding(bottom = spacing))
+            }
 
-        AnimatedContent(
-            targetState = filteredComponents,
-            label = "component-list"
-        ){ components ->
-            if (components.isEmpty()) {
-                EmptyState(
-                    query = searchQuery,
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                FilterRow(
+                    modifier = Modifier.padding(bottom = spacing),
+                    searchQuery = searchQuery,
                     selectedType = selectedType,
-                    onClearFilters = {
-                        searchQuery = ""
-                        selectedType = null
-                    }
+                    onQueryChange = { searchQuery = it },
+                    onTypeChange = { selectedType = it }
                 )
+            }
+
+            if (filteredComponents.isEmpty()) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    EmptyState(
+                        query = searchQuery,
+                        selectedType = selectedType,
+                        onClearFilters = {
+                            searchQuery = ""
+                            selectedType = null
+                        }
+                    )
+                }
             } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(300.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(components) { component ->
+                items(
+                    items = filteredComponents,
+                    key = { it.label }
+                ) { component ->
+                    LookaheadScope {
                         ComponentItem(
+                            modifier = Modifier
+                                .animateItem()
+                                .animateBounds(this),
                             component = component,
                             sharedTransitionScope = sharedTransitionScope,
                             animatedContentScope = animatedContentScope,
@@ -113,7 +146,39 @@ fun ComponentList(
                 }
             }
         }
+    }
+}
 
+@Composable
+private fun SkiHeader(modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = "Ski: A Compose Multiplatform Presentation Framework",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "Ski is a programmable presentation framework that allows Kotlin engineers to build slide decks the same way they build UI: with composables, state, and reusable components. By treating slides as declarative UI, Ski enables seamless integration of live demos, state-driven animations, and a structured layout system that aligns with modern development practices.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "If you can build it in Compose, you can present it.",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
     }
 }
 
@@ -125,7 +190,7 @@ private fun EmptyState(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxWidth().height(400.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -173,6 +238,7 @@ private fun EmptyState(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FilterRow(
     searchQuery: String,
@@ -181,12 +247,12 @@ private fun FilterRow(
     onQueryChange: (String) -> Unit = {},
     onTypeChange: (ComponentType?) -> Unit = {}
 ){
-    Row(
+    FlowRow(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
-        verticalAlignment = Alignment.Bottom
+            .padding(16.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom)
     ) {
         // Search Bar - Top Left
         OutlinedTextField(
@@ -207,30 +273,23 @@ private fun FilterRow(
             shape = RoundedCornerShape(12.dp)
         )
 
-        // Filter Chips
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            item {
-                FilterChip(
-                    selected = selectedType == null,
-                    onClick = { onTypeChange(null) },
-                    label = { Text("All") }
-                )
-            }
-            items(ComponentType.entries) { type ->
-                FilterChip(
-                    selected = selectedType == type,
-                    onClick = { onTypeChange(type) },
-                    label = { Text(type.name) }
-                )
-            }
+        FilterChip(
+            selected = selectedType == null,
+            onClick = { onTypeChange(null) },
+            label = { Text("All") }
+        )
+
+        ComponentType.entries.forEach { type ->
+            FilterChip(
+                selected = selectedType == type,
+                onClick = { onTypeChange(type) },
+                label = { Text(type.name) }
+            )
         }
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
 private fun ComponentItem(
     component: ComponentExample,
@@ -243,7 +302,6 @@ private fun ComponentItem(
         OutlinedCard(
             modifier = modifier
                 .padding(8.dp)
-                .fillMaxWidth()
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "container-${component.label}"),
                     animatedVisibilityScope = animatedContentScope
@@ -273,9 +331,9 @@ private fun ComponentItem(
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Row(
+                        FlowRow(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
+                            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
