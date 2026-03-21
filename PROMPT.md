@@ -65,6 +65,7 @@ The presentation must:
 7. Keep the defaults at Deck.kt as is
 8. Make sure to ask the user the length of this session so you can edit SlidesConstants.SESSION_DURATION in ke.don.ski.Deck.kt
 9. Use KotlinCoderViewer for code snippets
+10. Things to note: core module is deprecated and SlidesConfig is only in composeApp module which no other module depends on. Please put this into consideration and do not build a :List<SlideConfig>
 --
 
 # Slide Construction Guidelines
