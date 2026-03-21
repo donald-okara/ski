@@ -58,7 +58,7 @@ The presentation must:
 
 1. Have a clear plan of what goes into which slides, including notes
 2. Look into the :segments:demos module
-3. Add a folder for each slide with the components it will use
+3. Add a folder into demos (do not create a new module at any point) for each slide with the components it will use
 4. Write a slide using compose (look at the slides already present in ke.don.demo)\
 5. For each slide, add them to ke.don.ski.presentation.ui.skiPresentationSlides() and replace the place holders
 6. Edit the IntroductionScreen() to match the current presentation
