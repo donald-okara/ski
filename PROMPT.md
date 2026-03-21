@@ -56,21 +56,16 @@ The presentation must:
 
 # Generation Requirements
 
-1. Create a `segments/<talk_name>` structure.
-2. Generate:
-
-    * A list of `SlideConfig` including `notes` for each slide
-    * Individual composables per slide
-    * State-driven bullet reveals where appropriate
-    * Usage of shared components (titles, content blocks, layouts, etc.)
-3. Prefer reusable composables over inline UI duplication.
-4. Embed interactive composables directly in the slide for UI demos.
-5. Keep slide composables small and readable.
-6. Use animations via Compose animation APIs when progression benefits from it.
-7. Avoid hardcoded magic numbers unless necessary.
-8. Use theming from the shared design system.
-
----
+1. Have a clear plan of what goes into which slides, including notes
+2. Look into the :segments:demos module
+3. Add a folder for each slide with the components it will use
+4. Write a slide using compose (look at the slides already present in ke.don.demo)\
+5. For each slide, add them to ke.don.ski.presentation.ui.skiPresentationSlides() and replace the place holders
+6. Edit the IntroductionScreen() to match the current presentation
+7. Keep the defaults at Deck.kt as is
+8. Make sure to ask the user the length of this session so you can edit SlidesConstants.SESSION_DURATION in ke.don.ski.Deck.kt
+9. Use KotlinCoderViewer for code snippets
+--
 
 # Slide Construction Guidelines
 
