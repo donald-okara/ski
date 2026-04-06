@@ -1,6 +1,8 @@
 package io.github.donald_okara.components.devices
 
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -14,16 +16,16 @@ data class DeviceInsets(
     val end: Dp = 0.dp
 )
 
-val LocalDeviceInsets = staticCompositionLocalOf {
+val LocalDeviceInsets = compositionLocalOf {
     DeviceInsets()
 }
 
 fun Modifier.deviceSafePadding(): Modifier = composed {
     val insets = LocalDeviceInsets.current
-    this.padding(
+    this.absolutePadding(
         top = insets.top,
         bottom = insets.bottom,
-        start = insets.start,
-        end = insets.end
+        left = insets.start,
+        right = insets.end
     )
 }
