@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import io.github.donald_okara.components.timer.TimerController
+import ke.don.demos.DeviceGallery
 import ke.don.demos.ExampleSlide
 import ke.don.demos.HorizontalSegmentsDemo
 import ke.don.demos.KodeViewerSlide
@@ -46,6 +47,9 @@ fun skiPresentationSlides(sessionDuration: Duration = SESSION_DURATION): List<Sl
                 }
                 slide("Horizontal Segments Demo") {
                     HorizontalSegmentsDemo()
+                }
+                slide("Device Frames"){
+                    DeviceGallery()
                 }
             }
         }
