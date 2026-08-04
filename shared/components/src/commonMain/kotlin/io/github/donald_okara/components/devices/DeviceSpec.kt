@@ -13,8 +13,10 @@ data class DeviceSpec(
     val screenColor: Color = Color.White,
     val cutout: CutoutSpec = CutoutSpec(),
     val screenCornerRadius: Dp = 24.dp,
-    val buttons: List<ButtonSpec> = emptyList()
-){
+    val buttons: List<ButtonSpec> = emptyList(),
+    val isFoldable: Boolean = false,
+    val openedAspectRatio: Float = 1.2f // Aspect ratio of the device when opened
+) {
     /**
      * The raw size of the logical top inset (notch or cutout).
      */
@@ -28,17 +30,20 @@ data class DeviceSpec(
 
     fun calculateInsets(): DeviceInsets {
         val inset = rawTopInset
-        return if (orientation == DeviceOrientation.PORTRAIT) {
-            DeviceInsets(top = inset)
-        } else {
-            // When rotated -90deg (Clockwise), logical top moves to visual Right (End)
-            DeviceInsets(end = inset)
+        return when (orientation) {
+            DeviceOrientation.PORTRAIT, DeviceOrientation.HALF_OPENED -> {
+                DeviceInsets(top = inset)
+            }
+            DeviceOrientation.LANDSCAPE -> {
+                // When rotated -90deg (Clockwise), logical top moves to visual Right (End)
+                DeviceInsets(end = inset)
+            }
         }
     }
 }
 
 enum class DeviceOrientation {
-    PORTRAIT, LANDSCAPE
+    PORTRAIT, LANDSCAPE, HALF_OPENED
 }
 
 enum class NotchType {

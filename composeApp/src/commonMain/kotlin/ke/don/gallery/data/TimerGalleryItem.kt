@@ -5,6 +5,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ke.don.domain.timer.TimerState
+import ke.don.domain.timer.TimerIntentHandler
 import io.github.donald_okara.components.timer.TimerComponent
 import ke.don.gallery.domain.ComponentGalleryBuilder
 import ke.don.gallery.domain.ComponentType

@@ -14,6 +14,7 @@ kotlin {
             implementation(libs.bundles.preview)
         }
         commonMain.dependencies {
+            implementation(project(":core:domain"))
             implementation(libs.bundles.serialization)
             implementation(compose.components.uiToolingPreview)
         }

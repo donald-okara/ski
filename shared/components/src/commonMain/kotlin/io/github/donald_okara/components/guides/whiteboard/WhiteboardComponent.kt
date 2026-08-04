@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.guides.code_viewer.scaled
 import io.github.donald_okara.components.icon.IconButtonToken
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.values.Values
 
 @Composable
 fun WhiteboardCard(

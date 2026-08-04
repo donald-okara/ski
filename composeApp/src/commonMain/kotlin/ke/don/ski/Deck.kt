@@ -7,17 +7,19 @@ import io.github.donald_okara.components.backgrounds.BackgroundBuilder
 import io.github.donald_okara.components.backgrounds.decorator_image.DecoratorImage
 import io.github.donald_okara.components.backgrounds.pattern.Pattern
 import io.github.donald_okara.components.backgrounds.pattern.PatternDefaults
-import io.github.donald_okara.components.frames.FrameBuilder
+import ke.don.domain.frames.FrameBuilder
 import io.github.donald_okara.components.frames.defaultSkiFrames
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.frames.LocalSkiFrames
+import ke.don.domain.values.Values
 import ke.don.resources.Resources
-import ke.don.ski.SlidesConstants.FRAME_OPACITY
-import ke.don.ski.domain.DeckMode
-import ke.don.ski.domain.LocalDeckMode
-import ke.don.ski.domain.SlideConfig
-import ke.don.ski.navigation.DeckNavigator
+import ke.don.domain.DeckMode
+import ke.don.domain.DeckNavigator
+import ke.don.domain.LocalDeckMode
+import ke.don.domain.SlideConfig
+import ke.don.domain.SlidesConstants.FRAME_OPACITY
 import ke.don.ski.presentation.PresentationDeck
 import ke.don.ski.presentation.ui.skiPresentationSlides
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 /**
@@ -34,37 +36,38 @@ fun Deck(
     navigator: DeckNavigator = remember { DeckNavigator(slides) },
 ) {
 
-    val guidesFrame = FrameBuilder()
-        .setFrame { basic }
-        .setOpacity(FRAME_OPACITY)
-        .build()
-
-    val mainFrame = FrameBuilder()
-        .setFrame { snake }
-        .setOpacity(FRAME_OPACITY)
-        .build()
-
-    val background = BackgroundBuilder()
-        .setDecoratorImage(DecoratorImage(Resources.Images.ANDROID_ROBOT))
-        .setPattern(pattern = Pattern.AnimatedDiagonalWavyBackground(colors = PatternDefaults.colors))
-        .build()
-
-
     CompositionLocalProvider(
-        LocalDeckMode provides mode
+        LocalSkiFrames provides defaultSkiFrames()
     ) {
-        PresentationDeck(
-            mainFrame = mainFrame,
-            guidesFrame = guidesFrame,
-            background = background,
-            navigator = navigator,
-            slides = slides,
-            shareFrame = true
-        )
+        val guidesFrame = FrameBuilder()
+            .setFrame { basic }
+            .setOpacity(FRAME_OPACITY)
+            .build()
+
+        val mainFrame = FrameBuilder()
+            .setFrame { snake }
+            .setOpacity(FRAME_OPACITY)
+            .build()
+
+        val background = BackgroundBuilder()
+            .setDecoratorImage(DecoratorImage(Resources.Images.ANDROID_ROBOT))
+            .setPattern(pattern = Pattern.AnimatedDiagonalWavyBackground(colors = PatternDefaults.colors))
+            .build()
+
+
+        CompositionLocalProvider(
+            LocalDeckMode provides mode
+        ) {
+            PresentationDeck(
+                mainFrame = mainFrame,
+                guidesFrame = guidesFrame,
+                background = background,
+                navigator = navigator,
+                slides = slides,
+                shareFrame = true
+            )
+        }
     }
 }
 
-object SlidesConstants {
-    val SESSION_DURATION = 10.seconds
-    const val FRAME_OPACITY = Values.FRAME_OPACITY
-}
+

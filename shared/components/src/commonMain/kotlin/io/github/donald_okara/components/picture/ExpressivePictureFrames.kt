@@ -261,12 +261,14 @@ fun Modifier.expressiveImageClip(
         is Outline.Rounded -> Path().apply { addRoundRect(outline.roundRect) }
     }
 
-    // 1. Draw TOP half (no clipping)
-    clipRect(
-        left = 0f, top = 0f, right = w, bottom = halfH
-    ) {
-        translate(top = imageOffsetPx) {
-            this@drawWithContent.drawContent()
+    // 1. Draw TOP half (clipped to shape to avoid rectangular corners)
+    clipPath(shapePath) {
+        clipRect(
+            left = -w, top = -h, right = w * 2, bottom = halfH
+        ) {
+            translate(top = imageOffsetPx) {
+                this@drawWithContent.drawContent()
+            }
         }
     }
 

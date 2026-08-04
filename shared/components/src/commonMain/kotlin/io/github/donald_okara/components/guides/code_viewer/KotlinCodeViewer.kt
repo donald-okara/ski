@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.icon.IconButtonToken
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.values.Values
 
 @Composable
 fun KotlinCodeViewerCard(

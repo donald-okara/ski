@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import ke.don.design.theme.dimens
 import ke.don.domain.NavDirection
 import ke.don.domain.ScreenTransition
-import ke.don.ski.domain.SlideConfig
-import ke.don.ski.navigation.DeckNavigator
+import ke.don.domain.SlideConfig
+import ke.don.domain.DeckNavigator
 
 @Composable
 fun DeckHost(

@@ -26,8 +26,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.donald_okara.components.frames.SkiFrame
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.frames.SkiFrame
+import ke.don.domain.values.Values
 
 class SnakeFrame(
     private val leftToRight: Boolean = true,
