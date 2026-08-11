@@ -8,6 +8,10 @@
 
 **[Live Gallery Demo](https://ski-gallery.vercel.app)**
 
+<a href="https://www.buymeacoffee.com/donaldokara">
+  <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee" height="50">
+</a>
+
 Ski is a programmable presentation framework built on Compose Multiplatform. It allows Kotlin engineers to build slide decks the same way they build UI: with composables, state, and reusable components.
 
 Ski targets Web (Wasm) and Desktop (JVM), enabling you to run the same presentation as a browser app or a desktop application.
