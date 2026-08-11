@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +29,8 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import ke.don.design.theme.AppTheme
 import ke.don.gallery.domain.ComponentExample
+import io.github.donald_okara.components.frames.defaultSkiFrames
+import ke.don.domain.frames.LocalSkiFrames
 import ke.don.ski.presentation.ui.ToolBar
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -45,50 +48,52 @@ fun ComponentGallery(components: List<ComponentExample>) {
         darkTheme = darkTheme,
         isGallery = true
     ) {
-        Surface(
-            modifier = Modifier
-                .focusRequester(focusRequester)
-                .focusable()
-                .onPreviewKeyEvent { event ->
-                    if (event.type == KeyEventType.KeyDown && event.key == Key.D) {
-                        darkTheme = !darkTheme
-                        true
-                    } else {
-                        false
+        CompositionLocalProvider(LocalSkiFrames provides defaultSkiFrames()) {
+            Surface(
+                modifier = Modifier
+                    .focusRequester(focusRequester)
+                    .focusable()
+                    .onPreviewKeyEvent { event ->
+                        if (event.type == KeyEventType.KeyDown && event.key == Key.D) {
+                            darkTheme = !darkTheme
+                            true
+                        } else {
+                            false
+                        }
                     }
-                }
-                .fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
             ) {
-                ToolBar(
-                    darkTheme = darkTheme,
-                    title = { Text("Ski Gallery") },
-                    onThemeClick = {
-                        darkTheme = !darkTheme
-                    }
-                )
-                SharedTransitionLayout {
-                    AnimatedContent(targetState = selectedComponent) { component ->
-                        when {
-                            component == null -> ComponentList(
-                                components = components,
-                                sharedTransitionScope = this@SharedTransitionLayout,
-                                animatedContentScope = this@AnimatedContent
-                            ) {
-                                selectedComponent = it
-                            }
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    ToolBar(
+                        darkTheme = darkTheme,
+                        title = { Text("Ski Gallery") },
+                        onThemeClick = {
+                            darkTheme = !darkTheme
+                        }
+                    )
+                    SharedTransitionLayout {
+                        AnimatedContent(targetState = selectedComponent) { component ->
+                            when {
+                                component == null -> ComponentList(
+                                    components = components,
+                                    sharedTransitionScope = this@SharedTransitionLayout,
+                                    animatedContentScope = this@AnimatedContent
+                                ) {
+                                    selectedComponent = it
+                                }
 
-                            else -> ComponentDetail(
-                                component = component,
-                                sharedTransitionScope = this@SharedTransitionLayout,
-                                animatedContentScope = this@AnimatedContent
-                            ) {
-                                selectedComponent = null
+                                else -> ComponentDetail(
+                                    component = component,
+                                    sharedTransitionScope = this@SharedTransitionLayout,
+                                    animatedContentScope = this@AnimatedContent
+                                ) {
+                                    selectedComponent = null
+                                }
                             }
                         }
                     }

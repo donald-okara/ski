@@ -6,6 +6,8 @@
 
 # Ski: A Compose Multiplatform Presentation Framework
 
+**[Live Gallery Demo](https://ski-gallery.vercel.app)**
+
 Ski is a programmable presentation framework built on Compose Multiplatform. It allows Kotlin engineers to build slide decks the same way they build UI: with composables, state, and reusable components.
 
 Ski targets Web (Wasm) and Desktop (JVM), enabling you to run the same presentation as a browser app or a desktop application.
@@ -178,7 +180,22 @@ This flag can be toggled in `gradle.properties`.
 .\gradlew.bat runGallery
 ```
 
+### Deploy to Vercel
+
+The web version (Gallery + Slides) can be deployed to Vercel.
+Check out the [live example here](https://ski-gallery.vercel.app).
+
+1.  **Build the production distribution**:
+    ```shell
+    ./gradlew :composeApp:wasmJsBrowserDistribution
+    ```
+2.  **Deploy using Vercel CLI**:
+    ```shell
+    cd composeApp/build/dist/wasmJs/productionExecutable
+    vercel deploy --prod
+    ```
+
 ---
-Please check the [suggested prompt](PROMPT.md) to use with your AI tool of choice.
+Please check the [context.md](context.md) to understand the framework architecture and rules for AI development.
 
 Happy pitching!
