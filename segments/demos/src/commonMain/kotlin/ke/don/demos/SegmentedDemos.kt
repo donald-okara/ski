@@ -8,12 +8,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.github.donald_okara.components.frames.FrameBuilder
+import ke.don.domain.frames.FrameBuilder
 import io.github.donald_okara.components.frames.defaultSkiFrames
 import io.github.donald_okara.components.layout.HorizontallySegmentedScreen
 import io.github.donald_okara.components.layout.VerticallySegmentedScreen
-import io.github.donald_okara.components.values.Values
-import io.github.donald_okara.components.values.Values.FRAME_OPACITY
+import ke.don.domain.values.Values
+import ke.don.domain.values.Values.FRAME_OPACITY
 import ke.don.design.theme.dimens
 
 @Composable

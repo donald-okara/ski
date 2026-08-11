@@ -18,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import io.github.donald_okara.components.frames.FrameBuilder
-import io.github.donald_okara.components.frames.SkiFrame
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.frames.FrameBuilder
+import ke.don.domain.frames.SkiFrame
+import ke.don.domain.values.Values
 import ke.don.gallery.domain.ComponentGalleryBuilder
 import ke.don.gallery.domain.ComponentType
 import ke.don.gallery.domain.Focusable

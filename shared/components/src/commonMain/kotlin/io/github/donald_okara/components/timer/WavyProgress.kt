@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.values.Values
 import kotlin.math.PI
 import kotlin.math.sin
 

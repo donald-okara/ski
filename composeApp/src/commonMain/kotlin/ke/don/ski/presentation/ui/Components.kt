@@ -22,10 +22,10 @@ import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.DotBullet
 import io.github.donald_okara.components.LinearBullet
 import io.github.donald_okara.components.timer.TimerComponent
-import io.github.donald_okara.components.timer.TimerIntentHandler
-import io.github.donald_okara.components.timer.TimerState
-import io.github.donald_okara.components.values.Values
-import ke.don.ski.domain.DeckMode
+import ke.don.domain.DeckMode
+import ke.don.domain.timer.TimerIntentHandler
+import ke.don.domain.timer.TimerState
+import ke.don.domain.values.Values
 
 
 /**

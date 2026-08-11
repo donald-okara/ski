@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,19 +40,28 @@ fun DeviceFrame(
     content: @Composable BoxScope.() -> Unit
 ) {
     val isPortrait = spec.orientation == DeviceOrientation.PORTRAIT
+    val isHalfOpened = spec.orientation == DeviceOrientation.HALF_OPENED
     
     // The base ratio is always Portrait (e.g., 9/19.5)
     val baseRatio = 1f / spec.aspectRatio
     
     // The visual ratio changes based on orientation to take up correct layout space
-    val targetVisualRatio = if (isPortrait) baseRatio else spec.aspectRatio
+    val targetVisualRatio = when {
+        isHalfOpened -> spec.openedAspectRatio
+        isPortrait -> baseRatio
+        else -> spec.aspectRatio
+    }
     val visualRatio by animateFloatAsState(
         targetValue = targetVisualRatio,
         animationSpec = tween(durationMillis = 500)
     )
 
     val rotation by animateFloatAsState(
-        targetValue = if (isPortrait) 0f else -90f,
+        targetValue = when {
+            isHalfOpened -> 0f
+            isPortrait -> 0f
+            else -> -90f
+        },
         animationSpec = tween(durationMillis = 500)
     )
 
@@ -63,7 +73,11 @@ fun DeviceFrame(
         ) {
             // Adaptive scaling: reference phone width is ~360dp
             // In Landscape, the phone's 'width' is the container's height.
-            val phoneWidth = if (isPortrait) maxWidth else maxHeight
+            val phoneWidth = when {
+                isHalfOpened -> maxWidth
+                isPortrait -> maxWidth
+                else -> maxHeight
+            }
             val scalingFactor = (phoneWidth / 360.dp).coerceAtLeast(0.1f)
 
             // Animate insets to match rotation and scale
@@ -83,7 +97,8 @@ fun DeviceFrame(
                     .then(
                         // When Landscape, we need to swap constraints so the Portrait chassis
                         // fills the Landscape outer container before it is rotated.
-                        if (isPortrait) Modifier.fillMaxSize()
+                        // For Portrait and Half-Opened (which is upright), we just fill max size.
+                        if (isPortrait || isHalfOpened) Modifier.fillMaxSize()
                         else Modifier.layout { measurable, constraints ->
                             val placeable = measurable.measure(
                                 constraints.copy(
@@ -154,7 +169,8 @@ fun DeviceFrame(
                                     .fillMaxSize()
                                     .rotate(-rotation)
                                     .then(
-                                        if (!isPortrait) Modifier.layout { measurable, constraints ->
+                                        if (isHalfOpened) Modifier
+                                        else if (!isPortrait) Modifier.layout { measurable, constraints ->
                                             val placeable = measurable.measure(
                                                 constraints.copy(
                                                     minWidth = constraints.maxHeight,
@@ -173,6 +189,24 @@ fun DeviceFrame(
                                     )
                             ) {
                                 content()
+
+                                if (isHalfOpened) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .width(2.dp * scalingFactor)
+                                            .align(Alignment.Center)
+                                            .background(
+                                                Brush.horizontalGradient(
+                                                    colors = listOf(
+                                                        Color.Black.copy(alpha = 0.2f),
+                                                        Color.Transparent,
+                                                        Color.Black.copy(alpha = 0.2f)
+                                                    )
+                                                )
+                                            )
+                                    )
+                                }
                             }
                         }
                     }

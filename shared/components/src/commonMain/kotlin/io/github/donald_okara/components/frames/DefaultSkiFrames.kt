@@ -4,6 +4,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import io.github.donald_okara.components.frames.basic_frame.BasicFrame
 import io.github.donald_okara.components.frames.snake_frame.SnakeFrame
+import ke.don.domain.frames.SkiFrames
+import ke.don.domain.frames.rememberFrame
 
 @Composable
 fun defaultSkiFrames(): SkiFrames {

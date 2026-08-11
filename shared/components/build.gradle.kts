@@ -8,6 +8,12 @@ android {
     namespace = "io.github.donald_okara"
 }
 
+kotlin {
+    sourceSets.commonMain.dependencies {
+        api(project(":core:domain"))
+    }
+}
+
 group = "io.github.donald-okara"
 version = project.findProperty("version") ?: throw GradleException("Version property is required. Pass it with -Pversion=<version>")
 

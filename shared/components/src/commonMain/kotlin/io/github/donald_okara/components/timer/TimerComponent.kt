@@ -26,7 +26,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.timer.TimerIntentHandler
+import ke.don.domain.timer.TimerState
+import ke.don.domain.timer.TimerStatus
+import ke.don.domain.values.Values
 import kotlin.time.Duration
 
 

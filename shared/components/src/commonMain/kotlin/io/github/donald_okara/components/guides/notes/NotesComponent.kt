@@ -31,9 +31,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.github.donald_okara.components.frames.SkiFrame
+import ke.don.domain.frames.SkiFrame
 import io.github.donald_okara.components.picture.ExpressiveFrame
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.values.Values
 
 /**
  * Renders a slide-note panel inside the provided SkiFrame.

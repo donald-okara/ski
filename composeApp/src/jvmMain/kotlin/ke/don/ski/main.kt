@@ -5,8 +5,8 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import ke.don.ski.domain.DeckMode
-import ke.don.ski.navigation.DeckNavigator
+import ke.don.domain.DeckMode
+import ke.don.domain.DeckNavigator
 import ke.don.ski.presentation.ui.skiPresentationSlides
 
 /**

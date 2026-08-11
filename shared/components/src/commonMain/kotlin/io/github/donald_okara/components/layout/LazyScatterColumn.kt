@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.values.Values
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

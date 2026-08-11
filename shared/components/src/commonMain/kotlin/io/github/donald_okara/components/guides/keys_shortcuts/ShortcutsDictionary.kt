@@ -20,8 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.unit.dp
-import io.github.donald_okara.components.frames.SkiFrame
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.frames.SkiFrame
+import ke.don.domain.values.Values
 
 @Composable
 fun ShortcutsDictionary(

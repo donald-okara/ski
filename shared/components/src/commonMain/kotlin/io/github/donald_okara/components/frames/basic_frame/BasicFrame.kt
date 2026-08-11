@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import io.github.donald_okara.components.frames.SkiFrame
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.frames.SkiFrame
+import ke.don.domain.values.Values
 
 class BasicFrame(
     private val curve: Dp = Values.cornerRadius,

@@ -34,7 +34,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.github.donald_okara.components.guides.code_viewer.scaled
 import io.github.donald_okara.components.icon.IconButtonToken
-import io.github.donald_okara.components.values.Values
+import ke.don.domain.values.Values
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

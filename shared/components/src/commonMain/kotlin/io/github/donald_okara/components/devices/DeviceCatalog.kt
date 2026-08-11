@@ -65,4 +65,25 @@ object DeviceCatalog {
             ButtonSpec(ButtonSide.RIGHT, offset = (-40).dp, length = 70.dp)  // Side button
         )
     )
+
+    val PixelFold = DeviceSpec(
+        name = "Pixel Fold",
+        aspectRatio = 19.5f / 9f,
+        openedAspectRatio = 6f / 5f,
+        isFoldable = true,
+        bezel = BezelSpec(
+            thickness = 12.dp,
+            color = Color(0xFF1F1F1F),
+            cornerRadius = 24.dp
+        ),
+        cutout = CutoutSpec(
+            type = CutoutType.CENTER_CIRCLE,
+            size = 8.dp,
+            offsetY = 10.dp
+        ),
+        buttons = listOf(
+            ButtonSpec(ButtonSide.RIGHT, offset = (-80).dp, length = 30.dp), // Power
+            ButtonSpec(ButtonSide.RIGHT, offset = (-30).dp, length = 60.dp)   // Volume
+        )
+    )
 }
