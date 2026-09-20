@@ -16,18 +16,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class KotlinMultiplatformApplication: Plugin<Project> {
     override fun apply(target: Project):Unit = with(target){
-        with(pluginManager){
-            listOf(
-                "kotlinMultiplatform",
-                "composeMultiplatformPlugin",
-                "androidApplication"
-            ).forEach { id ->
-                pluginManager.apply(libs.findPlugin(id).get().get().pluginId)
-            }
-        }
+        pluginManager.apply(libs.findPlugin("kotlinMultiplatform").get().get().pluginId)
+        pluginManager.apply(libs.findPlugin("androidApplication").get().get().pluginId)
+        
+        extensions.configure<KotlinMultiplatformExtension>(::configureKotlinMultiplatform)
+
+        pluginManager.apply(libs.findPlugin("composeMultiplatformPlugin").get().get().pluginId)
 
         configureProjectDependencies(sharedModules.all, coreModules.all, segmentModules.all)
-        extensions.configure<KotlinMultiplatformExtension>(::configureKotlinMultiplatform)
         extensions.configure<KotlinMultiplatformExtension>(::configureComponents)
         extensions.configure<ApplicationExtension>(::configureKotlinAndroid)
     }

@@ -35,6 +35,9 @@ dependencyResolutionManagement {
 includeBuild("build-logic")
 
 include(":composeApp")
+include(":androidApp")
+include(":desktopApp")
+include(":webApp")
 
 include(":shared")
 include(":segments")
