@@ -16,18 +16,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class SegmentConvention : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
-        with(pluginManager) {
-            listOf(
-                "kotlinMultiplatform",
-                "composeMultiplatformPlugin",
-                "androidLibrary"
-            ).forEach { id ->
-                pluginManager.apply(libs.findPlugin(id).get().get().pluginId)
-            }
-        }
+        pluginManager.apply(libs.findPlugin("kotlinMultiplatform").get().get().pluginId)
+        pluginManager.apply(libs.findPlugin("androidLibrary").get().get().pluginId)
+
+        extensions.configure<KotlinMultiplatformExtension>(::configureKotlinMultiplatform)
+
+        pluginManager.apply(libs.findPlugin("composeMultiplatformPlugin").get().get().pluginId)
 
         configureProjectDependencies(coreModules.all, sharedModules.all)
-        extensions.configure<KotlinMultiplatformExtension>(::configureKotlinMultiplatform)
         extensions.configure<KotlinMultiplatformExtension>(::configureComponents)
         extensions.configure<LibraryExtension>(::configureKotlinAndroid)
     }

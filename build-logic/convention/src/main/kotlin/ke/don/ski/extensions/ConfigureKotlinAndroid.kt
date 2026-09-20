@@ -7,7 +7,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 
 internal fun Project.configureKotlinAndroid(
-    extension: CommonExtension<*, *, *, * ,* , *>
+    extension: CommonExtension
 ) = extension.apply {
     namespace = if (moduleName == "composeApp" || moduleName.isEmpty()) {
         appIdentity.packageName
@@ -16,25 +16,25 @@ internal fun Project.configureKotlinAndroid(
     }
 
     compileSdk = libs.findVersion("android-compileSdk").get().requiredVersion.toInt()
-    defaultConfig {
+    defaultConfig.apply {
         minSdk = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
     }
-    if (this is ApplicationExtension) {
-        defaultConfig {
+    if (extension is ApplicationExtension) {
+        extension.defaultConfig.apply {
             targetSdk = libs.findVersion("android-targetSdk").get().requiredVersion.toInt()
         }
     }
-    compileOptions {
+    compileOptions.apply {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    buildTypes {
-        getByName("release") {
+    buildTypes.apply {
+        getByName("release").apply {
             isMinifyEnabled = false
         }
     }
-    packaging {
-        resources {
+    packaging.apply {
+        resources.apply {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
