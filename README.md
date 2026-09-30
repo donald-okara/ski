@@ -187,7 +187,7 @@ This flag can be toggled in `gradle.properties`.
 ### Deploy to Vercel
 
 The web version (Gallery + Slides) can be deployed to Vercel.
-Check out the [live example here](https://ski-gallery.vercel.app).
+Check out the [live example here](https://adaptive-compose.vercel.app/).
 
 1.  **Build the production distribution**:
     ```shell
