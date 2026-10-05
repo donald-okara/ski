@@ -64,6 +64,8 @@ On Windows, use `gradlew.bat` in place of `./gradlew`.
 
 > **Note:** The web commands may appear to stall with no new output. Gradle keeps a background daemon running, so the terminal can sit quiet after the build finishes. Look for `FAILED` in the output to tell whether a run failed. If you don't see it, the run succeeded.
 
+> **Allow popups:** The web app opens the presenter notes window automatically, and browsers block it by default. Always allow popups for the site (for example `localhost` during development, or your Vercel domain once deployed). If the notes window doesn't appear, check the address bar for a blocked-popup icon. Once popups are allowed, refresh the page so the notes window opens.
+
 ### Build a production web bundle
 
 ```shell
