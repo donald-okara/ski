@@ -33,22 +33,22 @@ fun skiPresentationSlides(sessionDuration: Duration = SESSION_DURATION): List<Sl
                 ) {
                     IntroductionScreen()
                 }
-                slide("Example Screen") {
+                slide("Example Screen", notes = exampleScreenNotes) {
                     ExampleSlide()
                 }
-                slide("Kode Viewer") {
+                slide("Kode Viewer", notes = kodeViewerNotes) {
                     KodeViewerSlide()
                 }
-                slide("Whiteboard Screen"){
+                slide("Whiteboard Screen", notes = whiteboardNotes) {
                     WhiteboardSlide()
                 }
-                slide("Vertical Segments Demo") {
+                slide("Vertical Segments Demo", notes = verticalSegmentsNotes) {
                     VerticalSegmentsDemo()
                 }
-                slide("Horizontal Segments Demo") {
+                slide("Horizontal Segments Demo", notes = horizontalSegmentsNotes) {
                     HorizontalSegmentsDemo()
                 }
-                slide("Device Frames"){
+                slide("Device Frames", notes = deviceFramesNotes) {
                     DeviceGallery()
                 }
             }

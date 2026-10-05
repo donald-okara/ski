@@ -114,7 +114,7 @@ fun skiPresentationSlides(sessionDuration: Duration = SESSION_DURATION): List<Sl
 - **Put slide bodies in named composables** (`fun MyDemoSlide()`) in `segments/demos`, and keep the `slide { }` block as a list of references.
 - **Reveal with state, not with duplicate slides.** Use `remember` and `Animatable` inside the slide.
 - **Show code with `KotlinCodeViewer`**, so it is highlighted and can be focused during the talk.
-- **Write presenter notes.** The audience never sees them; the presenter needs them on stage.
+- **Write presenter notes** in `SlidesNotes.kt`, one named constant per slide. The audience never sees them. See [docs/speaker-notes.md](docs/speaker-notes.md) for how to write them.
 - **Use the session timer.** Take the duration from `SlidesConstants.SESSION_DURATION` instead of hardcoding it.
 
 ---
