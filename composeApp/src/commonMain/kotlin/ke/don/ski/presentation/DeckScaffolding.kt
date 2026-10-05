@@ -34,6 +34,7 @@ import io.github.donald_okara.components.guides.notes.Notes
 import io.github.donald_okara.components.guides.notes.NotesComponent
 import io.github.donald_okara.components.guides.notes.NotesHint
 import io.github.donald_okara.components.guides.whiteboard.FocusWhiteboard
+import ke.don.design.theme.TextScale
 import ke.don.design.theme.dimens
 import ke.don.domain.DeckMode
 import ke.don.domain.DeckNavigator
@@ -54,6 +55,8 @@ fun DeckScaffolding(
     frame: SkiFrame, // only needed for Local mode
     slides: List<SlideConfig>,
     timer: TimerController,
+    textScale: Float,
+    onTextScaleChange: (Float) -> Unit,
     switchTheme: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -72,7 +75,7 @@ fun DeckScaffolding(
     val focusRequester = remember { FocusRequester() }
     var hasFocus by remember { mutableStateOf(false) }
 
-    val shortcutDispatcher = remember(navigator, mode, timer) {
+    val shortcutDispatcher = remember(navigator, mode, timer, textScale) {
         DeckShortcutHandler(
             navigator = navigator,
             switchTheme = switchTheme,
@@ -123,7 +126,10 @@ fun DeckScaffolding(
             },
             deductTimer = {
                 if (mode == DeckMode.Local) timer.handleIntent(TimerIntentHandler.Deduct)
-            }
+            },
+            zoomIn = { onTextScaleChange(TextScale.adjust(textScale, 1)) },
+            zoomOut = { onTextScaleChange(TextScale.adjust(textScale, -1)) },
+            resetZoom = { onTextScaleChange(TextScale.DEFAULT) }
         )
     }
 

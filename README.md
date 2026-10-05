@@ -144,6 +144,8 @@ These are the parts you interact with at runtime.
 | `T` | Table of contents | Presenter panel |
 | `C` | Shortcut guide | Presenter panel |
 | `H` or `↓` | Show/hide hint | Presenter panel |
+| `]` / `[` | Timer +1 / -1 minute | Presenter panel |
+| `Ctrl`/`Cmd` + `+` / `-` / `0` | Bigger / smaller / reset deck text | Both modes |
 
 ---
 

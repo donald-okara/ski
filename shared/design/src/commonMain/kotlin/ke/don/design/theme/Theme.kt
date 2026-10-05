@@ -259,6 +259,7 @@ fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     enableExpressive: Boolean = true,
     isGallery: Boolean = false,
+    textScale: Float = TextScale.DEFAULT,
     content: @Composable() () -> Unit,
 ) {
     val colorScheme = when {
@@ -271,7 +272,7 @@ fun AppTheme(
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
         motionScheme = motionScheme,
-        typography = if (isGallery) GalleryTypography else AppTypography,
+        typography = (if (isGallery) GalleryTypography else AppTypography).scaled(textScale),
         content = content
     )
 }

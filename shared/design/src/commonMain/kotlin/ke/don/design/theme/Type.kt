@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import ke.don.resources.Resources
 import org.jetbrains.compose.resources.Font
+import kotlin.math.roundToInt
 
 val bodyFontFamily: FontFamily
     @Composable
@@ -118,3 +119,42 @@ val AppTypography: Typography
 val GalleryTypography: Typography
     @Composable
     get() = baseTypography()
+
+/** Deck-wide text size, applied on top of [AppTypography]. Steps by 0.1 between 0.8x and 1.6x. */
+object TextScale {
+    const val DEFAULT = 1f
+    private const val MIN_STEPS = 8
+    private const val MAX_STEPS = 16
+
+    /** Moves [current] by [steps] tenths (negative to shrink), clamped to the supported range. */
+    fun adjust(current: Float, steps: Int): Float {
+        val tenths = (current * 10).roundToInt() + steps
+        return tenths.coerceIn(MIN_STEPS, MAX_STEPS) / 10f
+    }
+}
+
+/** Multiplies every text style size and line height by [scale]. Returns this unchanged at 1x. */
+fun Typography.scaled(scale: Float): Typography {
+    if (scale == TextScale.DEFAULT) return this
+
+    fun TextStyle.scaledStyle() = copy(fontSize = fontSize * scale, lineHeight = lineHeight * scale)
+
+    return copy(
+        displayLarge = displayLarge.scaledStyle(),
+        displayMedium = displayMedium.scaledStyle(),
+        displaySmall = displaySmall.scaledStyle(),
+        headlineLarge = headlineLarge.scaledStyle(),
+        headlineMedium = headlineMedium.scaledStyle(),
+        headlineSmall = headlineSmall.scaledStyle(),
+        titleLarge = titleLarge.scaledStyle(),
+        titleMedium = titleMedium.scaledStyle(),
+        titleSmall = titleSmall.scaledStyle(),
+        bodyLarge = bodyLarge.scaledStyle(),
+        bodyMedium = bodyMedium.scaledStyle(),
+        bodySmall = bodySmall.scaledStyle(),
+        labelLarge = labelLarge.scaledStyle(),
+        labelMedium = labelMedium.scaledStyle(),
+        labelSmall = labelSmall.scaledStyle(),
+    )
+}
+

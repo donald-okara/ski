@@ -1,7 +1,10 @@
 package ke.don.ski.navigation
 
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import io.github.donald_okara.components.guides.keys_shortcuts.KeyEventHandler
@@ -18,8 +21,21 @@ class DeckShortcutHandler(
     showHint: () -> Unit,
     showNotes: () -> Unit,
     snoozeTimer: () -> Unit,
-    deductTimer: () -> Unit
+    deductTimer: () -> Unit,
+    zoomIn: () -> Unit,
+    zoomOut: () -> Unit,
+    resetZoom: () -> Unit
 ) {
+    /** Ctrl/Cmd plus these keys change the deck text size. */
+    private val zoomActions: Map<Key, () -> Unit> = mapOf(
+        Key.Equals to zoomIn,
+        Key.NumPadAdd to zoomIn,
+        Key.Minus to zoomOut,
+        Key.NumPadSubtract to zoomOut,
+        Key.Zero to resetZoom,
+        Key.NumPad0 to resetZoom
+    )
+
     private val actions: Map<KeyEventHandler, () -> Unit> = mapOf(
         KeyEventHandler.Next to { navigator.next() },
         KeyEventHandler.Previous to { navigator.previous() },
@@ -45,6 +61,13 @@ class DeckShortcutHandler(
      */
     fun handle(event: KeyEvent): Boolean {
         if (event.type != KeyEventType.KeyDown) return false
+
+        if (event.isCtrlPressed || event.isMetaPressed) {
+            zoomActions[event.key]?.let {
+                it()
+                return true
+            }
+        }
 
         val handler = actions.keys.firstOrNull {
             it.matches(event.key)
