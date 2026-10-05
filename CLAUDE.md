@@ -64,7 +64,3 @@ Publishing: `.github/workflows/publish.yml` runs on tag push and calls root `pub
 - New presentation content goes in `:segments:demos` or a sub-package of it, not a new module.
 - Presenter notes should be detailed. Presenter and audience windows keep separate animation state.
 - Read `SESSION_DURATION` from `SlidesConstants` rather than hardcoding a timer.
-
-## Known stale docs
-
-`README.md` says `./gradlew :composeApp:run` and `:composeApp:wasmJsBrowserDevelopmentRun` and `:composeApp:wasmJsBrowserDistribution`. None of those exist: `run` is on `:desktopApp`, and the wasm targets are on `:webApp`. Use the commands above.
