@@ -16,7 +16,9 @@ class DeckShortcutHandler(
     toggleShortcutsDeck: () -> Unit,
     dismissAll: () -> Unit,
     showHint: () -> Unit,
-    showNotes: () -> Unit
+    showNotes: () -> Unit,
+    snoozeTimer: () -> Unit,
+    deductTimer: () -> Unit
 ) {
     private val actions: Map<KeyEventHandler, () -> Unit> = mapOf(
         KeyEventHandler.Next to { navigator.next() },
@@ -28,7 +30,9 @@ class DeckShortcutHandler(
         KeyEventHandler.ShowShortcutGuide to toggleShortcutsDeck,
         KeyEventHandler.DismissAll to dismissAll,
         KeyEventHandler.ShowHint to showHint,
-        KeyEventHandler.ShowNotes to showNotes
+        KeyEventHandler.ShowNotes to showNotes,
+        KeyEventHandler.SnoozeTimer to snoozeTimer,
+        KeyEventHandler.DeductTimer to deductTimer
     )
 
     /**

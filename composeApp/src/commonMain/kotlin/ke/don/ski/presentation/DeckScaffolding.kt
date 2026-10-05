@@ -40,6 +40,8 @@ import ke.don.domain.DeckNavigator
 import ke.don.domain.LocalDeckMode
 import ke.don.domain.SlideConfig
 import ke.don.domain.frames.SkiFrame
+import ke.don.domain.timer.TimerController
+import ke.don.domain.timer.TimerIntentHandler
 import ke.don.ski.navigation.DeckShortcutHandler
 import ke.don.ski.presentation.ui.ToolBar
 import kotlinx.coroutines.yield
@@ -51,6 +53,7 @@ fun DeckScaffolding(
     darkTheme: Boolean,
     frame: SkiFrame, // only needed for Local mode
     slides: List<SlideConfig>,
+    timer: TimerController,
     switchTheme: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -69,7 +72,7 @@ fun DeckScaffolding(
     val focusRequester = remember { FocusRequester() }
     var hasFocus by remember { mutableStateOf(false) }
 
-    val shortcutDispatcher = remember(navigator, mode) {
+    val shortcutDispatcher = remember(navigator, mode, timer) {
         DeckShortcutHandler(
             navigator = navigator,
             switchTheme = switchTheme,
@@ -114,6 +117,12 @@ fun DeckScaffolding(
                     showHint = false
                 }
 
+            },
+            snoozeTimer = {
+                if (mode == DeckMode.Local) timer.handleIntent(TimerIntentHandler.Snooze)
+            },
+            deductTimer = {
+                if (mode == DeckMode.Local) timer.handleIntent(TimerIntentHandler.Deduct)
             }
         )
     }

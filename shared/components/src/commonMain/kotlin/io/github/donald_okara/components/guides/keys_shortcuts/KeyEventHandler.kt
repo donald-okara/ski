@@ -57,6 +57,16 @@ sealed class KeyEventHandler(
         hint = "Show/Hide Notes",
         keys = setOf(Key.N)
     )
+
+    data object SnoozeTimer : KeyEventHandler(
+        hint = "Timer +1 min",
+        keys = setOf(Key.RightBracket)
+    )
+
+    data object DeductTimer : KeyEventHandler(
+        hint = "Timer -1 min",
+        keys = setOf(Key.LeftBracket)
+    )
 }
 
 val DeckShortcuts = listOf(
@@ -69,7 +79,9 @@ val DeckShortcuts = listOf(
     KeyEventHandler.ShowShortcutGuide,
     KeyEventHandler.DismissAll,
     KeyEventHandler.ShowNotes,
-    KeyEventHandler.ShowHint
+    KeyEventHandler.ShowHint,
+    KeyEventHandler.SnoozeTimer,
+    KeyEventHandler.DeductTimer
 )
 
 
@@ -93,5 +105,7 @@ fun Key.displayName(): String = when (this) {
     Key.H -> "H"
     Key.N -> "N"
     Key.W -> "W"
+    Key.LeftBracket -> "["
+    Key.RightBracket -> "]"
     else -> toString()
 }
