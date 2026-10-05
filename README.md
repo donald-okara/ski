@@ -145,6 +145,7 @@ These are the parts you interact with at runtime.
 | `C` | Shortcut guide | Presenter panel |
 | `H` or `↓` | Show/hide hint | Presenter panel |
 | `]` / `[` | Timer +1 / -1 minute | Presenter panel |
+| `F` | Show/hide flashcards: the slide's notes as swipeable index cards in the bottom-right corner | Presenter panel |
 | `Ctrl`/`Cmd` + `+` / `-` / `0` | Bigger / smaller / reset deck text | Both modes |
 
 ---

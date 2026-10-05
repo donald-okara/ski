@@ -44,6 +44,7 @@ import ke.don.domain.frames.SkiFrame
 import ke.don.domain.timer.TimerController
 import ke.don.domain.timer.TimerIntentHandler
 import ke.don.ski.navigation.DeckShortcutHandler
+import ke.don.ski.presentation.ui.FlashcardOverlay
 import ke.don.ski.presentation.ui.ToolBar
 import kotlinx.coroutines.yield
 
@@ -67,6 +68,7 @@ fun DeckScaffolding(
 
     var showNotes by remember { mutableStateOf(true) }
     var showHint by remember { mutableStateOf(true) }
+    var showFlashcard by remember { mutableStateOf(false) }
 
     var showWhiteboard by remember { mutableStateOf(false) }
     var whiteboardValue by remember { mutableStateOf("") }
@@ -100,6 +102,7 @@ fun DeckScaffolding(
             dismissAll = {
                 showToolBar = false
                 showWhiteboard = false
+                showFlashcard = false
                 if (mode == DeckMode.Local) {
                     showHint = false
                     showNotes = false
@@ -126,6 +129,9 @@ fun DeckScaffolding(
             },
             deductTimer = {
                 if (mode == DeckMode.Local) timer.handleIntent(TimerIntentHandler.Deduct)
+            },
+            toggleFlashcard = {
+                if (mode == DeckMode.Local) showFlashcard = !showFlashcard
             },
             zoomIn = { onTextScaleChange(TextScale.adjust(textScale, 1)) },
             zoomOut = { onTextScaleChange(TextScale.adjust(textScale, -1)) },
@@ -190,7 +196,12 @@ fun DeckScaffolding(
                     )
                 }
 
-                Box(Modifier.weight(1f)) { content() }
+                Box(Modifier.weight(1f)) {
+                    content()
+                    if (showFlashcard) {
+                        FlashcardOverlay(notes = navigator.currentSlide.notes)
+                    }
+                }
 
                 AnimatedVisibility(showShortcuts) {
                     ShortcutsDictionary(
