@@ -62,13 +62,31 @@ Requirements: JDK 17+ and the Android SDK (only for the Android target). The Gra
 
 On Windows, use `gradlew.bat` in place of `./gradlew`.
 
+> **Note:** The web commands may appear to stall with no new output. Gradle keeps a background daemon running, so the terminal can sit quiet after the build finishes. Look for `FAILED` in the output to tell whether a run failed. If you don't see it, the run succeeded.
+
 ### Build a production web bundle
 
 ```shell
 ./gradlew :webApp:wasmJsBrowserDistribution
 ```
 
-The output is written under `webApp/build/`. Deploy that folder with the Vercel CLI (`vercel deploy --prod`) or any static host.
+The output is written under `webApp/build/`. The deployable folder is `webApp/build/dist/wasmJs/productionExecutable/`, and it already contains a `vercel.json` that rewrites all paths to `index.html`.
+
+### Deploy to Vercel
+
+1. Install the Vercel CLI if you don't have it: `npm i -g vercel`
+2. Build the bundle from the repo root: `./gradlew :webApp:wasmJsBrowserDistribution`
+3. Go to the output folder and deploy:
+   ```shell
+   cd webApp/build/dist/wasmJs/productionExecutable
+   vercel deploy --prod
+   ```
+4. The first run asks you to log in and link a project. Accept the defaults or name the project. Vercel prints the production URL when it finishes.
+
+Notes:
+- Rebuild (step 2) before every deploy. The output folder is regenerated on each build.
+- Drop `--prod` to get a preview URL instead of updating production.
+- Any other static host works too. Upload the same folder and keep the rewrite-to-`index.html` rule so direct links and `/?slides` load.
 
 ---
 

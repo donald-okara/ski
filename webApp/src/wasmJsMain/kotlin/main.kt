@@ -22,7 +22,7 @@ import ke.don.ski.web.DeckWebImpl
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     ComposeViewport {
-        var showGallery by remember { mutableStateOf(true) }
+        var showGallery by remember { mutableStateOf(false) }
 
         Box(modifier = Modifier.fillMaxSize()) {
             if (showGallery) {
