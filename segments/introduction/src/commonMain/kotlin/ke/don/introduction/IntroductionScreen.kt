@@ -37,7 +37,7 @@ fun IntroductionScreen(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         TextSegment(
-            title = "Ski: Slides as Compose",
+            title = "Building Slides with Jetpack Compose on Ski",
             presenter = "Jane Doe"
         )
 

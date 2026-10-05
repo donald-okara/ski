@@ -21,4 +21,9 @@ object Resources {
         val RAFAELLA = Res.drawable.rafaella_mendes
         val ANDROID_ROBOT = Res.drawable.android_head_3D
     }
+
+    object Videos {
+        /** Path of the bundled sample video, relative to the resources root. Resolve it with `resolveVideoUriForPlayer`. */
+        const val SAMPLE_VIDEO_PATH = "files/sample_video.mov"
+    }
 }
