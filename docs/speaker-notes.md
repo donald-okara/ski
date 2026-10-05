@@ -41,6 +41,10 @@ Notes are for you on stage, so write them as spoken sentences rather than as bul
 - Keep each point short enough to read at a glance from the panel. If a point needs a paragraph, split it.
 - Do not repeat the on-screen title as a note. Say the thing the title does not say.
 
+## Notes as flashcards
+
+Each note line is also a flashcard. Press `F` in the presenter panel to show the slide's notes as a stack of index cards in the bottom-right corner, one card per line. Swipe the top card away to reveal the next. Write each note as one self-contained sentence, since it becomes one card.
+
 ## Placeholder notes
 
 Use a clear placeholder when you have not written the real notes yet, so an unfinished slide is obvious during a dry run. The template's introduction slide currently uses one ("Remember to say hallo"). Replace it before the talk.

@@ -24,7 +24,8 @@ class DeckShortcutHandler(
     deductTimer: () -> Unit,
     zoomIn: () -> Unit,
     zoomOut: () -> Unit,
-    resetZoom: () -> Unit
+    resetZoom: () -> Unit,
+    toggleFlashcard: () -> Unit
 ) {
     /** Ctrl/Cmd plus these keys change the deck text size. */
     private val zoomActions: Map<Key, () -> Unit> = mapOf(
@@ -48,7 +49,8 @@ class DeckShortcutHandler(
         KeyEventHandler.ShowHint to showHint,
         KeyEventHandler.ShowNotes to showNotes,
         KeyEventHandler.SnoozeTimer to snoozeTimer,
-        KeyEventHandler.DeductTimer to deductTimer
+        KeyEventHandler.DeductTimer to deductTimer,
+        KeyEventHandler.ToggleFlashcard to toggleFlashcard
     )
 
     /**
