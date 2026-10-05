@@ -20,6 +20,17 @@ shared/resources/src/commonMain/composeResources/files/
 
 To add one, copy the file into this directory, then add a path constant to `Resources.Videos` in `shared/resources/src/commonMain/kotlin/ke/don/resources/Resources.kt`. Use the constant from the slide, not a hand-typed path.
 
+## Controls and zoom
+
+The controls are play/pause, restart, volume, playback speed (1x, 1.25x, 1.5x, 2x), zoom, and fullscreen. They hide after three seconds of playback and come back on tap.
+
+Zoom works on the whole player, controls included:
+
+- Pinch to zoom and drag to pan.
+- The zoom button cycles 1x, 1.5x, and 2x.
+
+Zoom resets when the slide changes. Pinch needs a touch screen. On desktop, use the zoom button.
+
 ## How resolution works
 
 `resolveVideoUriForPlayer` is declared in `segments/demos/src/commonMain/.../VideoPlayer.kt`. Each platform implements it in its own source set.
