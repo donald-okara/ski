@@ -68,7 +68,7 @@ val kodeViewerNotes = listOf(
 val whiteboardNotes = listOf(
     AnnotatedString("A freeform text area for annotating live, in the same card style as the code viewer."),
     AnnotatedString("Type during a demo to sketch an idea the audience can see on the slide."),
-    AnnotatedString("The whiteboard is also always available: press the up arrow to show the toolbar, then the pen to open it.")
+    AnnotatedString("The whiteboard is always available: press W, or press the up arrow to show the toolbar and then the pen.")
 )
 
 val horizontalSegmentsNotes = listOf(
@@ -95,7 +95,7 @@ val shortcutsNotes = listOf(
     AnnotatedString("Right arrow, Space, and Enter go forward. Left arrow and Backspace go back."),
     AnnotatedString("In the presenter panel, T opens the table of contents, C the shortcut guide, and H or the down arrow the hint."),
     AnnotatedString("D switches the theme, and Escape dismisses every overlay."),
-    AnnotatedString("The up arrow shows the toolbar. Its pen opens the whiteboard from any slide.")
+    AnnotatedString("W opens and closes the whiteboard. The up arrow shows the toolbar, and its pen also opens the whiteboard.")
 )
 
 val useItNotes = listOf(

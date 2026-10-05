@@ -30,6 +30,7 @@ import androidx.compose.ui.input.key.type
 import ke.don.design.theme.AppTheme
 import ke.don.gallery.domain.ComponentExample
 import io.github.donald_okara.components.frames.defaultSkiFrames
+import io.github.donald_okara.components.guides.whiteboard.FocusWhiteboard
 import ke.don.domain.frames.LocalSkiFrames
 import ke.don.ski.presentation.ui.ToolBar
 
@@ -38,6 +39,9 @@ import ke.don.ski.presentation.ui.ToolBar
 fun ComponentGallery(components: List<ComponentExample>) {
     var selectedComponent by remember { mutableStateOf<ComponentExample?>(null) }
     var darkTheme by remember { mutableStateOf(true) }
+    var showWhiteboard by remember { mutableStateOf(false) }
+    var whiteboardValue by remember { mutableStateOf("") }
+    var isWhiteboardDark by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
@@ -74,8 +78,19 @@ fun ComponentGallery(components: List<ComponentExample>) {
                         title = { Text("Ski Gallery") },
                         onThemeClick = {
                             darkTheme = !darkTheme
-                        }
+                        },
+                        onWhiteboardClick = { showWhiteboard = true }
                     )
+
+                    if (showWhiteboard) {
+                        FocusWhiteboard(
+                            onDismiss = { showWhiteboard = false },
+                            darkTheme = isWhiteboardDark,
+                            toggleTheme = { isWhiteboardDark = !isWhiteboardDark },
+                            value = whiteboardValue,
+                            onValueChange = { whiteboardValue = it }
+                        )
+                    }
                     SharedTransitionLayout {
                         AnimatedContent(targetState = selectedComponent) { component ->
                             when {

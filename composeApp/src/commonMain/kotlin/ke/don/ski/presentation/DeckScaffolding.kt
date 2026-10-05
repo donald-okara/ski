@@ -33,6 +33,7 @@ import io.github.donald_okara.components.guides.keys_shortcuts.ShortcutsDictiona
 import io.github.donald_okara.components.guides.notes.Notes
 import io.github.donald_okara.components.guides.notes.NotesComponent
 import io.github.donald_okara.components.guides.notes.NotesHint
+import io.github.donald_okara.components.guides.whiteboard.FocusWhiteboard
 import ke.don.design.theme.dimens
 import ke.don.domain.DeckMode
 import ke.don.domain.DeckNavigator
@@ -61,6 +62,10 @@ fun DeckScaffolding(
     var showNotes by remember { mutableStateOf(true) }
     var showHint by remember { mutableStateOf(true) }
 
+    var showWhiteboard by remember { mutableStateOf(false) }
+    var whiteboardValue by remember { mutableStateOf("") }
+    var isWhiteboardDark by remember { mutableStateOf(false) }
+
     val focusRequester = remember { FocusRequester() }
     var hasFocus by remember { mutableStateOf(false) }
 
@@ -69,6 +74,7 @@ fun DeckScaffolding(
             navigator = navigator,
             switchTheme = switchTheme,
             toggleToolbar = { showToolBar = !showToolBar },
+            toggleWhiteboard = { showWhiteboard = !showWhiteboard },
             toggleToc = {
                 if (mode == DeckMode.Local) {
                     showTableOfContent = !showTableOfContent
@@ -87,6 +93,7 @@ fun DeckScaffolding(
             },
             dismissAll = {
                 showToolBar = false
+                showWhiteboard = false
                 if (mode == DeckMode.Local) {
                     showHint = false
                     showNotes = false
@@ -131,12 +138,23 @@ fun DeckScaffolding(
             ToolBar(
                 darkTheme = darkTheme,
                 onThemeClick = switchTheme,
+                onWhiteboardClick = { showWhiteboard = true },
                 title = {
                     Text(
                         text = navigator.currentSlide.label,
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
+            )
+        }
+
+        if (showWhiteboard) {
+            FocusWhiteboard(
+                onDismiss = { showWhiteboard = false },
+                darkTheme = isWhiteboardDark,
+                toggleTheme = { isWhiteboardDark = !isWhiteboardDark },
+                value = whiteboardValue,
+                onValueChange = { whiteboardValue = it }
             )
         }
 

@@ -139,6 +139,7 @@ These are the parts you interact with at runtime.
 | `←`, `Backspace` | Previous slide | Both modes |
 | `D` | Switch light/dark theme | Both modes |
 | `↑` | Show/hide toolbar. Its pen icon opens the whiteboard | Both modes |
+| `W` | Show/hide whiteboard | Both modes |
 | `Esc` | Dismiss all overlays | Both modes |
 | `T` | Table of contents | Presenter panel |
 | `C` | Shortcut guide | Presenter panel |
