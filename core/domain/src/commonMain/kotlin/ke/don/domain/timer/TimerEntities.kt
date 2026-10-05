@@ -16,4 +16,6 @@ sealed interface TimerIntentHandler {
     object Pause: TimerIntentHandler
     object Stop: TimerIntentHandler
     object Reset: TimerIntentHandler
+    object Snooze: TimerIntentHandler
+    object Deduct: TimerIntentHandler
 }

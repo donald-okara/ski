@@ -1,5 +1,6 @@
 package ke.don.domain.timer
 
+import ke.don.domain.SlidesConstants.TIMER_ADJUST_STEP
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -26,6 +27,35 @@ class TimerController(
             TimerIntentHandler.Pause -> onPause()
             TimerIntentHandler.Stop -> onStop()
             TimerIntentHandler.Reset -> onReset()
+            TimerIntentHandler.Snooze -> onSnooze()
+            TimerIntentHandler.Deduct -> onDeduct()
+        }
+    }
+
+    /** Adds [TIMER_ADJUST_STEP] to the time left. */
+    fun onSnooze() {
+        _state.update { it.copy(timeLeft = it.timeLeft + TIMER_ADJUST_STEP) }
+        reviveIfExpired()
+    }
+
+    /**
+     * Removes [TIMER_ADJUST_STEP] from the time left. Reaching zero stops the timer.
+     */
+    fun onDeduct() {
+        _state.update {
+            it.copy(timeLeft = (it.timeLeft - TIMER_ADJUST_STEP).coerceAtLeast(Duration.ZERO))
+        }
+        if (_state.value.timeLeft <= Duration.ZERO) onStop()
+    }
+
+    /** A stopped timer that gets time back becomes paused, so the next tap resumes it instead of resetting it. */
+    private fun reviveIfExpired() {
+        _state.update {
+            if (it.status == TimerStatus.Stopped && it.timeLeft > Duration.ZERO) {
+                it.copy(status = TimerStatus.Paused)
+            } else {
+                it
+            }
         }
     }
 

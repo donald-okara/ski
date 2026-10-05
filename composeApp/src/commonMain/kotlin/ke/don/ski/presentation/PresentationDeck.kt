@@ -54,6 +54,7 @@ fun PresentationDeck(
     val deckMode = LocalDeckMode.current
 
     var isDarkTheme by rememberSaveable(deckMode) { mutableStateOf(deckMode == DeckMode.Local) }
+    val timerController = rememberTimerController(SESSION_DURATION)
 
     CompositionLocalProvider(LocalSharesFrameFlag provides shareFrame) {
         AppTheme(
@@ -68,11 +69,10 @@ fun PresentationDeck(
                     darkTheme = isDarkTheme,
                     frame = guidesFrame,
                     slides = slides,
+                    timer = timerController,
                     navigator = navigator
                 ) {
                     if (shareFrame) {
-                        val timerController = rememberTimerController(SESSION_DURATION)
-
                         val timerState by timerController.state.collectAsState()
 
                         mainFrame.Render(header = { MainHeader(deckMode) }, footer = {
