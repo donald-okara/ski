@@ -1,5 +1,9 @@
 package ke.don.demos
 
-// Remote http(s) URLs need no resolution on this platform.
-// Bundle a local file here if a slide needs one.
-actual suspend fun resolveVideoUriForPlayer(videoUri: String): String = videoUri
+import ski.shared.resources.generated.resources.Res
+
+/** Bundled resources are served by URL on the web. Remote URLs pass through unchanged. */
+actual suspend fun resolveVideoUriForPlayer(videoUri: String): String {
+    if (videoUri.startsWith("http://") || videoUri.startsWith("https://")) return videoUri
+    return Res.getUri(videoUri)
+}

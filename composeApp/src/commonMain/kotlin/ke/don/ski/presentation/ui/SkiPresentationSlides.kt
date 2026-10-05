@@ -3,6 +3,7 @@ package ke.don.ski.presentation.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import ke.don.demos.DemoLayoutExample
 import ke.don.demos.DeviceGallery
 import ke.don.demos.FeatureSlide
 import ke.don.demos.FramesDemo
@@ -12,6 +13,7 @@ import ke.don.demos.RevealDemo
 import ke.don.demos.ShortcutsSlide
 import ke.don.demos.SlidesAreComposablesDemo
 import ke.don.demos.VerticalSegmentsDemo
+import ke.don.demos.VideoSlide
 import ke.don.demos.WhiteboardSlide
 import ke.don.domain.ScreenTransition
 import ke.don.domain.SlideConfig
@@ -19,6 +21,7 @@ import ke.don.domain.SlidesConstants.SESSION_DURATION
 import ke.don.domain.generateDeck
 import ke.don.domain.timer.TimerController
 import ke.don.introduction.IntroductionScreen
+import ke.don.resources.Resources
 import kotlin.time.Duration
 
 @Composable
@@ -91,6 +94,20 @@ fun skiPresentationSlides(sessionDuration: Duration = SESSION_DURATION): List<Sl
                 }
                 slide("Device Frames", notes = deviceFramesNotes) {
                     DeviceGallery()
+                }
+                slide("Demo Layout", notes = demoLayoutNotes) {
+                    DemoLayoutExample()
+                }
+                slide("Video", notes = videoNotes) {
+                    VideoSlide(
+                        videoUri = Resources.Videos.SAMPLE_VIDEO_PATH,
+                        title = "Video in Slides",
+                        explanation = listOf(
+                            "Plays a bundled file or a remote URL",
+                            "Controls hide during playback"
+                        ),
+                        code = "VideoSlide(videoUri = Resources.Videos.SAMPLE_VIDEO_PATH, ...)"
+                    )
                 }
                 slide("Presenter Mode", notes = presenterModeNotes) {
                     FeatureSlide(

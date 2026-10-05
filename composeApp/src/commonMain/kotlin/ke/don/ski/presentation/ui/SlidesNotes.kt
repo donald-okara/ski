@@ -6,8 +6,21 @@ import androidx.compose.ui.text.AnnotatedString
 // See docs/speaker-notes.md for how to write these.
 
 val introductionNotes = listOf(
-    AnnotatedString("Remember to say hallo"),
-    AnnotatedString("Say something cool")
+    AnnotatedString("Welcome. This deck is a tour of Ski, and it is built with Ski, so every slide is a composable you could copy."),
+    AnnotatedString("Promise the audience two things: what each feature is for, and how to build the same thing in their own deck."),
+    AnnotatedString("Takeaway to return to: if you can build it in Compose, you can present it.")
+)
+
+val demoLayoutNotes = listOf(
+    AnnotatedString("DemoLayout is the layout behind the demo slides: title and points on the left, a code card under them, the live demo on the right."),
+    AnnotatedString("The code card shows the call that builds this slide. Point at it, then at the device frame it produces."),
+    AnnotatedString("Content enters the same way on every demo slide, so the audience learns the pattern once.")
+)
+
+val videoNotes = listOf(
+    AnnotatedString("Video plays in the same layout as any other demo. The player is a common composable, with a small resolver per platform."),
+    AnnotatedString("The sample is bundled with the app, so it plays without a network. A remote URL works too, if the venue connection is reliable."),
+    AnnotatedString("Controls hide after three seconds of playback. Tap the video to bring them back.")
 )
 
 val whatIsSkiNotes = listOf(
@@ -54,7 +67,8 @@ val kodeViewerNotes = listOf(
 
 val whiteboardNotes = listOf(
     AnnotatedString("A freeform text area for annotating live, in the same card style as the code viewer."),
-    AnnotatedString("Type during a demo to sketch an idea the audience can see on the slide.")
+    AnnotatedString("Type during a demo to sketch an idea the audience can see on the slide."),
+    AnnotatedString("The whiteboard is always available: press W, or press the up arrow to show the toolbar and then the pen.")
 )
 
 val horizontalSegmentsNotes = listOf(
@@ -80,7 +94,8 @@ val presenterModeNotes = listOf(
 val shortcutsNotes = listOf(
     AnnotatedString("Right arrow, Space, and Enter go forward. Left arrow and Backspace go back."),
     AnnotatedString("In the presenter panel, T opens the table of contents, C the shortcut guide, and H or the down arrow the hint."),
-    AnnotatedString("D switches the theme, and Escape dismisses every overlay.")
+    AnnotatedString("D switches the theme, and Escape dismisses every overlay."),
+    AnnotatedString("W opens and closes the whiteboard. The up arrow shows the toolbar, and its pen also opens the whiteboard.")
 )
 
 val useItNotes = listOf(

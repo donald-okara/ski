@@ -28,6 +28,11 @@ sealed class KeyEventHandler(
         keys = setOf(Key.DirectionUp)
     )
 
+    data object ToggleWhiteboard : KeyEventHandler(
+        hint = "Show/Hide Whiteboard",
+        keys = setOf(Key.W)
+    )
+
     data object ShowTableOfContent : KeyEventHandler(
         hint = "Show/Hide Table of Content",
         keys = setOf(Key.T)
@@ -59,6 +64,7 @@ val DeckShortcuts = listOf(
     KeyEventHandler.Previous,
     KeyEventHandler.SwitchTheme,
     KeyEventHandler.ShowToolBar,
+    KeyEventHandler.ToggleWhiteboard,
     KeyEventHandler.ShowTableOfContent,
     KeyEventHandler.ShowShortcutGuide,
     KeyEventHandler.DismissAll,
@@ -86,5 +92,6 @@ fun Key.displayName(): String = when (this) {
     Key.Escape -> "Esc"
     Key.H -> "H"
     Key.N -> "N"
+    Key.W -> "W"
     else -> toString()
 }

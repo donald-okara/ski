@@ -22,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.donald_okara.components.guides.whiteboard.FocusWhiteboard
 import ke.don.design.theme.dimens
 
 @Composable
@@ -31,11 +30,8 @@ fun ToolBar(
     darkTheme: Boolean,
     title: @Composable () -> Unit,
     onThemeClick: () -> Unit,
+    onWhiteboardClick: () -> Unit,
 ) {
-    var whiteboardValue by remember { mutableStateOf("") }
-    var showWhiteboard by remember { mutableStateOf(false) }
-    var isWhiteboardDark by remember { mutableStateOf(false) }
-
     Column(
         modifier = modifier
             .padding(
@@ -55,7 +51,7 @@ fun ToolBar(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
             ){
                 IconButton(
-                    onClick = { showWhiteboard = true }
+                    onClick = onWhiteboardClick
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
@@ -87,17 +83,6 @@ fun ToolBar(
             thickness = 4.dp,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(horizontal = 4.dp) //Nested padding is intentional here
-        )
-    }
-
-
-    if (showWhiteboard){
-        FocusWhiteboard(
-            onDismiss = { showWhiteboard = false },
-            darkTheme = isWhiteboardDark,
-            toggleTheme = { isWhiteboardDark = !isWhiteboardDark },
-            value = whiteboardValue,
-            onValueChange = { whiteboardValue = it }
         )
     }
 }
