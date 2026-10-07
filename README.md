@@ -78,15 +78,15 @@ The output is written under `webApp/build/`. The deployable folder is `webApp/bu
 
 1. Install the Vercel CLI if you don't have it: `npm i -g vercel`
 2. Build the bundle from the repo root: `./gradlew :webApp:wasmJsBrowserDistribution`
-3. Go to the output folder and deploy:
+3. Go to the output folder and deploy, naming the project explicitly:
    ```shell
    cd webApp/build/dist/wasmJs/productionExecutable
-   vercel deploy --prod
+   vercel deploy --prod --project ski-slides
    ```
-4. The first run asks you to log in and link a project. Accept the defaults or name the project. Vercel prints the production URL when it finishes.
+4. The first run asks you to log in. Vercel prints the production URL when it finishes.
 
 Notes:
-- Rebuild (step 2) before every deploy. The output folder is regenerated on each build.
+- Rebuild (step 2) before every deploy. The output folder is regenerated on each build, which also wipes any `.vercel/project.json` link `vercel link` would have written there — that's why `--project ski-slides` is passed explicitly every time instead of relying on a persisted link.
 - Drop `--prod` to get a preview URL instead of updating production.
 - Any other static host works too. Upload the same folder and keep the rewrite-to-`index.html` rule so direct links and `/?slides` load.
 
