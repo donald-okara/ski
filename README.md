@@ -4,7 +4,7 @@
 
 # Ski: Slides as Compose
 
-**[Live Gallery Demo](https://ski-gallery.vercel.app)** · **[Live Example](https://adaptive-compose.vercel.app/)**
+**[Live Demo](https://ski-slides.vercel.app)** — press G to switch to the component gallery.
 
 <a href="https://www.buymeacoffee.com/donaldokara">
   <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee" height="50">
