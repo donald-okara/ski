@@ -124,7 +124,7 @@ private fun NoteBullet(text: AnnotatedString) {
 
 
 /**
- * Displays a hint row suggesting keystrokes for showing slide notes and dismissing the hint.
+ * Displays a hint row suggesting keystrokes for showing flashcards and dismissing the hint.
  *
  * Renders the hint content inside the provided SkiFrame with 16.dp outer padding and no header or footer.
  *
@@ -168,7 +168,7 @@ fun NotesHint(
             }
 
             Text(
-                text = "Press N to show slide notes and H to dismiss Hint",
+                text = "Press F to show flashcards and H to dismiss Hint",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
