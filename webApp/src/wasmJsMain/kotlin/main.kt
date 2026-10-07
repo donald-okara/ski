@@ -20,7 +20,13 @@ import ke.don.gallery.data.gallery
 import ke.don.gallery.ui.ComponentGallery
 import ke.don.ski.web.DeckWebImpl
 
-/** Press G to switch between the slide deck and the component gallery. */
+/**
+ * Press G to switch between the slide deck and the component gallery.
+ *
+ * Toggles on key-up rather than key-down: the browser fires repeated KeyDown
+ * events while a key is held, which would otherwise flip the view back and
+ * forth for as long as G stays pressed. Key-up fires exactly once per tap.
+ */
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     ComposeViewport {
@@ -39,7 +45,7 @@ fun main() {
                 .focusRequester(focusRequester)
                 .focusable()
                 .onKeyEvent { event ->
-                    if (event.type == KeyEventType.KeyDown && event.key == Key.G) {
+                    if (event.type == KeyEventType.KeyUp && event.key == Key.G) {
                         showGallery = !showGallery
                         true
                     } else {
