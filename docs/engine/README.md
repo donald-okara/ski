@@ -57,6 +57,7 @@ Then `shared/components/build.gradle.kts` shrinks to `alias(libs.plugins.publish
 | `:engine:ops` | `ski-engine-ops` | Phase 1 |
 | `:engine:renderer` | `ski-engine-renderer` | Phase 1; pulls in `composemediaplayer` for video |
 | `:engine:export` | `ski-engine-export` | JVM only |
+| `:composeApp` deck shell (`Deck()`, `PresentationDeck`, `DeckHost`, presenter panel, shortcuts) | `ski-deck` | Today this lives only in `:composeApp`, so code-first users can't present from the published artifacts and must copy the template. Move it to a library module (e.g. `:deck`) and publish it; `:composeApp` keeps only the demo deck and gallery. |
 | `:engine:annotations` | `ski-annotations` | all targets, no dependencies (02) |
 | `:engine:ksp` | `ski-ksp` | JVM; KSP processor (02) |
 | `:gradle-plugin` | plugin `io.github.donald-okara.ski` | Gradle Plugin Portal or Maven Central plugin marker (02) |

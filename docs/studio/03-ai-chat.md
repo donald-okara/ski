@@ -96,6 +96,7 @@ Use the official Kotlin MCP SDK (`io.modelcontextprotocol:kotlin-sdk`). Check th
 Ski exists to demo code, so the AI needs to be good at code slides, and users need to teach it their own way of presenting. Skills are packaged instructions the AI loads when relevant. Use the **Agent Skills format** (a folder with a `SKILL.md` that has `name` and `description` front matter, plus optional reference files). Skills written for Claude Code or Claude.ai then work in Ski, and the reverse.
 
 **Where skills come from**
+0. **The base skill, `ski-slides`**, from the `ski` repo (`skills/ski-slides/`, see [engine 03](../engine/03-third-party.md), Task T.8). It's bundled at the version matching the engine, always on, and holds the general rules for good Ski slides. The built-in skills below add specific patterns on top of it and don't repeat its rules.
 1. **Built-in** (shipped in `:ai:agent` resources, updated with the app):
    - `code-walkthrough`: one `code` element revealed with `focusSteps`, a few lines per Next press, with notes explaining each step (needs 01, Task 1.9b).
    - `before-after`: `split` layout with the old and new code side by side, the diff explained in notes, optional `commit` tags.

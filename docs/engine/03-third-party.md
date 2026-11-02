@@ -10,7 +10,7 @@ Done when (milestone M1c): someone with no repo access goes from zero to their o
 
 | Channel | What | Where it's planned |
 |---|---|---|
-| Maven Central | `ski-bom`, `ski`, `ski-domain`, `ski-engine-model/ops/renderer/export`, `ski-annotations`, `ski-ksp` | [README](README.md), Task 0 |
+| Maven Central | `ski-bom`, `ski`, `ski-domain`, `ski-deck`, `ski-engine-model/ops/renderer/export`, `ski-annotations`, `ski-ksp` | [README](README.md), Task 0 |
 | Gradle Plugin Portal | `io.github.donald-okara.ski` (`skiPreview`, `skiPack`, `skiStudio`, `skiWebPlayer`, `skiDoctor`) | [02](02-custom-components.md), Task T.3 below |
 | GitHub releases (`ski`) | `ski-web-player-<version>.zip` | [01](01-engine.md), Task 1.13 |
 | GitHub template | Code-first starter project | Task T.4 below |
@@ -137,9 +137,30 @@ Each guide gets tested by following it word for word on a clean machine before a
 - Studio bugs: an in-app "Report a problem" that collects studio version, OS and `studio.json`, and **no deck content or keys** unless the user attaches them. Route these to a public `ski-studio-issues` repo (or a form) so people can report studio bugs without access to a private `ski-studio`.
 - `CONTRIBUTING.md` in `ski` explaining fork + PR, the public contracts above, and running the engine tests.
 
+## Task T.8: the `ski-slides` skill
+
+How to make slides the Ski way, as one Agent Skills folder: [`skills/ski-slides/`](../../skills/ski-slides/SKILL.md). It replaces `context.md` as the single source of authoring rules (`context.md` and `CLAUDE.md` now point to it). The same skill serves every AI that writes Ski decks:
+
+| Consumer | How it gets the skill |
+|---|---|
+| Claude Code in this repo | `.claude/skills/ski-slides` symlinks to `skills/ski-slides` |
+| Template users (Claude Code, Cursor…) | the template ships it in `.claude/skills/ski-slides/` |
+| Ski Studio's chat | bundled, matching the engine version; the studio's built-in skills (code walkthrough, component showcase…) build on it (studio 03, Task 3.8) |
+| Other AIs over Ski Studio's MCP server | exposed as an MCP prompt |
+| Anyone else | `ski-slides-skill-<version>.zip` attached to each `ski` GitHub release |
+
+Structure: a short `SKILL.md` that routes to `references/principles.md`, `code-first.md`, `components.md`, `deck-json.md` and `custom-components.md`, so the AI only loads what the task needs.
+
+Work left:
+- `deck-json.md` and `custom-components.md` are outlines until the engine (01) and Phase 1b (02) ship. Update them in the same PRs that build those features.
+- Generate the element tables in `components.md` and `deck-json.md` from the engine schema on release, with a CI check that fails when the committed files are out of date.
+- Add `skills/ski-slides/examples/`: a few good slides as both Kotlin and JSON, checked in CI (the Kotlin compiles, the JSON validates).
+- Attach the zip to releases in `publish.yml`, next to the web player.
+- Test the skill: give an AI a few tasks with only the skill ("add a three-step code walkthrough", "make a 10-minute talk about X") and review the result against the checklist in `SKILL.md`. Do this for every release that changes the skill.
+
 ## Order of work
 
 - **With Phase 1b (02):** T.2 and T.3 (version checks and studio discovery), since they're part of the plugin, plus `skiDoctor`.
 - **With studio Phase 2:** T.1 (`studio.json`).
-- **Before the first public beta:** T.4 (template), T.6 (at least guides 1–3 and the compatibility table) and T.7.
+- **Before the first public beta:** T.4 (template), T.6 (at least guides 1–3 and the compatibility table), T.7, and T.8's release zip and template copy.
 - **After launch, when the first outside component library appears:** T.5.
