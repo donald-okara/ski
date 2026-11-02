@@ -169,8 +169,10 @@ The packaged studio has no compiler, so it loads components already compiled by 
     "components": [ { "id": "rating-bar", "name": "RatingBarSlide", "steps": 1 } ] }
   ```
 - The studio loads each pack in its own child classloader whose parent provides Compose/Ski, then finds providers with `ServiceLoader`.
-- **Compatibility check** on load: refuse a pack built against a newer `skiVersion` major/minor than the studio's engine, or a different Compose minor version. Show the fix: "Rebuild with ski 0.4.x" or "Update Ski Studio". Compose-compiled code is sensitive to runtime version differences, which is the main risk here.
-- `./gradlew skiStudio` = `skiPack` + open the installed studio with that pack (through the `ski://open-pack?path=…` URL scheme from studio 06), then keeps watching: run it with `-t` (continuous build) and the studio reloads the pack's classloader when the file changes. This is a reload, not Compose Hot Reload: slide state resets, the deck and selection don't.
+- **Version check at build time:** before writing the pack, `skiPack` compares the project's versions with the installed studio's `~/.ski/studio.json` and fails early with the exact fix ([03-third-party.md](03-third-party.md), Tasks T.1–T.3). `./gradlew skiDoctor` prints the full picture.
+- **Compatibility check** on load (second line of defence): refuse a pack built against a newer `skiVersion` major/minor than the studio's engine, or a different Compose minor version. Show the fix: "Rebuild with ski 0.4.x" or "Update Ski Studio". Compose-compiled code is sensitive to runtime version differences, which is the main risk here.
+- Packs can include third-party component libraries from Maven (`ski { packDependencies { include("com.acme:acme-charts") } }`, [03](03-third-party.md), Task T.5).
+- `./gradlew skiStudio` = `skiPack` + open the installed studio (found as described in [03](03-third-party.md), Task T.3) with that pack (through the `ski://open-pack?path=…` URL scheme from studio 06), then keeps watching: run it with `-t` (continuous build) and the studio reloads the pack's classloader when the file changes. This is a reload, not Compose Hot Reload: slide state resets, the deck and selection don't.
 - Studio side of this: [studio 02, Task 2.9](../studio/02-studio-shell.md).
 
 ## Task 1b.6: `./gradlew skiWebPlayer` (custom web player)

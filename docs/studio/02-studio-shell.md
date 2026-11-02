@@ -154,6 +154,8 @@ Put the code in `ke.don.studio.publish` with an interface `DeckPublisher { suspe
 The packaged studio has no compiler, so it gets user components already compiled, as component packs built by the Ski Gradle plugin in the user's project ([engine 02](../engine/02-custom-components.md), Task 1b.5).
 
 - **Loading:** drag a `.skipack` onto the window, use File → Load Component Pack…, or run `./gradlew skiStudio` in the project, which opens `ski://open-pack?path=…`. Packs are referenced by path (not copied), remembered in `<appdata>/packs.json`, and listed in Settings → Component packs.
+- **Tell the plugin what this studio is:** write `~/.ski/studio.json` (version, install path, engine/Compose/Kotlin versions, supported pack formats) on every launch, and answer `ski://info`. The Ski Gradle plugin uses it to check versions at build time and to find the app ([engine 03](../engine/03-third-party.md), Tasks T.1–T.3).
+- **Single instance:** a `ski://` URL or `.skipack`/`.ski` file opened while the studio is running goes to the running instance (on macOS through `Desktop.setOpenURIHandler`/`setOpenFileHandler`; on Windows and Linux through a local socket handshake on launch).
 - **Isolation:** one child classloader per pack, with the studio's classloader (Compose, Ski engine) as parent. Find providers with `ServiceLoader<SkiComponentProvider>`.
 - **Compatibility:** read `pack.json` first. Refuse packs built against a newer engine or a different Compose minor version, and show the exact fix (rebuild with ski x.y, or update the studio).
 - **Duplicate IDs** across packs, or with Ski's built-ins: the first loaded wins. Show a warning naming both packs.

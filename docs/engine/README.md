@@ -7,6 +7,7 @@ Ski's purpose doesn't change: build a Compose component and show it on a slide a
 | this README | Repo split, Task 0 (publishing), versioning, local development with the studio |
 | [01-engine.md](01-engine.md) | Phase 1: `DeckDocument`, edit operations, renderer, web player, Kotlin export |
 | [02-custom-components.md](02-custom-components.md) | Phase 1b: `@SkiComponent`, KSP processor, Gradle plugin (`skiPreview` with hot reload, `skiPack`, `skiStudio`, `skiWebPlayer`) |
+| [03-third-party.md](03-third-party.md) | Using Ski without repo access: public contracts, studio/plugin version matching, template, third-party component libraries, docs and support |
 
 ## The split
 

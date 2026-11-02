@@ -7,8 +7,9 @@ Ski Studio is a desktop app built on Ski. People build decks by chatting with an
 | File | Repo | Area | Phase |
 |---|---|---|---|
 | [../engine/README.md](../engine/README.md) | `ski` | Repo split, publishing fix (Task 0), versioning, developing both repos together | 0 |
-| [../engine/02-custom-components.md](../engine/02-custom-components.md) | `ski` | Your own composables as slide elements: `@SkiComponent`, Gradle plugin, `skiPreview` with hot reload, component packs, custom web player | 1b |
 | [../engine/01-engine.md](../engine/01-engine.md) | `ski` | Slides as data: `DeckDocument`, renderer, edit operations, demo-ready code elements, web player, Kotlin export | 1 |
+| [../engine/02-custom-components.md](../engine/02-custom-components.md) | `ski` | Your own composables as slide elements: `@SkiComponent`, Gradle plugin, `skiPreview` with hot reload, component packs, custom web player | 1b |
+| [../engine/03-third-party.md](../engine/03-third-party.md) | `ski` + `ski-studio` | Using Ski without repo access: public contracts, version matching, template, third-party component libraries, docs, support | 1c |
 | [02-studio-shell.md](02-studio-shell.md) | `ski-studio` | Desktop app shell: files, preview, assets panel, present, publish to web (Vercel) | 2 |
 | [03-ai-chat.md](03-ai-chat.md) | `ski-studio` | Chat-only editing with the user's own AI, skills, attached project code, MCP server | 3 |
 | [04-mobile-remote.md](04-mobile-remote.md) | `ski-studio` | Phone remote over LAN, QR pairing | 4 |
@@ -79,6 +80,7 @@ Milestones worth demoing:
 - **M0 (end of Phase 0, `ski`):** a blank Gradle project resolves `ski-bom` + `ski` from Maven Local with no missing dependencies.
 - **M1 (end of Phase 1, `ski`):** the demo deck is rewritten as `samples/demo.ski.json` and renders the same as the Kotlin version, including reveal steps. First engine release published.
 - **M1b (end of Phase 1b, `ski`):** in a sample project, an `@SkiComponent` composable shows on a slide with `./gradlew skiPreview` and updates on edit without a restart; `./gradlew skiWebPlayer` renders it on the web.
+- **M1c (before the public beta):** someone with no repo access goes from zero to their own `@SkiComponent` in the studio and on a Vercel URL using only the public docs ([engine 03](../engine/03-third-party.md)).
 - **M2 (end of Phase 2):** open a `.ski` file in the studio, preview it, add an image in the Assets panel, press Present and get both windows.
 - **M2b (end of Phase 2):** Publish deploys that deck to a Vercel preview URL, and the web presenter popup works there.
 - **M2c (end of Phase 2):** `./gradlew skiStudio` in the sample project opens the studio with its component pack, and rebuilding reloads the components in place.
@@ -118,4 +120,6 @@ Track these here and move answers into the relevant plan.
 - Publish to web: free for everyone (recommended), or free with a "Made with Ski" badge that Pro removes? (see 02, Task 2.8)
 - Skills: open a curated skill list / marketplace later, or keep to folders and zips?
 - Component packs: free for editing and preview (recommended), or Pro-only?
+- Template: a slim `ski-template` repo (recommended) or keep `ski` itself as the template? ([engine 03](../engine/03-third-party.md), Task T.4)
+- Where do outsiders report studio bugs if `ski-studio` is private: a public `ski-studio-issues` repo or a form? ([engine 03](../engine/03-third-party.md), Task T.7)
 - Is Windows/Linux in v1, or macOS only? Affects keychain, packaging and firewall work.
