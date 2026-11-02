@@ -44,7 +44,7 @@ Rules:
 ## Code on slides
 
 - Always use Ski's code viewer (`KotlinCodeViewer` / `KotlinCodeViewerCard`, or a `code` element), never plain text.
-- Show the smallest snippet that makes the point. Remove imports, logging and unrelated parameters. Fold lambdas you're not talking about (the viewer can do this).
+- Show the smallest snippet that makes the point. Remove imports, logging and unrelated parameters. The viewer can fold `{ }` blocks, but it folds *all* of them by default, function bodies included. Turn folding off when the body is what you're showing, and check how the snippet actually renders.
 - About 15 lines maximum on screen at a readable size. For longer code, walk through it in steps or split it across slides.
 - Pair code with its result: code on one side, the live composable (or device frame, or chart) on the other. Ski's `DemoLayout` and split layouts exist for this.
 - Code shown should compile. If it's simplified pseudo-code, say so in the notes.

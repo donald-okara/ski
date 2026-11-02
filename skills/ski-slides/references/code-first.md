@@ -27,7 +27,7 @@ fun skiPresentationSlides(sessionDuration: Duration = SESSION_DURATION): List<Sl
 
     return remember(timerController) {
         generateDeck(timerController = timerController) {
-            slide("Introduction", transition = ScreenTransition.Fade, notes = introductionNotes, footer = null) {
+            slide("Introduction", transition = ScreenTransition.Fade, notes = introductionNotes, showFooter = false) {
                 IntroductionScreen()
             }
             slide("Hoist the State", notes = hoistStateNotes, steps = 3) {
@@ -49,11 +49,28 @@ fun skiPresentationSlides(sessionDuration: Duration = SESSION_DURATION): List<Sl
 | `notes: List<AnnotatedString>?` | Speaker notes. Pass a named constant from `SlidesNotes.kt`, never an inline `listOf(...)`. |
 | `transition: ScreenTransition` | `Horizontal` (default), `Fade`, `Vertical`, `None`. |
 | `steps: Int` | Number of reveal steps on this slide (default 0). See "Reveals". |
-| `frame`, `header`, `footer` | Override the deck's frame/header/footer for this slide. `footer = null` removes it (title and questions slides). |
-| `showFooter: Boolean` | Hide the footer without replacing it. |
+| `showFooter: Boolean` | `false` hides the footer (the label chip and timer) on this slide. Use it for title and questions slides. |
+| `frame`, `header`, `footer` | **Ignored by the default `Deck()`**, which draws one shared frame around every slide (`shareFrame = true`) and only reads `showFooter`. They only take effect when the deck doesn't share a frame. Don't use `footer = null` to hide the footer; it does nothing. |
 | content lambda | **One call to a named slide composable.** Don't put layout code inline here; the slide list should read like a table of contents. |
 
-Session length: the timer comes from `SlidesConstants.SESSION_DURATION`. Pass a different `sessionDuration` to `skiPresentationSlides` if the talk is a different length; don't hard-code durations elsewhere.
+Session length: the timer comes from `SlidesConstants.SESSION_DURATION`. Pass a different `sessionDuration` to `skiPresentationSlides` if the talk is a different length; don't hard-code durations elsewhere. `rememberTimerController(sessionDuration)` is defined at the bottom of `SkiPresentationSlides.kt`.
+
+### A second deck, and choosing which one runs
+
+To keep several talks in one project, give each its own deck function next to `skiPresentationSlides`, with a default length that suits it:
+
+```kotlin
+@Composable
+fun hoistingTalkSlides(sessionDuration: Duration = 10.minutes): List<SlideConfig> { /* same shape as above */ }
+```
+
+Put its notes in their own file (`HoistingTalkNotes.kt`), and its slide composables in their own sub-package of the segments module (`ke.don.demos.hoisting`).
+
+The entry points pick the deck. To present a different one, change the `slides = …` line in:
+- desktop: `desktopApp/src/jvmMain/kotlin/ke/don/ski/main.kt` (`val slides = skiPresentationSlides()`);
+- web: `webApp/src/commonMain/kotlin/ke/don/ski/web/WebMain.kt` (`DeckWebImpl`).
+
+Change both if the talk will be given from either.
 
 ## Writing a slide composable
 
@@ -86,6 +103,20 @@ fun HoistStateSlide(modifier: Modifier = Modifier) {
 }
 ```
 
+Title, section and question slides have no dedicated component. Use `SlideTitle` in a padded `Box`, and pass `showFooter = false` in the slide list:
+
+```kotlin
+@Composable
+fun TalkTitleSlide(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize().padding(Values.Dimens.largePadding),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        SlideTitle(title = "Hoist state, test anything", kicker = "Compose")
+    }
+}
+```
+
 - One public `@Composable` per slide, named after the slide (`HoistStateSlide`), with a `modifier: Modifier = Modifier` parameter.
 - Use Ski's building blocks (see [components.md](components.md)) before writing custom `Column`/`Row` layouts.
 - Use spacing from `Values.Dimens` (`smallPadding`, `mediumPadding`, `largePadding`) and colours/typography from `MaterialTheme`, rather than hard-coded `dp` values and colours.
@@ -107,11 +138,24 @@ Next moves through steps 1..`steps` and then to the next slide. Previous goes ba
 
 ## Code on a slide
 
-- `KotlinCodeViewer(code = ..., textScale = ..., shouldFoldLambdas = true)` for code inside a layout.
+- `KotlinCodeViewer(code = ..., textScale = ..., shouldFoldLambdas = ...)` for code inside a layout. **Check two defaults:**
+  - `shouldFoldLambdas = true` collapses every `{ … }` block, *including function bodies*. A snippet like `fun Counter() { … }` then shows only its signature. Pass `shouldFoldLambdas = false` whenever the body is the point, which is most of the time on a slide.
+  - `textScale = 0.75f` is small on a projector. Use `1f` or more for a snippet that's the focus of the slide.
+  - In half of a `SplitSlide` or `DemoLayout` at `textScale = 1f`, lines longer than about 45 characters wrap. Break long lines yourself (one argument per line) so the wrap doesn't land mid-expression.
 - `KotlinCodeViewerCard(darkTheme, toggleFocus, toggleTheme) { code }` for a standalone card with a theme toggle and a focus mode (`FocusKotlinViewer`) that the presenter can open.
 - `DemoLayout(title, explanation, code) { liveContent() }` for the standard demo slide: title and points on the left, a code card under them, and the live result on the right. **This is the default for "here's the code and here's what it does".**
 - Keep snippets to ~15 lines; use `trimIndent()`; escape `$` in raw strings as `${'$'}`.
-- To walk through code in steps today, split it into revealable parts (`RevealItem`) or several viewers. A line-focus feature for the viewer is planned in the engine plan (01, Task 1.9b).
+- To walk through code in steps today, give each part its own viewer inside a `RevealItem`, and set the slide's `steps` to the number of parts. A line-focus feature for the viewer is planned in the engine plan (01, Task 1.9b).
+
+```kotlin
+// slide("Hoisted Code", notes = hoistedCodeNotes, steps = 2) { HoistedCodeSlide() }
+details = {
+    RevealItem(index = 1) { KotlinCodeViewer(code = counterCode) }        // step 1: the stateless composable
+    RevealItem(index = 2) { KotlinCodeViewer(code = counterScreenCode) }  // step 2: the caller that owns the state
+}
+```
+
+  Write one note line per step that says what that part is, so the presenter knows what Next will show.
 
 ## Showing a composable
 
@@ -158,8 +202,10 @@ Follow the notes rules in [principles.md](principles.md). The full guide is `doc
 
 ```shell
 ./gradlew :desktopApp:run                       # presenter panel + audience window
-./gradlew :webApp:wasmJsBrowserDevelopmentRun   # browser; allow popups for the audience window
+./gradlew :webApp:wasmJsBrowserDevelopmentRun   # browser; opens on the gallery, press G for the deck; allow popups for the audience window
 ./gradlew :desktopApp:runGallery                # browse components with examples
 ```
 
-Before finishing, run the desktop app and step through every changed slide in the presenter panel, checking that notes, step counts and the audience window all match. If you can't run it, say so rather than claiming it works.
+Before finishing, run the desktop app and step through every changed slide in the presenter panel, checking that notes, step counts and the audience window all match. Look at how each code snippet actually renders: folding and text size are the usual surprises. If you can't run it, say so rather than claiming it works.
+
+When you can only drive a browser (no desktop window): the web presenter tab opens the audience view with `window.open`, which some embedded browsers turn into a same-tab navigation, leaving only `/?slides` views. The audience view follows `localStorage`, so from a second tab on the same origin you can move it with `localStorage.setItem('deckState', JSON.stringify({slideIndex: 3, direction: 'Forward', step: 1}))`. This checks slides and steps but not the presenter panel (notes, timer).

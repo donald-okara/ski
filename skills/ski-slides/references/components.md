@@ -23,7 +23,7 @@ All Kotlin components are in `io.github.donald_okara.components.*` (artifact `io
 
 | Need | Kotlin | Element | Notes |
 |---|---|---|---|
-| Code inside a layout | `guides.code_viewer.KotlinCodeViewer(code, darkTheme, textScale, shouldFoldLambdas)` | `code` | Kotlin highlighting; folds lambdas by default. |
+| Code inside a layout | `guides.code_viewer.KotlinCodeViewer(code, darkTheme, textScale, shouldFoldLambdas)` | `code` | Kotlin highlighting. **Folds every `{ }` block by default, including function bodies**: pass `shouldFoldLambdas = false` when the body matters. Default `textScale = 0.75f` is small; use `1f`+ for the main snippet. |
 | Standalone code card with theme toggle + focus mode | `guides.code_viewer.KotlinCodeViewerCard(darkTheme, toggleFocus, toggleTheme) { code }` | `code` | Focus mode opens `FocusKotlinViewer` (zoomable). |
 | Code + explanation + live result | `layout.DemoLayout(title, explanation, code) { live }` | layout `split` with `title`, `bullets`, `code` + content | **Default demo slide.** |
 | Two or more resizable panes | `layout.HorizontallySegmentedScreen(initialSegments)` / `VerticallySegmentedScreen` | layout `segments` | `initialSegments` = list of weight to composable; the presenter can drag the dividers. |
