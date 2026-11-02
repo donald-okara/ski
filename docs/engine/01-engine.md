@@ -98,7 +98,7 @@ Elements: one sealed type, one subtype per existing component. Each subtype maps
 | `image` | `assetId`, `shape`, `fit` (see Task 1.3; GIF assets animate) | `Image` / `ExpressivePictureFrame` / `AnimatedImage` |
 | `video` | `assetId`, `autoplay`, `loop`, `muted`, `startMs?`, `endMs?` (see Task 1.3) | `composemediaplayer` |
 | `device` | `deviceId` (from `DeviceCatalog`), `orientation`, `child: Element` | `DeviceFrame` |
-| `builtin` | `key: String`, `params: JsonObject` | registry lookup (see below) |
+| `component` | `componentId`, `params: JsonObject`, `frame` | `ComponentRegistry` lookup: Ski's built-ins and **your own `@SkiComponent` composables** ([02-custom-components.md](02-custom-components.md)) |
 
 Every element also has:
 
@@ -246,7 +246,7 @@ Compose Multiplatform, all targets. Package `ke.don.engine.renderer`. Depends on
 fun rememberSlides(
     document: DeckDocument,
     assets: AssetResolver,
-    registry: BuiltinRegistry = BuiltinRegistry.Default,
+    registry: ComponentRegistry = ComponentRegistry.Default,
 ): List<SlideConfig>
 ```
 
@@ -290,13 +290,9 @@ data class Code(
 
 ### Task 1.10: built-in slides (escape hatch)
 
-Some current slides are real composables that don't fit a data model (video, whiteboard, the device gallery, `SlidesAreComposablesDemo`). The `builtin` element covers them:
+Some current slides are real composables that don't fit a data model (video, whiteboard, the device gallery, `SlidesAreComposablesDemo`). The `component` element covers them **and your own composables**, through one `ComponentRegistry` filled from `@SkiComponent` annotations. That is specified in [02-custom-components.md](02-custom-components.md) (Phase 1b), which replaces the `BuiltinRegistry` idea from earlier drafts.
 
-```kotlin
-class BuiltinRegistry(private val entries: Map<String, @Composable (JsonObject) -> Unit>)
-```
-
-The engine defines `BuiltinRegistry` and ships an empty `Default`. Apps fill it: the studio ships a registry with a curated set (`"video"`, `"whiteboard"`, `"confetti"`…). The AI is told the list of keys and their params. This keeps the door open for rich slides without compiling code.
+For Phase 1 itself, build `ComponentRegistry` with hand-written `ComponentSpec`s for Ski's built-ins, so M1 doesn't wait on the KSP processor. Phase 1b then generates them.
 
 ### Task 1.11: thumbnails
 
@@ -332,5 +328,5 @@ Write `samples/demo.ski.json` by hand (or ask Claude with the schema) to mirror 
 ## Risks
 
 - **Animation parity.** Components like `SlideTitle` run entrance animations in `LaunchedEffect(Unit)`. When the document changes, recomposition must not restart animations on slides the user isn't editing. Key slides by `slide.id` in `DeckHost`'s `AnimatedContent`, not by index alone.
-- **Schema growth.** Every new component tempts a new element type. Rule: a component gets an element type only when it takes plain data. Otherwise it goes in `BuiltinRegistry`.
+- **Schema growth.** Every new component tempts a new element type. Rule: core layout and text building blocks get element types; everything else, including Ski's richer built-ins, is a `@SkiComponent` (02).
 - **Notes formatting.** `SlideConfig.notes` is `List<AnnotatedString>`. Keep the stored format to bold/italic/code spans so `parseLightMarkdown` stays small.

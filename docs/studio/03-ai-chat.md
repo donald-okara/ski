@@ -45,7 +45,8 @@ Read tools (no ops, return JSON):
 - `get_deck_outline`: titles, slide IDs, element IDs and types, no full content. Cheap; the model calls this first.
 - `get_slide(slideId)`: the full slide JSON.
 - `get_selection`: the slide the user selected in the strip, if any.
-- `list_builtins`: keys and param schemas from `BuiltinRegistry` (01, Task 1.10).
+- `list_components`: every component in the current `ComponentRegistry`: Ski's built-ins plus the user's own from loaded component packs ([engine 02](../engine/02-custom-components.md), 02 Task 2.9). Returns `id`, `name`, `description`, `steps` and the source (built-in or pack name).
+- `get_component(id)`: full parameter schema and `@SkiExample`s, so the model fills `params` correctly.
 - `list_assets`: assets from the Assets panel (02, Task 2.7) with `id`, `kind` (image/gif/video), `name`, `description`, dimensions and duration. The model places them with `image`/`video` elements by `assetId`. It can't upload or delete files; asset add/remove happens only in the panel. `update_asset` (rename, description) is allowed so the AI can fill in alt text.
 
 Rules for tool execution:
@@ -101,6 +102,7 @@ Ski exists to demo code, so the AI needs to be good at code slides, and users ne
    - `live-demo`: code next to a `device` frame showing a screenshot, GIF or video from the Assets panel.
    - `api-tour`: one slide per function/class from an attached project, with signatures and a usage snippet.
    - `talk-structure`: hook → problem → solution → demo → recap, sized to `sessionMinutes`.
+   - `component-showcase`: for the user's own `@SkiComponent`s. Shows the component live in its example states (one reveal step each, or side by side), optionally inside a `device` frame, next to the component's source code read from the attached project (found through the spec's `fqName`). This is the skill that does Ski's original job: "show my component now".
 2. **User skills:** Settings → Skills → "Add skill" from a folder or `.zip`, copied to `<appdata>/skills/<name>/`. Toggle each on or off, and see its description and source.
 3. **Deck skills (optional):** a deck can carry skills in `skills/` inside the `.ski` file so a team's house style travels with the deck. Off by default when opening someone else's deck; ask first ("This deck includes 2 skills. Enable them?").
 

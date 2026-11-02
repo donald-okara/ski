@@ -17,7 +17,7 @@ Alternative: Compose's built-in `jpackage` tasks for installers plus Sparkle (ma
 - Apple Developer account (Developer ID Application certificate).
 - Hardened runtime + notarization. With plain Compose: `nativeDistributions.macOS { signing { sign.set(true); identity.set(...) }; notarization { appleID, password (app-specific), teamID } }`. With Conveyor: its `app.mac.signing` and notarization settings.
 - Entitlements file must allow: `com.apple.security.cs.allow-jit` (JVM), `com.apple.security.network.server` (remote server, 04), `com.apple.security.network.client` (AI providers), `com.apple.security.device.camera` not needed on desktop.
-- `Info.plist`: document type for `.ski` (UTI `ke.don.ski.deck`), URL scheme `ski://` (sign-in callback, 05), `NSLocalNetworkUsageDescription`.
+- `Info.plist`: document type for `.ski` (UTI `ke.don.ski.deck`), URL scheme `ski://` (sign-in callback, 05; `ski://open-pack` from `./gradlew skiStudio`, 02 Task 2.9), document type for `.skipack`, `NSLocalNetworkUsageDescription`.
 - Universal binary or separate arm64/x64 builds. JVM apps are per-arch; ship arm64 first, add x64 if users ask.
 
 ## Task 6.3: Windows and Linux (if in v1)

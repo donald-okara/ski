@@ -1,11 +1,12 @@
 # Ski as an engine
 
-Ski is the open-source core of Ski Studio. This repo keeps the code-first framework (components, gallery, demo deck, web app) and adds the engine that draws decks stored as data. Ski Studio, the paid desktop app with the phone remote, lives in a separate repo (`ski-studio`) and depends on the artifacts this repo publishes. Its plans are in [`docs/studio/`](../studio/README.md) and move there when it's created.
+Ski's purpose doesn't change: build a Compose component and show it on a slide at a moment's notice. Code-first decks stay first-class. This repo adds an engine that draws decks stored as data, a way to put **your own composables** into those decks, and a Gradle plugin that previews them with hot reload from your own project. The same engine powers Ski Studio. Ski Studio, the paid desktop app with the phone remote, lives in a separate repo (`ski-studio`) and depends on the artifacts this repo publishes. Its plans are in [`docs/studio/`](../studio/README.md) and move there when it's created.
 
 | File | What it covers |
 |---|---|
 | this README | Repo split, Task 0 (publishing), versioning, local development with the studio |
-| [01-engine.md](01-engine.md) | Phase 1: `DeckDocument`, edit operations, renderer, Kotlin export |
+| [01-engine.md](01-engine.md) | Phase 1: `DeckDocument`, edit operations, renderer, web player, Kotlin export |
+| [02-custom-components.md](02-custom-components.md) | Phase 1b: `@SkiComponent`, KSP processor, Gradle plugin (`skiPreview` with hot reload, `skiPack`, `skiStudio`, `skiWebPlayer`) |
 
 ## The split
 
@@ -15,6 +16,7 @@ Ski is the open-source core of Ski Studio. This repo keeps the code-first framew
 | `:engine:model`, `:engine:ops`, `:engine:renderer` (new) | `:ai:agent`, `:ai:mcp` |
 | `:engine:export` (new, DeckDocument → Kotlin) | `:remote:protocol`, `:remote:server`, `:remote:client` |
 | `:webPlayer` (new, static web app that renders a `deck.json`; released as a zip, 01 Task 1.13) | Publish to web / Deploy to Vercel flow that ships the player with a deck |
+| `:engine:annotations`, `:engine:ksp`, `:gradle-plugin` (new, 02): your composables as slide elements, `skiPreview`, `skiPack`, `skiWebPlayer` | Loading component packs into the studio, `ski://open-pack` |
 | `:composeApp`, `:webApp`, `:desktopApp`, `:androidApp`, `iosApp`: demo deck + gallery | `:billing`, `:mobileRemote` |
 | Maven Central publishing on tag push | Desktop/Android/iOS apps, packaging, release CI, RevenueCat |
 
@@ -54,6 +56,9 @@ Then `shared/components/build.gradle.kts` shrinks to `alias(libs.plugins.publish
 | `:engine:ops` | `ski-engine-ops` | Phase 1 |
 | `:engine:renderer` | `ski-engine-renderer` | Phase 1; pulls in `composemediaplayer` for video |
 | `:engine:export` | `ski-engine-export` | JVM only |
+| `:engine:annotations` | `ski-annotations` | all targets, no dependencies (02) |
+| `:engine:ksp` | `ski-ksp` | JVM; KSP processor (02) |
+| `:gradle-plugin` | plugin `io.github.donald-okara.ski` | Gradle Plugin Portal or Maven Central plugin marker (02) |
 | (new) `:bom` | `ski-bom` | Gradle `java-platform` listing all of the above at one version, so the studio pins one number |
 
 Every module publishes on every release with the same version, even when it didn't change. One version number is much easier than tracking compatibility between modules.
@@ -106,3 +111,6 @@ if (useLocalSki) {
 1. Task 0.1–0.4 above: fix publishing and confirm with a blank consumer project.
 2. [01-engine.md](01-engine.md), Task 1.1: the `jvmLibrary` convention and the empty `:engine:model` module, with `publishedLibrary` applied from the start.
 3. Task 1.2: `DeckDocument` and its first element types, test-first with `./gradlew :engine:model:jvmTest`.
+4. In parallel, a throwaway spike for [02-custom-components.md](02-custom-components.md), Task 1b.4: can a Gradle-plugin-launched window run Compose Hot Reload with a sample project's composables? The answer decides how `skiPreview` is built, so get it early.
+
+Order after that: finish Phase 1 (01) → Phase 1b (02) → studio. Phase 1b comes before the studio because "show my component now" is Ski's core job, and the studio's component packs build on it.

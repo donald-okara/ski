@@ -65,6 +65,7 @@ Sections (most are filled in by later phases):
 - **Remote** (04): pairing QR, paired devices, port.
 - **Skills** (03, Task 3.8): built-in and user skills, on/off, add from folder or zip.
 - **Publishing** (Task 2.8): connected Vercel account/token, default team, publish history.
+- **Component packs** (Task 2.9): loaded packs, their components, versions, reload/remove.
 - **Account & purchases** (05).
 - **Appearance**: light/dark/system.
 
@@ -142,9 +143,25 @@ The folder works on any static host (Netlify, GitHub Pages, Cloudflare Pages, S3
 
 **Web presenting:** the published site uses the web player's existing popup flow: the main tab is the presenter view and `/?slides` is the audience window, synced through `localStorage`. The phone remote (04) doesn't connect to web decks in v1.
 
+**Decks with your own components:** the prebuilt player only has Ski's built-in components. When a deck uses components from a pack, the Publish dialog says which ones and offers two choices: "Use a custom player folder" (built in the user's project with `./gradlew skiWebPlayer`, [engine 02](../engine/02-custom-components.md), Task 1b.6; the studio remembers the folder per deck and can run the project's own `gradlew` for the user when a project folder is attached), or "Publish anyway" with placeholders for those components.
+
 **Gating (open question, see README):** recommended free, since it's how decks get shared and spread the word. Optionally show a small "Made with Ski" badge that `present`/Pro users can turn off.
 
 Put the code in `ke.don.studio.publish` with an interface `DeckPublisher { suspend fun publish(export: ExportedSite, options): Flow<PublishProgress> }`, so Netlify or GitHub Pages can be added later without touching the UI.
+
+## Task 2.9: component packs (your own composables)
+
+The packaged studio has no compiler, so it gets user components already compiled, as component packs built by the Ski Gradle plugin in the user's project ([engine 02](../engine/02-custom-components.md), Task 1b.5).
+
+- **Loading:** drag a `.skipack` onto the window, use File → Load Component Pack…, or run `./gradlew skiStudio` in the project, which opens `ski://open-pack?path=…`. Packs are referenced by path (not copied), remembered in `<appdata>/packs.json`, and listed in Settings → Component packs.
+- **Isolation:** one child classloader per pack, with the studio's classloader (Compose, Ski engine) as parent. Find providers with `ServiceLoader<SkiComponentProvider>`.
+- **Compatibility:** read `pack.json` first. Refuse packs built against a newer engine or a different Compose minor version, and show the exact fix (rebuild with ski x.y, or update the studio).
+- **Duplicate IDs** across packs, or with Ski's built-ins: the first loaded wins. Show a warning naming both packs.
+- **Live reload:** watch each pack file. When it changes (from `./gradlew skiStudio -t`), dispose compositions that use the old classloader, load the new one, and re-render. The deck, selection and chat stay. Show a small "Reloaded rating-bar, 2 components" toast.
+- **Errors inside a component** (exceptions while composing): catch them at the element boundary and show an error card with the stack trace's first lines. One broken component must not take down the preview or a presentation.
+- **Decks remember which packs they need:** `deck.json` gets `requiredComponents: [{ id, pack }]`, written by the studio on save. Opening a deck without a pack shows placeholders and a banner ("This deck uses 3 components from `my-ui-kit`. Load the pack").
+- **Presenting** works with packs exactly like built-ins: they're in the same JVM.
+- **Gating:** open question in the README. Recommended: packs work in the free tier for editing and preview; presenting stays gated by `present` as usual.
 
 ## Risks
 
