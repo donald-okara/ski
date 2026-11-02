@@ -1,0 +1,296 @@
+# Phase 1: the engine (slides as data)
+
+Goal: a deck is a JSON document that any Ski target can draw with the existing components, and that can be changed only through typed, undoable operations.
+
+Done when (milestone M1): the demo deck from `skiPresentationSlides()` is rewritten as `samples/demo.ski.json`, and rendering it gives the same slides, reveal steps, notes and transitions as the Kotlin version. Some slides (video, whiteboard demos) will need the escape hatch described under "Built-in slides".
+
+## How it fits the current code
+
+Today the flow is:
+
+```
+skiPresentationSlides()  ->  generateDeck { slide(...) { MyComposable() } }  ->  List<SlideConfig>
+                                                                                 │
+Deck(mode, slides, navigator)  ->  PresentationDeck  ->  DeckHost (AnimatedContent on currentIndex)
+```
+
+`SlideConfig` (`core/domain/.../SlideConfig.kt`) holds a `content: @Composable () -> Unit`, a `steps: Int` for reveals, notes as `List<AnnotatedString>`, a `transition`, a `frame`, header/footer, and a `TimerController`.
+
+The engine adds one step in front and leaves everything after it alone:
+
+```
+DeckDocument (JSON)  ->  rememberSlides(document)  ->  List<SlideConfig>  ->  Deck(...)  (unchanged)
+```
+
+So `DeckNavigator`, `DeckHost`, `PresentationDeck`, the two-window setup, reveals via `LocalRevealStep`, the timer and the shortcuts keep working with no changes. This is the main reason the plan is cheap: the presentation runtime already exists.
+
+## Module: `:engine:model`
+
+Pure Kotlin + `kotlinx.serialization`. No Compose, so it can be shared with the phone and tested on the JVM. Package: `ke.don.engine.model`.
+
+### Task 1.1: build setup
+
+- Add a `ke.don.ski.jvmLibrary` convention plugin in `build-logic/convention/src/main/kotlin/ke/don/ski/JvmLibrary.kt` for later JVM-only modules (`:engine:export`, `:remote:server`, `:ai:*`). Register it in `build-logic/convention/build.gradle.kts` and add it to `[plugins]` in `gradle/libs.versions.toml` the same way `kotlinMultiplatformLibrary` is.
+- Create `:engine:model` with the existing `kotlinMultiplatformLibrary` plugin plus `kotlin-serialization`. It should not apply `composeMultiplatformPlugin`.
+- Add `include(":engine:model")` to `settings.gradle.kts`.
+- Add `kotlin-test` to `commonTest` and confirm `./gradlew :engine:model:jvmTest` runs one trivial test.
+
+### Task 1.2: the document schema
+
+Start with this shape. Field names are what the AI will see in JSON, so keep them short and obvious.
+
+```kotlin
+@Serializable
+data class DeckDocument(
+    val schemaVersion: Int = CURRENT_SCHEMA_VERSION,
+    val id: String,                       // UUID, stable across saves
+    val title: String,
+    val theme: DeckTheme = DeckTheme(),
+    val sessionMinutes: Int = 45,         // feeds TimerController; default mirrors SlidesConstants.SESSION_DURATION
+    val slides: List<Slide>,
+    val assets: List<Asset> = emptyList(),
+)
+
+@Serializable
+data class Slide(
+    val id: String,                       // stable ID; ops address slides by ID, never by index
+    val label: String,                    // TOC + header, same as SlideConfig.label
+    val layout: SlideLayout = SlideLayout.Stack,
+    val elements: List<Element>,
+    val notes: List<String> = emptyList(),// plain text or light markdown, one entry per paragraph
+    val transition: Transition = Transition.Horizontal,
+    val showFooter: Boolean = true,
+    val frame: FrameRef = FrameRef.Default,
+)
+```
+
+`steps` is **not stored**. The renderer works it out as the highest `revealAt` among the slide's elements (see "Reveals"). Storing it would let the AI write a value that disagrees with the elements.
+
+Layouts (start small, add when a real deck needs one):
+
+```kotlin
+@Serializable sealed interface SlideLayout {
+    @Serializable @SerialName("stack")   data object Stack : SlideLayout                       // Column
+    @Serializable @SerialName("split")   data class Split(val leadWeight: Float = 1f) : SlideLayout  // SplitSlide: first half of elements = lead
+    @Serializable @SerialName("center")  data object Center : SlideLayout                      // title/section slides
+    @Serializable @SerialName("segments") data class Segments(val vertical: Boolean) : SlideLayout // Horizontally/VerticallySegmentedScreen
+}
+```
+
+For `Split`, put an explicit `column: Int` on elements rather than "first half". Pick one before writing code; `column` is clearer to the AI.
+
+Elements: one sealed type, one subtype per existing component. Each subtype maps to exactly one composable in `:shared:components`. The first batch is the components ported from the droidcon deck, because they already take plain data:
+
+| Element (`@SerialName`) | Fields | Renders with |
+|---|---|---|
+| `title` | `text`, `kicker?` | `SlideTitle` |
+| `bullets` | `items: List<String>`, `reveal: Boolean` | `BulletList`, or `RevealBulletList` when `reveal` |
+| `text` | `text` (light markdown) | `Text` with the theme's body style |
+| `code` | `code`, `language = "kotlin"`, `foldLambdas = true` | `KotlinCodeViewer` |
+| `callout` | `title`, `body` | `CalloutCard` |
+| `commit` | `sha` | `CommitTag` |
+| `stat` | `value`, `unit`, `label`, `direction`, `improvement`, `sha?`, `source?` | `StatTile` |
+| `columnChart` / `barChart` | `points: List<{label, value}>`, `caption?` | `ColumnChart` / `BarChart` |
+| `timeline` | `stages`, `gapAfterIndex?`, `gapTitle` | `EvolutionTimeline` |
+| `swatches` | `label`, `swatches: List<{name, hex}>` | `SwatchRow` |
+| `image` | `assetId`, `shape`, `fit` (see Task 1.3; GIF assets animate) | `Image` / `ExpressivePictureFrame` / `AnimatedImage` |
+| `video` | `assetId`, `autoplay`, `loop`, `muted`, `startMs?`, `endMs?` (see Task 1.3) | `composemediaplayer` |
+| `device` | `deviceId` (from `DeviceCatalog`), `orientation`, `child: Element` | `DeviceFrame` |
+| `builtin` | `key: String`, `params: JsonObject` | registry lookup (see below) |
+
+Every element also has:
+
+```kotlin
+val id: String          // stable, for update_element / remove_element
+val revealAt: Int = 0   // 0 = always visible; n = appears at reveal step n
+```
+
+Colors: components take `*Colors` objects (`SlideBlockDefaults.titleColors()`, `ChartDefaults.colors()`…). Do **not** expose those per element in v1. Use the deck theme (below). Add a per-element `accent: ColorRole?` later if users ask.
+
+Theme:
+
+```kotlin
+@Serializable
+data class DeckTheme(
+    val darkMode: Boolean = true,
+    val seedColor: String? = null,          // hex; null = AppTheme default from :shared:design
+    val background: BackgroundRef = BackgroundRef.AnimatedDiagonalWavy,
+    val decoratorAssetId: String? = null,   // replaces the hardcoded ANDROID_ROBOT in Deck.kt
+    val mainFrame: FrameRef = FrameRef.Snake,
+    val guidesFrame: FrameRef = FrameRef.Basic,
+)
+```
+
+`BackgroundRef` mirrors `Pattern` (`Wavy`, `DiagonalWavy`, `AnimatedDiagonalWavyBackground`, `PerspectiveFloor`, plus `None`). `FrameRef` mirrors `defaultSkiFrames()` (`Snake`, `Basic`, `None`, `Default` = use the theme's main frame).
+
+### Task 1.3: assets
+
+Images and video can't go inline in JSON. A deck on disk is a folder (or a zip with the `.ski` extension, see Phase 2):
+
+```
+my-talk.ski/
+  deck.json
+  assets/
+    3f2a….png
+```
+
+Users add assets through the Assets side panel in the studio (02, Task 2.7). Three kinds are supported:
+
+```kotlin
+@Serializable
+data class Asset(
+    val id: String,              // UUID; file is stored as assets/<id>.<ext>
+    val kind: AssetKind,         // Image, Gif, Video
+    val name: String,            // what the user sees; editable, also how the AI refers to it
+    val fileName: String,        // original file name, for display only
+    val mimeType: String,        // image/png, image/jpeg, image/webp, image/svg+xml, image/gif, video/mp4, video/webm, video/quicktime
+    val sha256: String,          // dedupe on import + phone cache key
+    val widthPx: Int? = null,
+    val heightPx: Int? = null,
+    val durationMs: Long? = null,     // gif + video
+    val description: String = "",     // alt text; also given to the AI so it can pick the right asset
+    val posterAssetId: String? = null // video: generated still frame for thumbnails and the phone
+)
+```
+
+The renderer gets an `AssetResolver` interface instead of reading files itself:
+
+```kotlin
+interface AssetResolver {
+    @Composable fun painter(assetId: String): Painter?          // images, and the first frame of a GIF
+    @Composable fun AnimatedImage(assetId: String, modifier: Modifier, playing: Boolean)  // GIF
+    @Composable fun Video(assetId: String, modifier: Modifier, autoplay: Boolean, loop: Boolean, muted: Boolean)
+}
+```
+
+The desktop implements it from the unpacked deck folder. The phone gets assets sent over the remote connection (04) or shows the poster frame.
+
+Element types for assets (add to the table in Task 1.2):
+
+| Element (`@SerialName`) | Fields | Renders with |
+|---|---|---|
+| `image` | `assetId`, `shape: plain/expressive`, `fit: contain/cover` | `Image` / `ExpressivePictureFrame`. When the asset is a GIF, `AnimatedImage` |
+| `video` | `assetId`, `autoplay = true`, `loop = false`, `muted = true`, `startMs?`, `endMs?` | `composemediaplayer` (already in `libs.versions.toml`, used by `VideoSlide` in `:segments:demos`) |
+
+Playback rules:
+- GIFs and autoplay videos start when their slide (and reveal step) becomes visible and pause when it leaves. Use `LocalRevealStep` and the current slide index so off-screen slides in `AnimatedContent` don't keep decoding.
+- Thumbnails (Task 1.11) show the poster or first frame and never play.
+- Only the audience window plays audio. The presenter window plays muted so the sound doesn't come out twice.
+
+Animated GIF decoding: Compose Multiplatform has no built-in animated GIF support. On JVM, iOS and web, use Skia's `org.jetbrains.skia.Codec` (Skiko), which exposes frames and frame durations. On Android, use `ImageDecoder` + `AnimatedImageDrawable`. Put this behind an `expect`/`actual` in `:engine:renderer`. Prototype this early, since it's the least certain piece of the asset work.
+
+### Task 1.4: validation
+
+`fun DeckDocument.validate(): List<ValidationError>` in `:engine:model`. Ops call it before committing; the AI receives the errors as tool results so it can fix its own mistakes. Check at least:
+
+- IDs unique within the deck (slides) and within each slide (elements).
+- `revealAt` values form 0..n with no gaps (a gap means a "next" press that shows nothing).
+- `assetId` references exist in `assets`, and the kind matches the element (`video` elements need a video asset; `image` elements need an image or GIF).
+- `deviceId` exists in `DeviceCatalog` (needs the catalog IDs exposed as data; small change in `:shared:components`).
+- Text length limits (titles ≤ 80 chars, bullets ≤ 8 items) as **warnings**, not errors. These encode the authoring rules so the AI gets nudged toward readable slides.
+- `slides` not empty (`DeckNavigator` requires at least one slide and throws otherwise).
+
+### Task 1.5: schema versions and migrations
+
+- `const val CURRENT_SCHEMA_VERSION = 1`.
+- `object DeckMigrations { fun migrate(json: JsonObject): JsonObject }` runs step by step (v1→v2→…) on the raw JSON before decoding.
+- Decode with `Json { ignoreUnknownKeys = true; classDiscriminator = "type" }` so a newer file opened in an older app degrades instead of crashing. Unknown element types should decode to an `Element.Unknown` placeholder (custom serializer), which the renderer draws as a grey "Update Ski to see this element" box.
+
+Tests for 1.2–1.5: JSON round-trip of every element type, a golden `samples/demo.ski.json` that must keep decoding, validation cases, and one fake v0→v1 migration to prove the mechanism.
+
+## Module: `:engine:ops`
+
+Pure Kotlin. Package `ke.don.engine.ops`. Depends on `:engine:model`.
+
+### Task 1.6: operations
+
+```kotlin
+@Serializable sealed interface DeckOp {
+    @Serializable @SerialName("add_slide")       data class AddSlide(val slide: Slide, val afterSlideId: String?) : DeckOp
+    @Serializable @SerialName("remove_slide")    data class RemoveSlide(val slideId: String) : DeckOp
+    @Serializable @SerialName("move_slide")      data class MoveSlide(val slideId: String, val afterSlideId: String?) : DeckOp
+    @Serializable @SerialName("update_slide")    data class UpdateSlide(val slideId: String, val patch: SlidePatch) : DeckOp   // label, layout, notes, transition…
+    @Serializable @SerialName("add_element")     data class AddElement(val slideId: String, val element: Element, val afterElementId: String?) : DeckOp
+    @Serializable @SerialName("update_element")  data class UpdateElement(val slideId: String, val element: Element) : DeckOp  // replace by element.id
+    @Serializable @SerialName("remove_element")  data class RemoveElement(val slideId: String, val elementId: String) : DeckOp
+    @Serializable @SerialName("set_theme")       data class SetTheme(val theme: DeckTheme) : DeckOp
+    @Serializable @SerialName("set_title")       data class SetTitle(val title: String) : DeckOp
+    @Serializable @SerialName("add_asset")       data class AddAsset(val asset: Asset) : DeckOp          // Assets panel only, not exposed to the AI
+    @Serializable @SerialName("update_asset")    data class UpdateAsset(val assetId: String, val name: String?, val description: String?) : DeckOp
+    @Serializable @SerialName("remove_asset")    data class RemoveAsset(val assetId: String) : DeckOp    // rejected while any element references it
+}
+```
+
+`fun DeckDocument.apply(op: DeckOp): OpResult` where `OpResult` is `Applied(newDoc, inverse: DeckOp)` or `Rejected(errors)`. Every op produces its own inverse at apply time (e.g. `RemoveSlide` returns an `AddSlide` with the removed slide and its old position). That is what makes undo trivial.
+
+Ops are serializable on purpose: the AI layer, the MCP server and a future collaborative mode all send the same JSON.
+
+### Task 1.7: transactions and history
+
+- `DeckTransaction(label: String, ops: List<DeckOp>)` applies all or nothing. One AI turn is one transaction, so one Undo reverts the whole turn ("Added 3 slides about state hoisting").
+- `DeckHistory` holds a past stack and a future stack of transactions, capped (e.g. 200). Exposes `StateFlow<DeckDocument>`, `undo()`, `redo()`, `canUndo`, `canRedo`.
+- `DeckEditor` is the single entry point the app uses: `val document: StateFlow<DeckDocument>`, `fun commit(tx): Result`, `undo()`, `redo()`. Nothing else in the app holds a mutable document.
+
+Tests: every op's inverse restores the original document (property-style test over the sample deck), transaction rollback on a failing op, undo/redo order.
+
+## Module: `:engine:renderer`
+
+Compose Multiplatform, all targets. Package `ke.don.engine.renderer`. Depends on `:engine:model`, `:core:domain`, `:shared:components`, `:shared:design`, `:shared:resources`.
+
+### Task 1.8: document → `SlideConfig`
+
+```kotlin
+@Composable
+fun rememberSlides(
+    document: DeckDocument,
+    assets: AssetResolver,
+    registry: BuiltinRegistry = BuiltinRegistry.Default,
+): List<SlideConfig>
+```
+
+- Creates one `TimerController` with `document.sessionMinutes` (same pattern as `rememberTimerController` in `SkiPresentationSlides.kt`).
+- Maps each `Slide` to `SlideConfig(label, notes = notes.map(::parseLightMarkdown), transition, frame, showFooter, steps = maxRevealAt, content = { SlideBody(slide) })`.
+- Keys `remember` on `document` so a new document gives new configs. **Watch out:** `DeckNavigator` is built with a fixed `List<SlideConfig>` (`DeckNavigator(slides)`). When the AI adds or removes slides, the navigator must be rebuilt or updated. Plan: add `fun updateSlides(newSlides: List<SlideConfig>)` to `DeckNavigator` in `:core:domain` that clamps `currentIndex`/`currentStep`, and make `slides` a `mutableStateOf`. Keep the constructor as is so the code-first path does not change.
+- Also: `currentIndex` should follow the slide the user is looking at by **ID** across edits. When a slide is inserted before the current one, the preview should not jump. `DeckEditor` reports the current slide ID; the renderer maps it back to an index.
+
+### Task 1.9: element composables
+
+`@Composable fun ElementView(element: Element)` with a `when` over element types, wrapping each in `RevealItem(index = element.revealAt)` when `revealAt > 0`. `RevealItem` already reads `LocalRevealStep`, so reveals work in both windows with no new code.
+
+`SlideBody(slide)` arranges `ElementView`s according to `slide.layout`.
+
+Map deck theme → `Deck()` parameters. `Deck()` in `composeApp/.../Deck.kt` currently hardcodes the frames, the background pattern and `Resources.Images.ANDROID_ROBOT`. Refactor it to take `mainFrame`, `guidesFrame` and `background` as parameters with today's values as defaults, so the code-first deck is unchanged and the studio passes values from `DeckTheme`. This refactor is small and should be its own PR.
+
+### Task 1.10: built-in slides (escape hatch)
+
+Some current slides are real composables that don't fit a data model (video, whiteboard, the device gallery, `SlidesAreComposablesDemo`). The `builtin` element covers them:
+
+```kotlin
+class BuiltinRegistry(private val entries: Map<String, @Composable (JsonObject) -> Unit>)
+```
+
+The studio ships a registry with a curated set (`"video"`, `"whiteboard"`, `"confetti"`…). The AI is told the list of keys and their params. This keeps the door open for rich slides without compiling code.
+
+### Task 1.11: thumbnails
+
+The studio's slide strip and the phone's next-slide preview both need small renders. Use a fixed design size (1920×1080) scaled with `Modifier.graphicsLayer` inside a `Box` of the thumbnail size, with animations disabled through a `LocalThumbnailMode` composition local (entrance animations in `SlideTitle`/`BulletList` would otherwise run in every thumbnail). Reveal step for thumbnails = the max step, so everything is visible.
+
+### Task 1.12: gallery entry
+
+Add a "Rendered from JSON" example to the gallery (`composeApp/.../gallery/data/`) that shows a slide's JSON next to its rendering. It doubles as a manual test and as the docs the AI prompt will point to.
+
+## Module: `:engine:export` (can wait until after Phase 3)
+
+JVM only. `fun DeckDocument.toKotlin(packageName: String): Map<String, String>` (file name → source). Output follows `context.md`: one named composable per slide, `generateDeck { slide(...) }` registration, `KotlinCodeViewer` for code, reveals using `RevealItem`. The exported project depends on the published `io.github.donald-okara:ski` artifact. Use KotlinPoet to avoid string-building bugs.
+
+Test: export the sample deck, compile it in a Gradle test fixture, and check it builds.
+
+## Converting the demo deck (M1)
+
+Write `samples/demo.ski.json` by hand (or ask Claude with the schema) to mirror `skiPresentationSlides()`. Then add a temporary toggle in `desktopApp/.../main.kt` to load either the Kotlin deck or the JSON deck, and compare them window by window. Differences show where the schema or renderer still falls short.
+
+## Risks
+
+- **Animation parity.** Components like `SlideTitle` run entrance animations in `LaunchedEffect(Unit)`. When the document changes, recomposition must not restart animations on slides the user isn't editing. Key slides by `slide.id` in `DeckHost`'s `AnimatedContent`, not by index alone.
+- **Schema growth.** Every new component tempts a new element type. Rule: a component gets an element type only when it takes plain data. Otherwise it goes in `BuiltinRegistry`.
+- **Notes formatting.** `SlideConfig.notes` is `List<AnnotatedString>`. Keep the stored format to bold/italic/code spans so `parseLightMarkdown` stays small.
