@@ -2,19 +2,17 @@
 
 Goal: a desktop app that opens and saves decks, shows a live preview, and presents them using today's two-window setup. The chat pane is a placeholder until Phase 3.
 
-Done when (milestone M2): you can open `samples/demo.ski`, see it in the preview, press Present, and get the audience window plus the presenter panel, both driven by one `DeckNavigator` as in `desktopApp/.../main.kt` today.
+Done when (milestone M2): you can open `samples/demo.ski`, see it in the preview, press Present, and get the audience window plus the presenter panel, both driven by one `DeckNavigator` as in `ski`'s `desktopApp/.../main.kt` today.
 
 ## Where the code goes
 
 - **`:studio`** (new, JVM-only Compose module, package `ke.don.studio`): all studio UI and state. JVM-only because it needs the file system, the keychain, the Ktor server and AI clients.
-- **`:desktopApp`** (existing): keep its `main()` for the code-first demo deck, and add a second entry point `ke.don.studio.StudioMainKt` with its own Gradle task, like `runGallery`. Later, when the studio is the product, swap `compose.desktop.application.mainClass` to the studio and keep a `runDemoDeck` task for the old one.
+- **`:desktopApp`** (in `ski-studio`): thin entry point (`ke.don.studio.StudioMainKt`) plus `compose.desktop` packaging config. `ski`'s own `:desktopApp` stays the code-first demo deck and isn't touched.
 
-  Alternative: a separate `:studioApp` module. Choose this if packaging two apps from one module gets messy. Decide in Task 2.1.
-
-Add a run command to `CLAUDE.md` once it exists:
+The studio gets Ski's UI through published artifacts (`ski`, `ski-domain`, `ski-engine-*`, pinned by `ski-bom`), or through the composite build while developing (engine README). Add a run command to the studio's `CLAUDE.md` once it exists:
 
 ```shell
-./gradlew :desktopApp:runStudio
+./gradlew :desktopApp:run
 ```
 
 ## Task 2.1: app skeleton
@@ -54,7 +52,7 @@ Add a run command to `CLAUDE.md` once it exists:
 
 ## Task 2.4: Present
 
-- The Present button opens the two windows the way `desktopApp/.../main.kt` does now: an audience window (`DeckMode.Presenter`, fullscreen) and a presenter window (`DeckMode.Local`), sharing one `DeckNavigator`.
+- The Present button opens the two windows the way `ski`'s `desktopApp/.../main.kt` does now: an audience window (`DeckMode.Presenter`, fullscreen) and a presenter window (`DeckMode.Local`), sharing one `DeckNavigator`.
 - Put the audience window on the second display when there is one: use `GraphicsEnvironment.getLocalGraphicsEnvironment().screenDevices`, then set the window's position to that screen's bounds before going fullscreen. Fall back to the main display.
 - While presenting, the document is **read-only**. `DeckEditor` rejects commits and the chat shows "Presenting. Edits are paused." This avoids slides moving under the presenter mid-talk.
 - Esc in the presenter window ends the presentation and closes both windows.
@@ -65,6 +63,8 @@ Add a run command to `CLAUDE.md` once it exists:
 Sections (most are filled in by later phases):
 - **AI provider** (03): provider, model, API key status.
 - **Remote** (04): pairing QR, paired devices, port.
+- **Skills** (03, Task 3.8): built-in and user skills, on/off, add from folder or zip.
+- **Publishing** (Task 2.8): connected Vercel account/token, default team, publish history.
 - **Account & purchases** (05).
 - **Appearance**: light/dark/system.
 
@@ -113,6 +113,38 @@ A collapsible panel on the right of the preview (toolbar button and View → Tog
 - On save, unreferenced files in `assets/` that no `Asset` points to are dropped from the zip.
 
 **Description suggestions (optional, Phase 3):** when an AI provider with vision is set up, offer "Describe with AI" to fill in alt text for images, which also helps the AI choose assets.
+
+## Task 2.8: Publish to web (Vercel)
+
+Decks made in the studio must stay portable: anyone with a browser can view them, and the presenter can present from any machine. The studio publishes a deck as a static website built on `ski`'s web player (01, Task 1.13), then deploys it to Vercel with one button.
+
+**Export (no account needed):** File → Export → Website… writes a folder (or zip) with:
+```
+index.html, *.wasm, *.js        prebuilt ski-web-player bundle (version matched to the engine the studio uses)
+deck.json                       the document
+assets/                         images, GIFs, videos the deck uses (unused assets are left out)
+vercel.json                     rewrite all paths to index.html, so /?slides works (same rule as ski's webApp)
+```
+The player bundle is downloaded from the `ski` GitHub release at **build time** and packed into the studio's resources (Gradle task in `:studio`). Exporting then works offline and always matches the engine version.
+
+The folder works on any static host (Netlify, GitHub Pages, Cloudflare Pages, S3). Say so in the export dialog.
+
+**Deploy to Vercel (toolbar button "Publish"):**
+1. First time: connect Vercel. v1: the user pastes a Vercel access token (link to the token page), stored in the keychain like AI keys (03, Task 3.2). Later: "Sign in with Vercel" through a Vercel integration (OAuth), which avoids copy-pasting tokens.
+2. Dialog: project name (default: slug of the deck title, remembered per deck in `<appdata>/settings.json`), team (if the token has several), Production or Preview, "Include speaker notes" (on by default because the web presenter popup needs them; turn off for an audience-only link).
+3. The studio builds the export folder in a temp dir and deploys with the Vercel REST API, not the CLI, so users don't need Node:
+   - upload each file (`POST /v2/files` with its SHA-1 digest; Vercel skips files it already has, so re-deploys only send changed assets);
+   - create the deployment (`POST /v13/deployments`) listing files by SHA, `projectSettings.framework = null`, and `target = production` when chosen;
+   - poll the deployment until `READY` or `ERROR`, showing progress.
+   Check the current endpoint versions and payloads in Vercel's REST API docs before building. Pass the project name explicitly every time, for the same reason `ski`'s README passes `--project ski-slides`: there's no local `.vercel` link to rely on.
+4. Show the URL with Copy and Open buttons, plus a QR code so the audience can follow along on their phones.
+5. Keep a per-deck publish history (URL, date, target), and offer "Update the published deck" on later publishes.
+
+**Web presenting:** the published site uses the web player's existing popup flow: the main tab is the presenter view and `/?slides` is the audience window, synced through `localStorage`. The phone remote (04) doesn't connect to web decks in v1.
+
+**Gating (open question, see README):** recommended free, since it's how decks get shared and spread the word. Optionally show a small "Made with Ski" badge that `present`/Pro users can turn off.
+
+Put the code in `ke.don.studio.publish` with an interface `DeckPublisher { suspend fun publish(export: ExportedSite, options): Flow<PublishProgress> }`, so Netlify or GitHub Pages can be added later without touching the UI.
 
 ## Risks
 

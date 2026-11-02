@@ -19,7 +19,7 @@ The remote is a networked version of what the two desktop windows already share 
 - **`:remote:server`** (JVM, package `ke.don.remote.server`): Ktor server embedded in the studio.
 - **`:remote:client`** (Android + iOS + JVM for tests, package `ke.don.remote.client`): Ktor client, pairing and reconnection.
 - **`:mobileRemote`** (Compose Multiplatform, Android + iOS, package `ke.don.mobileremote`): the remote UI.
-- **`androidApp`** and **`iosApp`** become entry points for `:mobileRemote` instead of `:composeApp`. To keep the demo deck on Android, give `androidApp` a product flavour (`remote`, `demo`), or move the demo deck to its own module first. Decide in Task 4.5.
+- **`:androidApp`** and **`iosApp/`** in `ski-studio` are the remote app's entry points for `:mobileRemote`. `ski`'s own `androidApp`/`iosApp` stay as code-first demo apps and aren't touched.
 
 ## Task 4.1: protocol
 
@@ -114,7 +114,7 @@ Platform setup:
 
 ## Task 4.6: replace web sync (optional, later)
 
-The web build's `localStorage` sync could use `:remote:protocol` messages too (with a `BroadcastChannel` transport), so there is one sync model everywhere. Not needed for the studio; do it if the web sync keeps causing bugs.
+`ski`'s web build (and the web player published from the studio, 02 Task 2.8) syncs through `localStorage`. If that keeps causing bugs, move a small sync protocol into `ski` (with a `BroadcastChannel` transport) and have `:remote:protocol` reuse its message types. Not needed for v1. A later version could let the phone remote control a deck published to the web through the relay (Risks).
 
 ## Risks
 

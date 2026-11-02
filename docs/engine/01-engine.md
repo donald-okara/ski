@@ -1,5 +1,7 @@
 # Phase 1: the engine (slides as data)
 
+> Lives in **`ski`** (this repo) and ships as published artifacts (see [README](README.md), Task 0). Ski Studio consumes it. References to studio plans (02–06) point at [`docs/studio/`](../studio/README.md), which moves to the `ski-studio` repo.
+
 Goal: a deck is a JSON document that any Ski target can draw with the existing components, and that can be changed only through typed, undoable operations.
 
 Done when (milestone M1): the demo deck from `skiPresentationSlides()` is rewritten as `samples/demo.ski.json`, and rendering it gives the same slides, reveal steps, notes and transitions as the Kotlin version. Some slides (video, whiteboard demos) will need the escape hatch described under "Built-in slides".
@@ -30,8 +32,8 @@ Pure Kotlin + `kotlinx.serialization`. No Compose, so it can be shared with the 
 
 ### Task 1.1: build setup
 
-- Add a `ke.don.ski.jvmLibrary` convention plugin in `build-logic/convention/src/main/kotlin/ke/don/ski/JvmLibrary.kt` for later JVM-only modules (`:engine:export`, `:remote:server`, `:ai:*`). Register it in `build-logic/convention/build.gradle.kts` and add it to `[plugins]` in `gradle/libs.versions.toml` the same way `kotlinMultiplatformLibrary` is.
-- Create `:engine:model` with the existing `kotlinMultiplatformLibrary` plugin plus `kotlin-serialization`. It should not apply `composeMultiplatformPlugin`.
+- Add a `ke.don.ski.jvmLibrary` convention plugin in `build-logic/convention/src/main/kotlin/ke/don/ski/JvmLibrary.kt` for JVM-only modules in this repo (`:engine:export`). The studio repo keeps its own conventions. Register it in `build-logic/convention/build.gradle.kts` and add it to `[plugins]` in `gradle/libs.versions.toml` the same way `kotlinMultiplatformLibrary` is.
+- Create `:engine:model` with the existing `kotlinMultiplatformLibrary` plugin, `kotlin-serialization`, and `publishedLibrary` (README, Task 0.1) with artifact `ski-engine-model`. It should not apply `composeMultiplatformPlugin`. Apply `publishedLibrary` to `:engine:ops`, `:engine:renderer` and `:engine:export` the same way when you create them.
 - Add `include(":engine:model")` to `settings.gradle.kts`.
 - Add `kotlin-test` to `commonTest` and confirm `./gradlew :engine:model:jvmTest` runs one trivial test.
 
@@ -86,7 +88,7 @@ Elements: one sealed type, one subtype per existing component. Each subtype maps
 | `title` | `text`, `kicker?` | `SlideTitle` |
 | `bullets` | `items: List<String>`, `reveal: Boolean` | `BulletList`, or `RevealBulletList` when `reveal` |
 | `text` | `text` (light markdown) | `Text` with the theme's body style |
-| `code` | `code`, `language = "kotlin"`, `foldLambdas = true` | `KotlinCodeViewer` |
+| `code` | `code`, `language = "kotlin"`, `foldLambdas = true`, `focusSteps`, `source?` (see Task 1.9b) | `KotlinCodeViewer` |
 | `callout` | `title`, `body` | `CalloutCard` |
 | `commit` | `sha` | `CommitTag` |
 | `stat` | `value`, `unit`, `label`, `direction`, `improvement`, `sha?`, `source?` | `StatTile` |
@@ -125,7 +127,7 @@ data class DeckTheme(
 
 ### Task 1.3: assets
 
-Images and video can't go inline in JSON. A deck on disk is a folder (or a zip with the `.ski` extension, see Phase 2):
+Images and video can't go inline in JSON. A deck on disk is a folder (or a zip with the `.ski` extension, see studio plan [02](../studio/02-studio-shell.md), Task 2.2):
 
 ```
 my-talk.ski/
@@ -134,7 +136,7 @@ my-talk.ski/
     3f2a….png
 ```
 
-Users add assets through the Assets side panel in the studio (02, Task 2.7). Three kinds are supported:
+Users add assets through the Assets side panel in the studio ([02](../studio/02-studio-shell.md), Task 2.7). The engine only defines the model and how assets render; importing files is the studio's job. Three kinds are supported:
 
 ```kotlin
 @Serializable
@@ -163,7 +165,7 @@ interface AssetResolver {
 }
 ```
 
-The desktop implements it from the unpacked deck folder. The phone gets assets sent over the remote connection (04) or shows the poster frame.
+The desktop implements it from the unpacked deck folder. The studio's phone remote gets assets over its own connection ([04](../studio/04-mobile-remote.md)) or shows the poster frame. The code-first path can implement `AssetResolver` over Compose resources.
 
 Element types for assets (add to the table in Task 1.2):
 
@@ -223,7 +225,7 @@ Pure Kotlin. Package `ke.don.engine.ops`. Depends on `:engine:model`.
 
 `fun DeckDocument.apply(op: DeckOp): OpResult` where `OpResult` is `Applied(newDoc, inverse: DeckOp)` or `Rejected(errors)`. Every op produces its own inverse at apply time (e.g. `RemoveSlide` returns an `AddSlide` with the removed slide and its old position). That is what makes undo trivial.
 
-Ops are serializable on purpose: the AI layer, the MCP server and a future collaborative mode all send the same JSON.
+Ops are serializable on purpose: the studio's AI layer, its MCP server and a future collaborative mode all send the same JSON. That makes `DeckOp` part of the public API: renaming an op or a field is a breaking change for every studio version in the wild, so treat `@SerialName`s as frozen once published.
 
 ### Task 1.7: transactions and history
 
@@ -261,6 +263,31 @@ fun rememberSlides(
 
 Map deck theme → `Deck()` parameters. `Deck()` in `composeApp/.../Deck.kt` currently hardcodes the frames, the background pattern and `Resources.Images.ANDROID_ROBOT`. Refactor it to take `mainFrame`, `guidesFrame` and `background` as parameters with today's values as defaults, so the code-first deck is unchanged and the studio passes values from `DeckTheme`. This refactor is small and should be its own PR.
 
+### Task 1.9b: code elements built for demos
+
+Ski is mostly used to demo code, and the studio's built-in skills (03, Task 3.8) lean on these. Extend the `code` element:
+
+```kotlin
+@Serializable @SerialName("code")
+data class Code(
+    override val id: String,
+    override val revealAt: Int = 0,
+    val code: String,
+    val language: String = "kotlin",
+    val foldLambdas: Boolean = true,
+    val title: String? = null,                         // file name shown above the snippet
+    val focusSteps: List<LineFocus> = emptyList(),     // reveal step n highlights focusSteps[n-1]; dims other lines
+    val source: CodeSource? = null,                    // where the snippet came from, for "Refresh from project"
+) : Element
+
+@Serializable data class LineFocus(val from: Int, val to: Int)                 // 1-based, inclusive
+@Serializable data class CodeSource(val path: String, val fromLine: Int, val toLine: Int, val commit: String? = null)
+```
+
+- `focusSteps` count toward the slide's `steps`, so pressing Next walks through the code a few lines at a time. `KotlinCodeViewer` has no line highlighting today: add a `focusedLines: IntRange?` parameter to it in `:shared:components` (dim other lines with an animated alpha). This is a library feature code-first users get too, so add a gallery entry.
+- `language`: `KotlinCodeViewer` only highlights Kotlin. For other languages, show plain monospaced text in v1 and plan a small multi-language highlighter later. Many talks show Gradle KTS, XML, Swift or shell next to Kotlin.
+- `source` is metadata only. The engine never reads files; the studio uses it to re-pull code from an attached project folder (03, Task 3.8).
+
 ### Task 1.10: built-in slides (escape hatch)
 
 Some current slides are real composables that don't fit a data model (video, whiteboard, the device gallery, `SlidesAreComposablesDemo`). The `builtin` element covers them:
@@ -269,7 +296,7 @@ Some current slides are real composables that don't fit a data model (video, whi
 class BuiltinRegistry(private val entries: Map<String, @Composable (JsonObject) -> Unit>)
 ```
 
-The studio ships a registry with a curated set (`"video"`, `"whiteboard"`, `"confetti"`…). The AI is told the list of keys and their params. This keeps the door open for rich slides without compiling code.
+The engine defines `BuiltinRegistry` and ships an empty `Default`. Apps fill it: the studio ships a registry with a curated set (`"video"`, `"whiteboard"`, `"confetti"`…). The AI is told the list of keys and their params. This keeps the door open for rich slides without compiling code.
 
 ### Task 1.11: thumbnails
 
@@ -279,11 +306,24 @@ The studio's slide strip and the phone's next-slide preview both need small rend
 
 Add a "Rendered from JSON" example to the gallery (`composeApp/.../gallery/data/`) that shows a slide's JSON next to its rendering. It doubles as a manual test and as the docs the AI prompt will point to.
 
-## Module: `:engine:export` (can wait until after Phase 3)
+## Module: `:engine:export` (can wait until the studio has chat editing)
 
 JVM only. `fun DeckDocument.toKotlin(packageName: String): Map<String, String>` (file name → source). Output follows `context.md`: one named composable per slide, `generateDeck { slide(...) }` registration, `KotlinCodeViewer` for code, reveals using `RevealItem`. The exported project depends on the published `io.github.donald-okara:ski` artifact. Use KotlinPoet to avoid string-building bugs.
 
 Test: export the sample deck, compile it in a Gradle test fixture, and check it builds.
+
+## Module: `:webPlayer` (Task 1.13)
+
+The web player keeps decks portable: a static site that renders any `deck.json` in the browser. The studio's "Publish to web / Deploy to Vercel" ([02](../studio/02-studio-shell.md), Task 2.8) ships this bundle with the deck.
+
+- New app module `:webPlayer` (wasmJs, plus js as a fallback like `:webApp`). On load it fetches `deck.json` next to `index.html`, decodes it with `:engine:model`, and renders with `:engine:renderer`. Assets load from `assets/<id>.<ext>` through a web `AssetResolver`.
+- Reuse the presenter/audience flow from `webApp/.../WebMain.kt`: the main tab is the presenter view (notes, timer) and opens `/?slides` as the audience popup, synced through `localStorage`. Move that sync code out of `:webApp` into a small shared web module so both apps use it.
+- Ship a `vercel.json` with the rewrite-to-`index.html` rule, the same one `webApp`'s distribution already has.
+- Show a friendly error page when `deck.json` is missing or has a newer `schemaVersion` than the player supports.
+- **Release it as a versioned bundle:** extend `.github/workflows/publish.yml` to run `./gradlew :webPlayer:wasmJsBrowserDistribution`, zip `productionExecutable/` as `ski-web-player-<version>.zip`, and attach it to a GitHub release for the tag. The studio downloads the matching version at build time.
+- Anyone can use it without the studio: drop a hand-written or AI-written `deck.json` and its `assets/` into the unzipped bundle and deploy, following the README's existing Vercel steps.
+
+Add it to the engine README's split table and to the README "Deploy to Vercel" section.
 
 ## Converting the demo deck (M1)
 

@@ -90,8 +90,44 @@ Use the official Kotlin MCP SDK (`io.modelcontextprotocol:kotlin-sdk`). Check th
 - A fake `ChatProvider` that replays scripted tool calls, to test the staging → commit → undo loop without network.
 - A manual "eval" checklist of 10 prompts (empty deck, edit selected slide, add code, reorder, change theme, fix a validation error…) run against each provider before a release. Keep the prompts in `ai/agent/src/jvmTest/resources/evals/`.
 
+## Task 3.8: skills (and reading real code)
+
+Ski exists to demo code, so the AI needs to be good at code slides, and users need to teach it their own way of presenting. Skills are packaged instructions the AI loads when relevant. Use the **Agent Skills format** (a folder with a `SKILL.md` that has `name` and `description` front matter, plus optional reference files). Skills written for Claude Code or Claude.ai then work in Ski, and the reverse.
+
+**Where skills come from**
+1. **Built-in** (shipped in `:ai:agent` resources, updated with the app):
+   - `code-walkthrough`: one `code` element revealed with `focusSteps`, a few lines per Next press, with notes explaining each step (needs 01, Task 1.9b).
+   - `before-after`: `split` layout with the old and new code side by side, the diff explained in notes, optional `commit` tags.
+   - `live-demo`: code next to a `device` frame showing a screenshot, GIF or video from the Assets panel.
+   - `api-tour`: one slide per function/class from an attached project, with signatures and a usage snippet.
+   - `talk-structure`: hook → problem → solution → demo → recap, sized to `sessionMinutes`.
+2. **User skills:** Settings → Skills → "Add skill" from a folder or `.zip`, copied to `<appdata>/skills/<name>/`. Toggle each on or off, and see its description and source.
+3. **Deck skills (optional):** a deck can carry skills in `skills/` inside the `.ski` file so a team's house style travels with the deck. Off by default when opening someone else's deck; ask first ("This deck includes 2 skills. Enable them?").
+
+Later: install from a Git URL or a curated list.
+
+**How the AI uses them** (progressive loading, so the prompt stays small):
+- The system prompt lists each enabled skill's `name` + `description` only.
+- Tool `load_skill(name)` returns the `SKILL.md` body; `read_skill_file(name, path)` returns a reference file (templates, example `deck.json` snippets).
+- Skills are instructions and examples only. **Scripts inside skills are not run** in v1. Show a note on install if a skill contains scripts.
+- In the chat, show "Using skill: code-walkthrough" as a chip, and let the user force one with `/code-walkthrough make slides for this file`.
+- Over MCP (Task 3.6), expose enabled skills as **MCP prompts**, so Claude Desktop/Code users get the same behaviour.
+
+**Attach a project (read-only code source)**
+
+Demo decks are better when the code comes from the real project. The chat has an "Attach project folder" button (also per deck in settings):
+- Tools: `list_project_files(glob?)`, `read_project_file(path, fromLine?, toLine?)`, `search_project(query)` (plain text search, capped results).
+- Scope: only inside attached folders; respect `.gitignore`; never read files matching a deny list (`.env*`, `*.keystore`, `*.jks`, `local.properties`, `*.pem`, `id_*`, `google-services.json`, `GoogleService-Info.plist`). Cap file size and lines per call.
+- Code added from a file gets `source = CodeSource(path, lines, commit)` (git HEAD if it's a repo), and the slide strip offers **Refresh code from project** when the file changed since. That's the main reason to record `source`.
+- Attached folders are remembered per deck in `<appdata>`, never inside the `.ski` file (paths are personal).
+- Tell the user plainly that file contents they let the AI read are sent to their AI provider.
+
+Code: `ke.don.ai.agent.skills` (`SkillRegistry`, `SkillLoader` for front matter and file access) and `ke.don.ai.agent.project` (`ProjectSource`, deny-list matcher). UI in `ke.don.studio.skills`.
+
+Tests: skill parsing (valid, missing front matter, duplicate names); deny-list and path traversal (`../`, symlinks out of the folder) for project tools; the fake provider loading a skill and producing a valid walkthrough slide.
+
 ## Risks
 
 - **Weaker models break schemas.** Local models via Ollama often send malformed tool calls. Validation + error-as-tool-result handles most of it; also show "This model struggled with your request. Try a stronger model" after repeated failures.
 - **Cost surprises.** Show token usage per turn when the provider returns it.
-- **Prompt injection via pasted content.** The AI can only touch the deck through tools, and every turn is undoable, which keeps the blast radius small. Don't add tools that touch the file system or network.
+- **Prompt injection via pasted content, project files or third-party skills.** The AI can only change the deck through tools, and every turn is undoable, which keeps the blast radius small. The only file access is read-only and limited to folders the user attached (Task 3.8). Don't add tools that write files, run code or reach the network.

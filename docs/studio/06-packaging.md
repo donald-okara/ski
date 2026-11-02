@@ -2,9 +2,9 @@
 
 Goal: users download a signed installer, the app updates itself, and releases come from CI. Can start any time after Phase 2; must be done before a public release.
 
-## What exists today
+## Starting point
 
-`desktopApp/build.gradle.kts` already has `compose.desktop.application.nativeDistributions` with `Dmg`, `Msi` and `Deb`, `packageName = "ke.don.ski"` and `packageVersion = "1.0.0"`. No signing, no notarization, no update mechanism. `.github/workflows/publish.yml` only publishes the `:shared:components` library to Maven Central on tag push.
+All of this lives in `ski-studio`. `ski`'s `desktopApp/build.gradle.kts` has a usable starting `compose.desktop.application.nativeDistributions` block (`Dmg`, `Msi`, `Deb`) to copy, with no signing, notarization or updates. Use a new package name (e.g. `ke.don.skistudio`) so the studio and the demo app can be installed side by side. `ski`'s `publish.yml` keeps publishing the engine artifacts and the web player bundle (01, Task 1.13); the studio repo owns everything below.
 
 ## Task 6.1: choose the update path
 
@@ -27,13 +27,12 @@ Alternative: Compose's built-in `jpackage` tasks for installers plus Sparkle (ma
 
 ## Task 6.4: versioning
 
-- One version for the studio, separate from the library version (`ski = ...` in `libs.versions.toml` stays for `:shared:components`).
-- Add `studio = "0.1.0"` to `libs.versions.toml` and feed it to `packageVersion` and to the About screen.
-- Phone apps get their own `versionCode`/`versionName` (currently `1` / `"1.0"` in `androidApp/build.gradle.kts`). Keep `PROTOCOL_VERSION` (04) as the compatibility contract, not app versions.
+- The studio has its own version (`studio = "0.1.0"` in its `libs.versions.toml`), separate from `ski-bom`. Feed it to `packageVersion` and the About screen, and show the engine version there too.
+- Phone apps get their own `versionCode`/`versionName`. Keep `PROTOCOL_VERSION` (04) as the compatibility contract, not app versions.
 
 ## Task 6.5: CI
 
-New workflow `.github/workflows/studio-release.yml`, triggered by tags like `studio-v*` (so it doesn't collide with the library's tag-triggered `publish.yml`):
+Workflow `.github/workflows/release.yml` in `ski-studio`, triggered by version tags (`v*`). No prefix is needed since the engine releases from the other repo:
 
 1. macOS runner: build, sign, notarize, upload DMG (or run Conveyor) to GitHub Releases / our download site.
 2. Windows runner: build, sign MSI (if in v1).
@@ -41,11 +40,12 @@ New workflow `.github/workflows/studio-release.yml`, triggered by tags like `stu
 4. Android: build the release AAB for `androidApp` and upload to Play internal testing (Gradle Play Publisher or `r0adkll/upload-google-play`).
 5. iOS: archive and upload to TestFlight (Fastlane on the macOS runner).
 
-Secrets in GitHub Actions: Apple ID/app-specific password/team ID, signing certificate (base64 p12 + password), Play service account JSON, App Store Connect API key. Also add a plain CI workflow on PRs that runs `./gradlew :engine:model:jvmTest :engine:ops:jvmTest :remote:protocol:jvmTest` once those modules exist.
+Secrets in GitHub Actions: Apple ID/app-specific password/team ID, signing certificate (base64 p12 + password), Play service account JSON, App Store Connect API key. Also add a CI workflow on PRs that runs the studio's tests (`:remote:protocol`, `:ai:agent`, `:billing`) against the **published** `ski-bom` (`use_local_ski=false`), so the studio never depends on unreleased engine code by accident.
 
 ## Task 6.6: release checklist
 
-- [ ] Version bumped in `libs.versions.toml`.
+- [ ] Version bumped in `libs.versions.toml`; `ski-bom` pinned to a released engine version.
+- [ ] Web player bundle in the studio matches that engine version; Publish to Vercel works with a test token.
 - [ ] Sample deck opens; Present works on two displays.
 - [ ] AI eval prompts pass on at least Anthropic, OpenAI and Ollama (03, Task 3.7).
 - [ ] Phone pairs on a home network and on a phone hotspot.
