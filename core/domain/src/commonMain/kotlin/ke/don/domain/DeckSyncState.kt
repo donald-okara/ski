@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 data class DeckSyncState(
     val slideIndex: Int,
     val direction: NavDirection,
+    val step: Int = 0,
 )

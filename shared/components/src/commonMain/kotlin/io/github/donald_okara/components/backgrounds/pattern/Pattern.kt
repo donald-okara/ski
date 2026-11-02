@@ -32,4 +32,25 @@ sealed interface Pattern {
         val animationDuration: Int = 1000,
         val strokeWidth: Dp = 3.dp
     ): Pattern
+
+    /**
+     * A checkered floor in perspective, scrolling toward a horizon.
+     *
+     * @param color Fill of the lit tiles.
+     * @param alternateColor Fill of the other tiles. Transparent by default, so the backdrop shows through.
+     * @param horizon Height of the horizon as a fraction of the canvas, from the top.
+     * @param columnsAcross How many tiles span the bottom edge.
+     * @param tileDepth Depth of one row of tiles. Smaller values pack more rows toward the horizon.
+     * @param rows How many rows are drawn toward the horizon.
+     * @param tileDurationMillis How long one row takes to scroll past.
+     */
+    data class PerspectiveFloor(
+        val color: Color,
+        val alternateColor: Color = Color.Transparent,
+        val horizon: Float = 0.4f,
+        val columnsAcross: Float = 6f,
+        val tileDepth: Float = 0.5f,
+        val rows: Int = 30,
+        val tileDurationMillis: Int = 4000,
+    ) : Pattern
 }
