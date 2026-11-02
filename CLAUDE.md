@@ -56,9 +56,11 @@ Publishing: `.github/workflows/publish.yml` runs on tag push and calls root `pub
 - `:shared:design` holds `AppTheme` (`ke.don.design.theme`) and dimensions. `:shared:resources` holds images, strings, and fonts.
 - The gallery (`composeApp/.../gallery/`) is a DSL (`ComponentGalleryDsl`) listing components with examples. It is shown on web and runs on desktop via `runGallery`.
 
-## Authoring rules (from context.md)
+## Authoring rules
 
-- Reveals use state (`remember`, `Animatable`), never duplicated slides.
+The full authoring guide is the `ski-slides` skill in `skills/ski-slides/` (also linked from `.claude/skills/`). Summary:
+
+- Reveals use the deck's steps (`slide(steps = n)` plus `RevealBulletList`/`RevealItem`), never duplicated slides and never local `remember` state, which only exists in one window.
 - Put slide content in named composables, not inline in the `slide { }` block.
 - Use `KotlinCodeViewer` for code snippets.
 - New presentation content goes in `:segments:demos` or a sub-package of it, not a new module.
