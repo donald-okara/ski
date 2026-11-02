@@ -15,6 +15,9 @@ fun PatternComponent(
         is Pattern.AnimatedDiagonalWavyBackground ->
             AnimatedDiagonalWavyCanvas(pattern = pattern, modifier = modifier)
 
+        is Pattern.PerspectiveFloor ->
+            PerspectiveFloorCanvas(pattern = pattern, modifier = modifier)
+
         else ->
             Canvas(modifier = modifier) {
                 drawPattern(pattern)
@@ -30,6 +33,8 @@ fun DrawScope.drawPattern(pattern: Pattern) {
         is Pattern.DiagonalWavy -> drawDiagonalWavy(pattern)
 
         is Pattern.AnimatedDiagonalWavyBackground -> {}
+
+        is Pattern.PerspectiveFloor -> drawPerspectiveFloor(pattern, scroll = 0f)
     }
 }
 

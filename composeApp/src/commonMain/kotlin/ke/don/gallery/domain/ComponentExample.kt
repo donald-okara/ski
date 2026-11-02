@@ -18,5 +18,5 @@ data class Focusable(
 )
 
 enum class ComponentType{
-    Background, Frame, Guide, Icon, Layout, Picture, Timer
+    Background, Chart, Frame, Guide, Icon, Layout, Picture, Text, Timer
 }

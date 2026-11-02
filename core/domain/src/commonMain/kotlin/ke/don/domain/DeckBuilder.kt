@@ -27,6 +27,8 @@ class DeckBuilder(
         frame: (@Composable () -> SkiFrame?)? = null,
         header: (@Composable () -> Unit)? = null,
         footer: (@Composable () -> Unit)? = null,
+        showFooter: Boolean = true,
+        steps: Int = 0,
         content: @Composable () -> Unit
     ) {
         _slides += SlideConfig(
@@ -36,7 +38,9 @@ class DeckBuilder(
             timer = timerController,
             frame = frame,
             footer = footer,
+            showFooter = showFooter,
             header = header,
+            steps = steps,
             content = content
         )
     }

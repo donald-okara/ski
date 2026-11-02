@@ -21,10 +21,11 @@ fun DeckWebImpl() {
     val isSlides = window.location.search.contains("slides")
 
     if (!isSlides) {
-        LaunchedEffect(navigator.currentIndex, navigator.direction) {
+        LaunchedEffect(navigator.currentIndex, navigator.currentStep, navigator.direction) {
             val syncState = DeckSyncState(
                 slideIndex = navigator.currentIndex,
-                direction = navigator.direction
+                direction = navigator.direction,
+                step = navigator.currentStep
             )
             window.localStorage.setItem(
                 "deckState",
@@ -43,7 +44,7 @@ fun DeckWebImpl() {
                     val syncState = event.newValue
                         ?.let { raw -> runCatching { Json.decodeFromString<DeckSyncState>(raw) }.getOrNull() }
                     if (syncState != null && syncState.slideIndex in slides.indices) {
-                        navigator.goTo(syncState.slideIndex)
+                        navigator.goTo(syncState.slideIndex, syncState.step)
                     }
                 }
             }
