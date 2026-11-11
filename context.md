@@ -46,9 +46,11 @@ Use these pre-built components to maintain visual consistency:
 
 ## AI Implementation Rules
 
+> The full, maintained guide is the `ski-slides` skill in [`skills/ski-slides/`](skills/ski-slides/SKILL.md) (principles, code-first, components, data decks, custom components). It wins if anything here disagrees. The rules below are the short version.
+
 When generating or modifying slides, agents **MUST** follow these rules:
 
-1. **State-Driven Reveals**: Never duplicate slides to show bullet points. Use internal composable state (`remember`, `Animatable`) to handle progressive disclosure.
+1. **Step-Driven Reveals**: Never duplicate slides to show bullet points. Give the slide `steps = n` and use `RevealBulletList` / `RevealItem` (they read `LocalRevealStep`), so Next walks through the reveals in both windows. Don't use local `remember` state for presenter-paced reveals; it only lives in one window. Local state is for interactions inside a live demo.
 2. **Modular Content**: Define slide content in separate functions (e.g., `fun MySlideContent()`) rather than inlining everything in the DSL.
 3. **Presenter Mode Awareness**: Ensure `notes` are detailed. Remember that state is isolated between the Presenter window and the Audience window.
 4. **Code Snippets**: Always use `KotlinCodeViewer` for code examples.
