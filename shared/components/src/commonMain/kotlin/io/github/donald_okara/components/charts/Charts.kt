@@ -305,7 +305,10 @@ fun Confetti(
     val dots = remember { confettiDots() }
 
     LaunchedEffect(trigger) {
-        if (!trigger) return@LaunchedEffect
+        if (!trigger) {
+            progress.snapTo(1f)
+            return@LaunchedEffect
+        }
         progress.snapTo(0f)
         progress.animateTo(1f, tween(durationMillis = CONFETTI_MILLIS, easing = FastOutSlowInEasing))
     }

@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.donald_okara.components.text.CommitTag
 import ke.don.domain.values.Values
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -114,7 +115,7 @@ fun StatTile(
     val tint = if (improvement) colors.improvement else colors.regression
 
     val numberScale = if (direction == StatDirection.Decrease) {
-        1f - p * (value / 100f) * 0.5f
+        (1f - p * (value / 100f) * 0.5f).coerceAtLeast(MIN_DECREASE_SCALE)
     } else {
         1f
     }
@@ -185,8 +186,12 @@ private fun formatValue(value: Float, decimals: Int): String {
     var factor = 1
     repeat(decimals) { factor *= 10 }
     val scaled = (value * factor).roundToInt()
-    val whole = scaled / factor
-    if (decimals == 0) return whole.toString()
-    val fraction = (scaled % factor).toString().padStart(decimals, '0')
-    return "$whole.$fraction"
+    if (decimals == 0) return scaled.toString()
+    val sign = if (scaled < 0) "-" else ""
+    val magnitude = abs(scaled)
+    val fraction = (magnitude % factor).toString().padStart(decimals, '0')
+    return "$sign${magnitude / factor}.$fraction"
 }
+
+/** Floor for the shrinking number on a decrease, so large values never collapse or mirror it. */
+private const val MIN_DECREASE_SCALE = 0.1f

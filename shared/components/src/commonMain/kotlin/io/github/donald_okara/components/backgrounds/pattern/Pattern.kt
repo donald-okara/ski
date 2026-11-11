@@ -52,5 +52,12 @@ sealed interface Pattern {
         val tileDepth: Float = 0.5f,
         val rows: Int = 30,
         val tileDurationMillis: Int = 4000,
-    ) : Pattern
+    ) : Pattern {
+        init {
+            // The floor loops over two tiles, so the duration is doubled; keep it positive and overflow-free.
+            require(tileDurationMillis in 1..(Int.MAX_VALUE / 2)) {
+                "tileDurationMillis must be between 1 and ${Int.MAX_VALUE / 2}"
+            }
+        }
+    }
 }

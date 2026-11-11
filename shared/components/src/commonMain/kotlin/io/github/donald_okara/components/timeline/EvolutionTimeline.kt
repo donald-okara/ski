@@ -348,7 +348,6 @@ private fun TimelineSlot(
     val dash = PathEffect.dashPathEffect(floatArrayOf(10f, 8f))
 
     val slotModifier = modifier
-        .padding(horizontal = Values.Dimens.tinyPadding)
         .hoverable(interactionSource = interaction)
         .let { base ->
             if (onClick != null) {
@@ -371,6 +370,7 @@ private fun TimelineSlot(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = Values.Dimens.tinyPadding)
                 .graphicsLayer { alpha = textAlpha }
         )
 
@@ -462,6 +462,7 @@ private fun TimelineSlot(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = Values.Dimens.tinyPadding)
                 .graphicsLayer { alpha = textAlpha }
         )
     }
