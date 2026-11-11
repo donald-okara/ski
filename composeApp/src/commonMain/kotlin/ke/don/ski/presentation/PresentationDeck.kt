@@ -82,15 +82,20 @@ fun PresentationDeck(
                     if (shareFrame) {
                         val timerState by timerController.state.collectAsState()
 
-                        mainFrame.Render(header = { MainHeader(deckMode) }, footer = {
-                            MainFooter(
-                                showTimer = deckMode == DeckMode.Local,
-                                label = navigator.currentSlide.label,
-                                timerState = timerState,
-                                onIntent = timerController::handleIntent,
-                                transitionSpec = navigator.contentTransform()
+                        val showFooter = navigator.currentSlide.showFooter
 
-                            )
+                        mainFrame.Render(header = { MainHeader(deckMode) }, footer = if (showFooter) {
+                            {
+                                MainFooter(
+                                    showTimer = deckMode == DeckMode.Local,
+                                    label = navigator.currentSlide.label,
+                                    timerState = timerState,
+                                    onIntent = timerController::handleIntent,
+                                    transitionSpec = navigator.contentTransform()
+                                )
+                            }
+                        } else {
+                            null
                         }) {
                             DeckHost(
                                 slides = slides,

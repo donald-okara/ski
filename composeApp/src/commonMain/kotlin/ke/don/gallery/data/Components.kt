@@ -9,4 +9,5 @@ val gallery = componentGallery {
     frames()
     guides()
     layouts()
+    slideContent()
 }

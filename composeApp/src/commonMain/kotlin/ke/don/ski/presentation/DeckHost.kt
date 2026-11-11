@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import ke.don.design.theme.dimens
+import ke.don.domain.LocalRevealStep
 import ke.don.domain.NavDirection
 import ke.don.domain.ScreenTransition
 import ke.don.domain.SlideConfig
@@ -36,7 +38,11 @@ fun DeckHost(
             .padding(MaterialTheme.dimens.mediumPadding)
             .fillMaxSize()
     ) { index ->
-        slides[index].Render()
+        // The outgoing slide is fully revealed while it animates out.
+        val step = if (index == navigator.currentIndex) navigator.currentStep else slides[index].steps
+        CompositionLocalProvider(LocalRevealStep provides step) {
+            slides[index].Render()
+        }
     }
 }
 

@@ -45,7 +45,38 @@ fun ComponentGalleryBuilder.backgrounds() {
         dos = wavyPatternDos,
         donts = wavyPatternDonts
     )
+
+    component(
+        label = "Perspective Floor",
+        description = perspectiveFloorDescription,
+        type = ComponentType.Background,
+        rendered = {
+            BackgroundComponent(
+                pattern = Pattern.PerspectiveFloor(color = Color(0xFF00C853).copy(alpha = 0.25f)),
+                decoratorImage = null
+            ).Render()
+        },
+        dos = perspectiveFloorDos,
+        donts = perspectiveFloorDonts
+    )
 }
+
+val perspectiveFloorDescription = "The Perspective Floor is a checkered floor that scrolls slowly toward a horizon, like a retro arcade stage." +
+        "\n\n" +
+        "Features:" +
+        "\n- Set `color` for the lit tiles and `alternateColor` for the others (transparent by default)" +
+        "\n- Adjustable horizon height, tile density and scroll speed" +
+        "\n- Seamless loop"
+
+val perspectiveFloorDos = listOf(
+    "Use a low alpha on `color` so slide text stays readable",
+    "Raise `horizon` to give the slide content more empty space at the top"
+)
+
+val perspectiveFloorDonts = listOf(
+    "Avoid two strong opaque colours, which make the floor flicker as it scrolls",
+    "Don't shorten `tileDurationMillis` so far that the motion distracts"
+)
 
 val animatedDiagonalDescription = "The Animated Diagonal Wavy Background is a high-energy, dynamic background pattern featuring moving waves. It's designed to add life and motion to slides, making them more engaging for the audience." +
         "\n\n" +
